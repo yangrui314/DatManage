@@ -61,6 +61,7 @@ uses
 
 constructor TTable.Create(aConfig : TConfig ; aSQL : String);
 begin
+  aConfig.SetSQL(aSQL);
   FConfig := aConfig;
   FSQL := aSQL;
   FData := TDBISAMQuery.Create(nil);

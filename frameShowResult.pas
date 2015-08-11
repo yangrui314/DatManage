@@ -6,13 +6,14 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms, 
   Dialogs, cxStyles, cxCustomData, cxGraphics, cxFilter, cxData,
   cxDataStorage, cxEdit, cxGridLevel, cxClasses, cxControls,
-  cxGridCustomView, cxGridCustomTableView, cxGridTableView, cxGrid,DB, dbisamtb,unitTable;
+  cxGridCustomView, cxGridCustomTableView, cxGridTableView, cxGrid,DB, dbisamtb,unitTable,
+  cxGridBandedTableView;
 
 type
   TShowResultFrame = class(TFrame)
     gridField: TcxGrid;
-    dgField: TcxGridTableView;
     levelField: TcxGridLevel;
+    dgField: TcxGridTableView;
   private
     { Private declarations }
     FTable : TTable;
@@ -93,13 +94,13 @@ var
   ANewRecId : Integer;
 begin
   ClearGridField;
+
   dgField.BeginUpdate;
   try
     for i:=0 to  FTable.TableFieldCount - 1 do
     begin
-      AddColumn(GetColumnLength(FTable.TableFieldSizeArray[I]),FTable.TableFieldNameArray[I] + '(' + IntToStr(FTable.TableFieldSizeArray[I])+ ')',FTable.TableFieldSQLTypeArray[I]);
+      AddColumn(GetColumnLength(FTable.TableFieldSizeArray[I]),FTable.TableFieldNameArray[I],FTable.TableFieldSQLTypeArray[I]);
     end;
-
 
     while not FTable.TableData.Eof do
     begin
@@ -108,6 +109,7 @@ begin
       begin
         sField := FTable.TableData.Fields.Fields[I].FieldName;
         aDataType := FTable.TableFieldDataTypeArray[I];
+
         if aDataType = ftString then
         begin
           dgField.DataController.Values[ANewRecId,i] := FTable.TableData.FieldByName(sField).AsString;
@@ -131,7 +133,7 @@ begin
         else
         begin
           dgField.DataController.Values[ANewRecId,i] := FTable.TableData.FieldByName(sField).AsString;
-        end;        
+        end;
       end;
       dgField.DataController.Post();
       FTable.TableData.Next;

@@ -10,7 +10,8 @@ uses
   cxGridCustomView, cxGridCustomTableView, cxGridTableView,
   cxGridDBTableView, cxGrid, cxCheckBox, ExtCtrls, cxMemo, cxVGrid,
   cxDBVGrid, cxInplaceContainer,unitConfig,frameShowResult, dxLayoutControl,
-  cxDropDownEdit, cxRadioGroup,unitTable;
+  cxDropDownEdit, cxRadioGroup,unitTable, Menus,
+  cxLookAndFeelPainters, cxButtons,formTest;
 
 type
   TfmMain = class(TForm)
@@ -47,6 +48,11 @@ type
     btnImportExcel: TButton;
     dMainGroup9: TdxLayoutGroup;
     dMainGroup8: TdxLayoutGroup;
+    btnTest: TcxButton;
+    dMainItem12: TdxLayoutItem;
+    dMainItem13: TdxLayoutItem;
+    btnExport: TButton;
+    dMainGroup6: TdxLayoutGroup;
     procedure btnResultClick(Sender: TObject);
     procedure btnCreatePathPropertiesButtonClick(Sender: TObject;
       AButtonIndex: Integer);
@@ -65,6 +71,8 @@ type
     procedure edtCreatePathPropertiesValidate(Sender: TObject;
       var DisplayValue: Variant; var ErrorText: TCaption;
       var Error: Boolean);
+    procedure btnTestClick(Sender: TObject);
+    procedure btnExportClick(Sender: TObject);
   private
     FRootPath : String;
     FTableName : String;
@@ -94,7 +102,7 @@ implementation
 {$R *.dfm}
 
 uses
-   FileCtrl,StrUtils,unitStandardHandle,formTableProperty,unitExcelHandle;
+   FileCtrl,StrUtils,unitStandardHandle,formTableProperty,unitExcelHandle,formExport;
 
 
 
@@ -144,7 +152,6 @@ end;
 
 procedure TfmMain.LoadField(aSQL : String);
 begin
-  FConfig.SetSQL(aSQL);
   FTable := TTable.Create(FConfig,aSQL);
   FTable.TableName := FTableName;
   FGetTable := True;
@@ -416,6 +423,38 @@ begin
   FRootPath := DisplayValue;
   LoadTableName(FRootPath);
   FConfig.SetRootPath(FRootPath);
+end;
+
+procedure TfmMain.btnTestClick(Sender: TObject);
+var
+  ANewRecId : Integer;
+  aTest : String;
+  F : TForm1;
+begin
+  F := TForm1.Create(self);
+  try
+    f.ShowModal;
+  finally
+    F.Free;
+  end;
+end;
+
+procedure TfmMain.btnExportClick(Sender: TObject);
+var
+  fmExport : TfmExport;
+begin
+  if not FGetTable then
+  begin
+    ShowMessage('未选择对应表。无法导入Excel。');
+    Exit;
+  end;
+
+  fmExport := TfmExport.Create(self);
+  try
+    fmExport.ShowModal;
+  finally
+    fmExport.Free;
+  end;
 end;
 
 end.

@@ -14,16 +14,9 @@ object ShowResultFrame: TShowResultFrame
     TabOrder = 0
     object dgField: TcxGridTableView
       NavigatorButtons.ConfirmDelete = False
-      FilterBox.CustomizeDialog = False
-      DataController.Options = [dcoAssignGroupingValues, dcoAssignMasterDetailKeys, dcoSaveExpanding, dcoGroupsAlwaysExpanded]
       DataController.Summary.DefaultGroupSummaryItems = <>
       DataController.Summary.FooterSummaryItems = <>
       DataController.Summary.SummaryGroups = <>
-      OptionsCustomize.ColumnFiltering = False
-      OptionsData.CancelOnExit = False
-      OptionsData.Deleting = False
-      OptionsData.DeletingConfirmation = False
-      OptionsData.Inserting = False
       OptionsView.GroupByBox = False
     end
     object levelField: TcxGridLevel
