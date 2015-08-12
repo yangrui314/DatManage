@@ -20,7 +20,8 @@ type
     FFieldSizeArray: array of Integer;
     FFieldDataTypeArray: array of TFieldType;
     FFieldIsNullArray: array of Boolean;
-    FFieldSQLTypeArray: array of String;        
+    FFieldSQLTypeArray: array of String;
+    FFieldVisibleArray: array of Boolean;        
     procedure InitData;
     procedure SetFieldNameArray(index:Integer;Value: String);
     function GetFieldNameArray(index:Integer): String;
@@ -32,6 +33,8 @@ type
     function GetFieldIsNullArray(index:Integer): Boolean;
     procedure SetFieldSQLTypeArray(index:Integer;Value: String);
     function GetFieldSQLTypeArray(index:Integer): String;
+    procedure SetFieldVisibleArray(index:Integer;Value: Boolean);
+    function GetFieldVisibleArray(index:Integer): Boolean;
 
     function GetSQLType(aFieldType : TFieldType) : String;
   protected
@@ -39,6 +42,7 @@ type
     destructor Destroy;
     constructor Create(aConfig : TConfig ; aSQL : String);
     procedure Add(AOwner: TComponent);
+    procedure SaveSQLFile(aFilePath : String);
     function ConvertString(aValue : Variant;aType :TFieldType):String;
     function GetOrderID(aName : String) : Integer;
     property TableField: TStringList read FField write FField;
@@ -51,13 +55,14 @@ type
     property TableFieldDataTypeArray[Index:Integer]: TFieldType read GetFieldDataTypeArray write SetFieldDataTypeArray;
     property TableFieldIsNullArray[Index:Integer]: Boolean read GetFieldIsNullArray write SetFieldIsNullArray;
     property TableFieldSQLTypeArray[Index:Integer]: String read GetFieldSQLTypeArray write SetFieldSQLTypeArray;
+    property TableFieldVisibleArray[Index:Integer]: Boolean read GetFieldVisibleArray write SetFieldVisibleArray;
     property Config  : TConfig  read  FConfig write FConfig;
   end;
 
 implementation
 
 uses
-  formInsert;
+  formInsert,unitStandardHandle;
 
 constructor TTable.Create(aConfig : TConfig ; aSQL : String);
 begin
@@ -203,6 +208,7 @@ begin
   SetLength(FFieldDataTypeArray,FFieldCount);
   SetLength(FFieldIsNullArray,FFieldCount);
   SetLength(FFieldSQLTypeArray,FFieldCount);
+  SetLength(FFieldVisibleArray,FFieldCount);
   for I:=0 to  FFieldCount - 1 do
   begin
     FFieldNameArray[I] :=  FConfig.MainData.Fields.Fields[I].FieldName;
@@ -210,6 +216,7 @@ begin
     FFieldDataTypeArray[I] := FConfig.MainData.Fields.Fields[I].DataType;
     FFieldIsNullArray[I] := FConfig.MainData.Fields.Fields[I].IsNull;
     FFieldSQLTypeArray[I] := GetSQLType(FFieldDataTypeArray[I]);
+    FFieldVisibleArray[I] := True;
   end;  
 end;
 
@@ -266,6 +273,17 @@ begin
   FFieldSQLTypeArray[index] := Value;
 end;
 
+
+function TTable.GetFieldVisibleArray(index:Integer): Boolean;
+begin
+  Result := FFieldVisibleArray[index];    
+end;
+
+procedure TTable.SetFieldVisibleArray(index:Integer;Value: Boolean);
+begin
+  FFieldVisibleArray[index] := Value;
+end;
+
 destructor TTable.Destroy;
 begin
   SetLength(FFieldNameArray,0);
@@ -303,5 +321,92 @@ begin
     end;  
   end;    
 end;
+
+
+procedure TTable.SaveSQLFile(aFilePath : String);
+var
+  aSQL : String;
+  aPrefixSQL : String;
+  aPostfixSQL : String;
+  aType : TFieldType;
+  aValue : String;
+  aFieldName : String;
+  I : Integer;
+  aDataType : TFieldType;
+  aFirst : Boolean;
+begin
+  for I:=0 to  TableFieldCount - 1 do
+  begin
+    if not TableFieldVisibleArray[I] then Continue;
+    aDataType := TableFieldDataTypeArray[I];
+
+    if  (aDataType = ftAutoInc ) then Continue;
+
+    if aFieldName = ''
+    then aFieldName := aFieldName + TableFieldNameArray[I]
+    else aFieldName := aFieldName + ',' + TableFieldNameArray[I];
+
+  end;
+
+  aPrefixSQL := 'INSERT INTO ' + TableName + ' (' +aFieldName + ' ) ';
+
+  TableData.First;
+  while not TableData.Eof do
+  begin
+
+
+    aPostfixSQL := ' VALUES ( ';
+    aFirst := True;
+    for i:=0 to  TableData.Fields.Count - 1 do
+    begin
+      if not TableFieldVisibleArray[I] then Continue;
+      aFieldName := TableData.Fields.Fields[I].FieldName;
+      aDataType := TableFieldDataTypeArray[I];
+
+      if  (aDataType = ftAutoInc ) then Continue;
+
+
+      if aDataType = ftString then
+      begin
+        aValue :=  ''''+ TableData.FieldByName(aFieldName).AsString + '''';
+      end
+      else if  (aDataType = ftInteger)  then
+      begin
+        aValue := IntToStr(TableData.FieldByName(aFieldName).AsInteger);
+      end
+      else if  aDataType = ftFloat  then
+      begin
+        aValue := FloatToStr(TableData.FieldByName(aFieldName).AsFloat);
+      end
+      else if  aDataType = ftBoolean      then
+      begin
+        if  TableData.FieldByName(aFieldName).AsBoolean
+        then aValue := '1'
+        else aValue := '0';
+      end
+      else if  aDataType = ftDateTime      then
+      begin
+        aValue :=  ' ''' +  FormatDateTime('yyyy-mm-dd', TableData.FieldByName(aFieldName).AsDateTime) + ''' ' ;;
+      end
+      else
+      begin
+        aValue :=  ''''+ TableData.FieldByName(aFieldName).AsString + '''';
+      end;
+      if aFirst
+      then aPostfixSQL := aPostfixSQL + aValue
+      else aPostfixSQL := aPostfixSQL + ','+ aValue ;
+      aFirst := False;
+    end;
+    aPostfixSQL :=  aPostfixSQL + ')';
+
+    if aSQL = ''
+    then aSQL := aPrefixSQL + aPostfixSQL + ';'
+    else aSQL := aSQL +#13#10  + aPrefixSQL + aPostfixSQL + ';' ;
+    TableData.Next;
+  end;
+  TStandardHandle.SaveFile(aFilePath,aSQL);
+  ShowMessage('±£´æ³É¹¦£¡');
+end;
+
 
 end.

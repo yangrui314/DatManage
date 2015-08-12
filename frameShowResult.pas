@@ -7,7 +7,7 @@ uses
   Dialogs, cxStyles, cxCustomData, cxGraphics, cxFilter, cxData,
   cxDataStorage, cxEdit, cxGridLevel, cxClasses, cxControls,
   cxGridCustomView, cxGridCustomTableView, cxGridTableView, cxGrid,DB, dbisamtb,unitTable,
-  cxGridBandedTableView;
+  cxGridBandedTableView,cxGridExportLink;
 
 type
   TShowResultFrame = class(TFrame)
@@ -26,6 +26,7 @@ type
   public
     constructor Create(AOwner: TComponent);
     procedure Update(aTable : TTable);
+    procedure ExportExcel(aFilePath : String);
   end;
 
 implementation
@@ -85,6 +86,12 @@ begin
     
 end;
 
+procedure TShowResultFrame.ExportExcel(aFilePath : String);
+begin
+  ExportGridToExcel(aFilePath, gridField, True, False, True); 
+end;
+
+
 procedure TShowResultFrame.LoadData;
 var
   sTest : String;
@@ -92,6 +99,7 @@ var
   i : Integer;
   aDataType : TFieldType;
   ANewRecId : Integer;
+  j : Integer;
 begin
   ClearGridField;
 
@@ -99,41 +107,46 @@ begin
   try
     for i:=0 to  FTable.TableFieldCount - 1 do
     begin
+      if FTable.TableFieldVisibleArray[I] then
       AddColumn(GetColumnLength(FTable.TableFieldSizeArray[I]),FTable.TableFieldNameArray[I],FTable.TableFieldSQLTypeArray[I]);
     end;
 
+    FTable.TableData.First;
     while not FTable.TableData.Eof do
     begin
       ANewRecId := dgField.DataController.AppendRecord;
+      j := 0;
       for i:=0 to  FTable.TableData.Fields.Count - 1 do
       begin
+        if  not FTable.TableFieldVisibleArray[I] then Continue;
         sField := FTable.TableData.Fields.Fields[I].FieldName;
         aDataType := FTable.TableFieldDataTypeArray[I];
 
         if aDataType = ftString then
         begin
-          dgField.DataController.Values[ANewRecId,i] := FTable.TableData.FieldByName(sField).AsString;
+          dgField.DataController.Values[ANewRecId,j] := FTable.TableData.FieldByName(sField).AsString;
         end
         else if  aDataType = ftInteger then
         begin
-          dgField.DataController.Values[ANewRecId,i] := FTable.TableData.FieldByName(sField).AsInteger;
+          dgField.DataController.Values[ANewRecId,j] := FTable.TableData.FieldByName(sField).AsInteger;
         end
         else if  aDataType = ftFloat  then
         begin
-          dgField.DataController.Values[ANewRecId,i] := FTable.TableData.FieldByName(sField).AsFloat;
+          dgField.DataController.Values[ANewRecId,j] := FTable.TableData.FieldByName(sField).AsFloat;
         end
         else if  aDataType = ftBoolean      then
         begin
-          dgField.DataController.Values[ANewRecId,i] := FTable.TableData.FieldByName(sField).AsBoolean;
+          dgField.DataController.Values[ANewRecId,j] := FTable.TableData.FieldByName(sField).AsBoolean;
         end
         else if  aDataType = ftDateTime      then
         begin
-          dgField.DataController.Values[ANewRecId,i] := FTable.TableData.FieldByName(sField).AsDateTime;
+          dgField.DataController.Values[ANewRecId,j] := FTable.TableData.FieldByName(sField).AsDateTime;
         end
         else
         begin
-          dgField.DataController.Values[ANewRecId,i] := FTable.TableData.FieldByName(sField).AsString;
+          dgField.DataController.Values[ANewRecId,j] := FTable.TableData.FieldByName(sField).AsString;
         end;
+        Inc(j);
       end;
       dgField.DataController.Post();
       FTable.TableData.Next;

@@ -12,8 +12,8 @@ uses
   formTableProperty in 'formTableProperty.pas' {fmTableProperty},
   formInsert in 'formInsert.pas' {fmInsert},
   unitExcelHandle in 'FileHandle\unitExcelHandle.pas',
-  formTest in 'formTest.pas' {Form1},
-  formExport in 'formExport.pas' {fmExport};
+  formExport in 'formExport.pas' {fmExport},
+  frameTableProperty in 'frameTableProperty.pas' {frmTableProperty: TFrame};
 
 {$R *.res}
 
@@ -22,7 +22,6 @@ begin
   Application.CreateForm(TfmMain, fmMain);
   Application.CreateForm(TfmTableProperty, fmTableProperty);
   Application.CreateForm(TfmInsert, fmInsert);
-  Application.CreateForm(TForm1, Form1);
   Application.CreateForm(TfmExport, fmExport);
   Application.Run;
 end.

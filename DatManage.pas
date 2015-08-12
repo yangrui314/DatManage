@@ -11,7 +11,7 @@ uses
   cxGridDBTableView, cxGrid, cxCheckBox, ExtCtrls, cxMemo, cxVGrid,
   cxDBVGrid, cxInplaceContainer,unitConfig,frameShowResult, dxLayoutControl,
   cxDropDownEdit, cxRadioGroup,unitTable, Menus,
-  cxLookAndFeelPainters, cxButtons,formTest;
+  cxLookAndFeelPainters, cxButtons,cxGridExportLink;
 
 type
   TfmMain = class(TForm)
@@ -48,11 +48,9 @@ type
     btnImportExcel: TButton;
     dMainGroup9: TdxLayoutGroup;
     dMainGroup8: TdxLayoutGroup;
-    btnTest: TcxButton;
-    dMainItem12: TdxLayoutItem;
     dMainItem13: TdxLayoutItem;
     btnExport: TButton;
-    dMainGroup6: TdxLayoutGroup;
+    dlgSave: TSaveDialog;
     procedure btnResultClick(Sender: TObject);
     procedure btnCreatePathPropertiesButtonClick(Sender: TObject;
       AButtonIndex: Integer);
@@ -71,8 +69,8 @@ type
     procedure edtCreatePathPropertiesValidate(Sender: TObject;
       var DisplayValue: Variant; var ErrorText: TCaption;
       var Error: Boolean);
-    procedure btnTestClick(Sender: TObject);
     procedure btnExportClick(Sender: TObject);
+    procedure btnExportSQLClick(Sender: TObject);
   private
     FRootPath : String;
     FTableName : String;
@@ -87,6 +85,7 @@ type
     function GetSQL : String;
     procedure LoadFile(aFilePath : String);
     function SelectFile(aExt : String) : String;
+    function SaveFile: String;    
     procedure CheckState;
     procedure ShowResult(bShow : Boolean);overload;
     procedure ShowResult;overload;
@@ -269,6 +268,19 @@ begin
   end;
 end;
 
+function TfmMain.SaveFile: String;
+var
+  I : Integer;
+begin
+  Result := '';
+  if dlgSave.Execute then
+  begin
+    for I := 0 to dlgSave.Files.Count-1 do
+    begin
+      Result := dlgSave.Files.Strings[I];
+    end;
+  end;
+end;
 
 
 procedure TfmMain.btnImportClick(Sender: TObject);
@@ -371,10 +383,9 @@ begin
     Exit;
   end;
 
-  fmTableProperty := TfmTableProperty.Create(Self);
+  fmTableProperty := TfmTableProperty.Create(Self,FTable);
   with fmTableProperty do
   try
-    InitData(FTable);
     ShowModal;
   finally
     Free;
@@ -425,20 +436,6 @@ begin
   FConfig.SetRootPath(FRootPath);
 end;
 
-procedure TfmMain.btnTestClick(Sender: TObject);
-var
-  ANewRecId : Integer;
-  aTest : String;
-  F : TForm1;
-begin
-  F := TForm1.Create(self);
-  try
-    f.ShowModal;
-  finally
-    F.Free;
-  end;
-end;
-
 procedure TfmMain.btnExportClick(Sender: TObject);
 var
   fmExport : TfmExport;
@@ -449,12 +446,31 @@ begin
     Exit;
   end;
 
-  fmExport := TfmExport.Create(self);
+  fmExport := TfmExport.Create(self,FTable);
   try
     fmExport.ShowModal;
   finally
     fmExport.Free;
   end;
+end;
+
+procedure TfmMain.btnExportSQLClick(Sender: TObject);
+var
+  I : Integer;
+  aFilePath : String;  
+begin
+  if not FGetTable then
+  begin
+    ShowMessage('未选择对应表。无法导出SQL。');
+    Exit;
+  end;
+
+  aFilePath := SaveFile;
+  if aFilePath = '' then
+  begin
+    Exit;
+  end;
+  FTable.SaveSQLFile(aFilePath);
 end;
 
 end.

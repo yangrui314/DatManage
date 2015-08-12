@@ -113,7 +113,7 @@ object fmMain: TfmMain
       Width = 75
       Height = 25
       Caption = #34920#26684#23646#24615
-      TabOrder = 12
+      TabOrder = 11
       OnClick = btnPropertyClick
     end
     object btnAdd: TButton
@@ -133,15 +133,6 @@ object fmMain: TfmMain
       Caption = #23548#20837'Excel'
       TabOrder = 9
       OnClick = btnImportExcelClick
-    end
-    object btnTest: TcxButton
-      Left = 253
-      Top = 162
-      Width = 75
-      Height = 25
-      Caption = 'btnTest'
-      TabOrder = 11
-      OnClick = btnTestClick
     end
     object btnExport: TButton
       Left = 172
@@ -251,22 +242,10 @@ object fmMain: TfmMain
             Control = btnImportExcel
             ControlOptions.ShowBorder = False
           end
-          object dMainGroup6: TdxLayoutGroup
+          object dMainItem13: TdxLayoutItem
             ShowCaption = False
-            Hidden = True
-            LayoutDirection = ldHorizontal
-            ShowBorder = False
-            object dMainItem13: TdxLayoutItem
-              ShowCaption = False
-              Control = btnExport
-              ControlOptions.ShowBorder = False
-            end
-            object dMainItem12: TdxLayoutItem
-              Caption = 'cxButton1'
-              ShowCaption = False
-              Control = btnTest
-              ControlOptions.ShowBorder = False
-            end
+            Control = btnExport
+            ControlOptions.ShowBorder = False
           end
           object dMainItem1: TdxLayoutItem
             AutoAligns = [aaVertical]
@@ -291,6 +270,10 @@ object fmMain: TfmMain
   end
   object dlgOpen: TOpenDialog
     Left = 408
+    Top = 40
+  end
+  object dlgSave: TSaveDialog
+    Left = 448
     Top = 40
   end
 end

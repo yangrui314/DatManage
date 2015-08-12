@@ -7,23 +7,16 @@ uses
   Dialogs, ExtCtrls, cxStyles, cxCustomData, cxGraphics, cxFilter, cxData,
   cxDataStorage, cxEdit, DB, cxDBData, cxGridLevel, cxClasses, cxControls,
   cxGridCustomView, cxGridCustomTableView, cxGridTableView,
-  cxGridDBTableView, cxGrid, cxCheckBox,unitTable, cxSpinEdit, cxTextEdit;
+  cxGridDBTableView, cxGrid, cxCheckBox,unitTable, cxSpinEdit, cxTextEdit,frameTableProperty;
 
 type
   TfmTableProperty = class(TForm)
-    levelProperty: TcxGridLevel;
-    gridProperty: TcxGrid;
-    dgProperty: TcxGridTableView;
-    dgPropertyID: TcxGridColumn;
-    dgPropertyName: TcxGridColumn;
-    dgPropertyDataType: TcxGridColumn;
-    dgPropertySize: TcxGridColumn;
-    dgPropertyIsNull: TcxGridColumn;
+    pnlProperty: TPanel;
   private
     FTable : TTable;
-    procedure LoadData;
+    FShowProperty: TfrmTableProperty;
   public
-    procedure InitData(aTable : TTable);
+    constructor Create(AOwner: TComponent;aTable : TTable);
   end;
 
 var
@@ -33,32 +26,13 @@ implementation
 
 {$R *.dfm}
 
-procedure TfmTableProperty.InitData(aTable : TTable);
+constructor TfmTableProperty.Create(AOwner: TComponent;aTable : TTable);
 begin
+  inherited Create(AOwner);
   FTable := aTable;
-  LoadData;
-end;
-
-procedure TfmTableProperty.LoadData;
-var
-  I : Integer;
-  ANewRecId : Integer;
-begin
-  for I:=0  to FTable.TableFieldCount - 1 do
-  begin
-    dgProperty.BeginUpdate;
-    try
-      ANewRecId := dgProperty.DataController.AppendRecord;
-      dgProperty.DataController.Values[ANewRecId,dgPropertyID.Index] := ANewRecId + 1;
-      dgProperty.DataController.Values[ANewRecId,dgPropertyName.Index] := FTable.TableFieldNameArray[I];
-      dgProperty.DataController.Values[ANewRecId,dgPropertyDataType.Index] := FTable.TableFieldSQLTypeArray[I];
-      dgProperty.DataController.Values[ANewRecId,dgPropertySize.Index] := FTable.TableFieldSizeArray[I];
-      dgProperty.DataController.Values[ANewRecId,dgPropertyIsNull.Index] := FTable.TableFieldIsNullArray[I];
-      dgProperty.DataController.Post();
-    finally
-      dgProperty.EndUpdate;
-    end;
-  end;
+  FShowProperty := TfrmTableProperty.Create(Self,FTable,False);
+  FShowProperty.Parent := pnlProperty;
+  FShowProperty.Align := alClient;    
 end;
 
 
