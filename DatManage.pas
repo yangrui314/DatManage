@@ -76,7 +76,6 @@ type
     procedure btnExportClick(Sender: TObject);
     procedure btnExportSQLClick(Sender: TObject);
     procedure btnRefreshClick(Sender: TObject);
-    procedure btnTestClick(Sender: TObject);
   private
     FRootPath : String;
     FTableName : String;
@@ -133,7 +132,9 @@ begin
   else
   begin
     FTableName := '';
-    Result  := edtSQL.Text;
+    if edtSQL.SelText = ''
+    then Result  := edtSQL.Text
+    else Result := edtSQL.SelText;
   end;
 end;
 
@@ -157,8 +158,7 @@ end;
 
 procedure TfmMain.LoadField(aSQL : String);
 begin
-  FTable := TTable.Create(FConfig,aSQL);
-  FTable.TableName := FTableName;
+  FTable := TTable.Create(FConfig,aSQL,FTableName);
   FGetTable := True;
   FResult.Update(FTable);
 end;
@@ -221,7 +221,7 @@ begin
   edtCreatePath.Text := FRootPath;
   LoadTableName(FRootPath);
   FConfig := TConfig.Create(Self,FRootPath);
-  FTable := TTable.Create(FConfig,'');
+  FTable := TTable.Create(FConfig,'','');
   FResult := TShowResultFrame.Create(Self);
   FResult.Parent := pnlResult;
   FResult.Align := alClient;
@@ -482,16 +482,6 @@ end;
 procedure TfmMain.btnRefreshClick(Sender: TObject);
 begin
   FResult.Update(FTable);
-end;
-
-procedure TfmMain.btnTestClick(Sender: TObject);
-begin
-  if not FGetTable then
-  begin
-    ShowMessage('未选择对应表。无法导入Excel。');
-    Exit;
-  end;
-  FTable.SaveTableConfig;
 end;
 
 end.

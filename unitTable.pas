@@ -44,7 +44,7 @@ type
   protected
   public
     destructor Destroy;
-    constructor Create(aConfig : TConfig ; aSQL : String);
+    constructor Create(aConfig : TConfig ; aSQL : String;aTableName : String);
     procedure Add(AOwner: TComponent);
     procedure SaveSQLFile(aFilePath : String);
 
@@ -75,11 +75,12 @@ implementation
 uses
   formInsert,unitStandardHandle,unitXmlHandle;
 
-constructor TTable.Create(aConfig : TConfig ; aSQL : String);
+constructor TTable.Create(aConfig : TConfig ; aSQL : String;aTableName : String);
 begin
   aConfig.SetSQL(aSQL);
   FConfig := aConfig;
   FSQL := aSQL;
+  FTableName := aTableName;
   FData := TDBISAMQuery.Create(nil);
   FContainData := FConfig.IsContainData;  
   InitData;    
@@ -237,7 +238,9 @@ begin
     FFieldSQLTypeArray[I] := GetSQLType(FFieldDataTypeArray[I]);
     FFieldVisibleArray[I] := True;
     FFieldCaptionArray[I] := '';
-  end;  
+  end;
+
+  ReadTableConfig;  
 end;
 
 
@@ -366,11 +369,19 @@ begin
     aConfig.Free;
   end;
 end;
-    
-procedure TTable.ReadTableConfig;
-begin
 
+procedure TTable.ReadTableConfig;
+var
+  aConfig : TXmlHandle;
+begin
+  aConfig := TXmlHandle.Create(Self);
+  try
+    aConfig.ReadFile;
+  finally
+    aConfig.Free;
+  end;
 end;
+
 
 
 procedure TTable.SaveSQLFile(aFilePath : String);

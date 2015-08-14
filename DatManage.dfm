@@ -159,7 +159,6 @@ object fmMain: TfmMain
       Height = 25
       Caption = #27979#35797
       TabOrder = 12
-      OnClick = btnTestClick
     end
     object dMainGroup_Root: TdxLayoutGroup
       ShowCaption = False
