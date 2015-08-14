@@ -13,7 +13,8 @@ uses
   formInsert in 'formInsert.pas' {fmInsert},
   unitExcelHandle in 'FileHandle\unitExcelHandle.pas',
   formExport in 'formExport.pas' {fmExport},
-  frameTableProperty in 'frameTableProperty.pas' {frmTableProperty: TFrame};
+  frameTableProperty in 'frameTableProperty.pas' {frmTableProperty: TFrame},
+  unitXmlHandle in 'FileHandle\unitXmlHandle.pas';
 
 {$R *.res}
 

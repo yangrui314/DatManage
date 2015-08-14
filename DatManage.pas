@@ -51,6 +51,10 @@ type
     dMainItem13: TdxLayoutItem;
     btnExport: TButton;
     dlgSave: TSaveDialog;
+    dMainItem12: TdxLayoutItem;
+    btnRefresh: TButton;
+    dMainItem14: TdxLayoutItem;
+    btnTest: TButton;
     procedure btnResultClick(Sender: TObject);
     procedure btnCreatePathPropertiesButtonClick(Sender: TObject;
       AButtonIndex: Integer);
@@ -71,6 +75,8 @@ type
       var Error: Boolean);
     procedure btnExportClick(Sender: TObject);
     procedure btnExportSQLClick(Sender: TObject);
+    procedure btnRefreshClick(Sender: TObject);
+    procedure btnTestClick(Sender: TObject);
   private
     FRootPath : String;
     FTableName : String;
@@ -471,6 +477,21 @@ begin
     Exit;
   end;
   FTable.SaveSQLFile(aFilePath);
+end;
+
+procedure TfmMain.btnRefreshClick(Sender: TObject);
+begin
+  FResult.Update(FTable);
+end;
+
+procedure TfmMain.btnTestClick(Sender: TObject);
+begin
+  if not FGetTable then
+  begin
+    ShowMessage('未选择对应表。无法导入Excel。');
+    Exit;
+  end;
+  FTable.SaveTableConfig;
 end;
 
 end.

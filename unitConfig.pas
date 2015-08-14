@@ -15,6 +15,7 @@ type
     dExecSQL: TDBISAMDatabase;
     FRootPath : String;
     FOwner : TComponent;
+    FContainData : Boolean;
     procedure InitData;
   protected
   public
@@ -26,6 +27,7 @@ type
     property MainData: TDBISAMQuery read aMain write aMain;
     property InitOwner: TComponent read FOwner write FOwner;
     function Clone:TConfig;
+    function IsContainData : Boolean;
   end;
 
 implementation
@@ -82,12 +84,19 @@ begin
     aMain.SQL.Add(aSQL);
     aMain.Prepare;
     aMain.ExecSQL;
+    FContainData := not aMain.IsEmpty;
   except
     on E: Exception do
       showmessage('异常类名称:' + E.ClassName
         + #13#10 + '异常信息:' + E.Message);
   end;    
 end;
+
+function TConfig.IsContainData : Boolean;
+begin
+  Result := FContainData;
+end;
+
 
 destructor TConfig.Destroy; 
 begin

@@ -1,8 +1,8 @@
 object fmTableProperty: TfmTableProperty
   Left = 476
   Top = 277
-  Width = 475
-  Height = 244
+  Width = 527
+  Height = 295
   Caption = 'fmTableProperty'
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -16,8 +16,8 @@ object fmTableProperty: TfmTableProperty
   object pnlProperty: TPanel
     Left = 0
     Top = 0
-    Width = 459
-    Height = 206
+    Width = 511
+    Height = 257
     Align = alClient
     Caption = 'pnlProperty'
     TabOrder = 0

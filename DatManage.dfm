@@ -1,7 +1,7 @@
 object fmMain: TfmMain
   Left = 268
   Top = 88
-  Width = 895
+  Width = 925
   Height = 642
   Caption = 'fmMain'
   Color = clBtnFace
@@ -18,8 +18,8 @@ object fmMain: TfmMain
   object dMain: TdxLayoutControl
     Left = 0
     Top = 0
-    Width = 879
-    Height = 217
+    Width = 909
+    Height = 225
     Align = alTop
     ParentBackground = True
     TabOrder = 0
@@ -30,7 +30,7 @@ object fmMain: TfmMain
       Width = 75
       Height = 25
       Caption = #26174#31034#32467#26524
-      TabOrder = 7
+      TabOrder = 8
       OnClick = btnResultClick
     end
     object edtCreatePath: TcxButtonEdit
@@ -57,7 +57,7 @@ object fmMain: TfmMain
     object edtSQL: TcxMemo
       Left = 63
       Top = 91
-      TabOrder = 5
+      TabOrder = 6
       Height = 65
       Width = 489
     end
@@ -76,7 +76,7 @@ object fmMain: TfmMain
       Width = 50
       Height = 25
       Caption = #23548#20837#25991#20214
-      TabOrder = 6
+      TabOrder = 7
       OnClick = btnImportClick
     end
     object edtTable: TcxComboBox
@@ -113,7 +113,7 @@ object fmMain: TfmMain
       Width = 75
       Height = 25
       Caption = #34920#26684#23646#24615
-      TabOrder = 11
+      TabOrder = 13
       OnClick = btnPropertyClick
     end
     object btnAdd: TButton
@@ -122,7 +122,7 @@ object fmMain: TfmMain
       Width = 75
       Height = 25
       Caption = #22686#21152#25968#25454
-      TabOrder = 8
+      TabOrder = 9
       OnClick = btnAddClick
     end
     object btnImportExcel: TButton
@@ -131,7 +131,7 @@ object fmMain: TfmMain
       Width = 75
       Height = 25
       Caption = #23548#20837'Excel'
-      TabOrder = 9
+      TabOrder = 10
       OnClick = btnImportExcelClick
     end
     object btnExport: TButton
@@ -140,8 +140,26 @@ object fmMain: TfmMain
       Width = 75
       Height = 25
       Caption = #23548#20986
-      TabOrder = 10
+      TabOrder = 11
       OnClick = btnExportClick
+    end
+    object btnRefresh: TButton
+      Left = 271
+      Top = 60
+      Width = 75
+      Height = 25
+      Caption = #21047#26032#20013#25991#21517
+      TabOrder = 5
+      OnClick = btnRefreshClick
+    end
+    object btnTest: TButton
+      Left = 253
+      Top = 162
+      Width = 75
+      Height = 25
+      Caption = #27979#35797
+      TabOrder = 12
+      OnClick = btnTestClick
     end
     object dMainGroup_Root: TdxLayoutGroup
       ShowCaption = False
@@ -188,6 +206,11 @@ object fmMain: TfmMain
           object dMainItem9: TdxLayoutItem
             ShowCaption = False
             Control = btnLoadTableName
+            ControlOptions.ShowBorder = False
+          end
+          object dMainItem12: TdxLayoutItem
+            ShowCaption = False
+            Control = btnRefresh
             ControlOptions.ShowBorder = False
           end
         end
@@ -247,6 +270,11 @@ object fmMain: TfmMain
             Control = btnExport
             ControlOptions.ShowBorder = False
           end
+          object dMainItem14: TdxLayoutItem
+            ShowCaption = False
+            Control = btnTest
+            ControlOptions.ShowBorder = False
+          end
           object dMainItem1: TdxLayoutItem
             AutoAligns = [aaVertical]
             AlignHorz = ahRight
@@ -260,9 +288,9 @@ object fmMain: TfmMain
   end
   object pnlResult: TPanel
     Left = 0
-    Top = 217
-    Width = 879
-    Height = 387
+    Top = 225
+    Width = 909
+    Height = 379
     Align = alClient
     Caption = 'pnlResult'
     ParentBackground = True

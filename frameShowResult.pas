@@ -103,12 +103,28 @@ var
 begin
   ClearGridField;
 
+  if not FTable.ContainData then
+  begin
+    ShowMessage('执行SQL语句完成，无结果显示。');
+    Exit;
+  end;
+
+
   dgField.BeginUpdate;
   try
     for i:=0 to  FTable.TableFieldCount - 1 do
     begin
       if FTable.TableFieldVisibleArray[I] then
-      AddColumn(GetColumnLength(FTable.TableFieldSizeArray[I]),FTable.TableFieldNameArray[I],FTable.TableFieldSQLTypeArray[I]);
+      begin
+        if FTable.TableFieldCaptionArray[I] ='' then
+        begin
+          AddColumn(GetColumnLength(FTable.TableFieldSizeArray[I]),FTable.TableFieldNameArray[I],FTable.TableFieldSQLTypeArray[I]);
+        end
+        else
+        begin
+          AddColumn(GetColumnLength(FTable.TableFieldSizeArray[I]),FTable.TableFieldCaptionArray[I],FTable.TableFieldSQLTypeArray[I]);
+        end;
+      end;
     end;
 
     FTable.TableData.First;
@@ -175,7 +191,8 @@ begin
   col.HeaderAlignmentVert := cxClasses.vaCenter;
   col.Options.Sorting := False;
   col.Options.CellMerging := False;
-  col.Options.Editing := False;
+//  col.Options.Editing := False;
+  col.Properties.ReadOnly := True;
   col.Width := width ;
 end;
 

@@ -9,6 +9,7 @@ uses
 type
   TTable = class
   private
+    FContainData : Boolean;
     FFieldCount : Integer;
     FField : TStringList;
     FValue : TStringList;
@@ -21,7 +22,8 @@ type
     FFieldDataTypeArray: array of TFieldType;
     FFieldIsNullArray: array of Boolean;
     FFieldSQLTypeArray: array of String;
-    FFieldVisibleArray: array of Boolean;        
+    FFieldVisibleArray: array of Boolean;
+    FFieldCaptionArray: array of String;            
     procedure InitData;
     procedure SetFieldNameArray(index:Integer;Value: String);
     function GetFieldNameArray(index:Integer): String;
@@ -36,6 +38,8 @@ type
     procedure SetFieldVisibleArray(index:Integer;Value: Boolean);
     function GetFieldVisibleArray(index:Integer): Boolean;
 
+    procedure SetFieldCaptionArray(index:Integer;Value: String);
+    function GetFieldCaptionArray(index:Integer): String;
     function GetSQLType(aFieldType : TFieldType) : String;
   protected
   public
@@ -43,6 +47,10 @@ type
     constructor Create(aConfig : TConfig ; aSQL : String);
     procedure Add(AOwner: TComponent);
     procedure SaveSQLFile(aFilePath : String);
+
+    procedure SaveTableConfig;
+    procedure ReadTableConfig;
+    
     function ConvertString(aValue : Variant;aType :TFieldType):String;
     function GetOrderID(aName : String) : Integer;
     property TableField: TStringList read FField write FField;
@@ -56,13 +64,16 @@ type
     property TableFieldIsNullArray[Index:Integer]: Boolean read GetFieldIsNullArray write SetFieldIsNullArray;
     property TableFieldSQLTypeArray[Index:Integer]: String read GetFieldSQLTypeArray write SetFieldSQLTypeArray;
     property TableFieldVisibleArray[Index:Integer]: Boolean read GetFieldVisibleArray write SetFieldVisibleArray;
+    property TableFieldCaptionArray[Index:Integer]: String read GetFieldCaptionArray write SetFieldCaptionArray;
+
     property Config  : TConfig  read  FConfig write FConfig;
+    property ContainData : Boolean read  FContainData write FContainData;    
   end;
 
 implementation
 
 uses
-  formInsert,unitStandardHandle;
+  formInsert,unitStandardHandle,unitXmlHandle;
 
 constructor TTable.Create(aConfig : TConfig ; aSQL : String);
 begin
@@ -70,6 +81,7 @@ begin
   FConfig := aConfig;
   FSQL := aSQL;
   FData := TDBISAMQuery.Create(nil);
+  FContainData := FConfig.IsContainData;  
   InitData;    
 end;
 
@@ -200,6 +212,12 @@ procedure TTable.InitData;
 var
   I : Integer;
 begin
+  if not FContainData then
+  begin
+    Exit;
+  end;
+
+
   FData := FConfig.MainData;
   FFieldCount := FConfig.MainData.Fields.Count;
 
@@ -209,6 +227,7 @@ begin
   SetLength(FFieldIsNullArray,FFieldCount);
   SetLength(FFieldSQLTypeArray,FFieldCount);
   SetLength(FFieldVisibleArray,FFieldCount);
+  SetLength(FFieldCaptionArray,FFieldCount);  
   for I:=0 to  FFieldCount - 1 do
   begin
     FFieldNameArray[I] :=  FConfig.MainData.Fields.Fields[I].FieldName;
@@ -217,6 +236,7 @@ begin
     FFieldIsNullArray[I] := FConfig.MainData.Fields.Fields[I].IsNull;
     FFieldSQLTypeArray[I] := GetSQLType(FFieldDataTypeArray[I]);
     FFieldVisibleArray[I] := True;
+    FFieldCaptionArray[I] := '';
   end;  
 end;
 
@@ -284,6 +304,17 @@ begin
   FFieldVisibleArray[index] := Value;
 end;
 
+
+function TTable.GetFieldCaptionArray(index:Integer): String;
+begin  
+    Result := FFieldCaptionArray[index];
+end;
+
+procedure TTable.SetFieldCaptionArray(index:Integer;Value: String);
+begin
+  FFieldCaptionArray[index] := Value;
+end;
+
 destructor TTable.Destroy;
 begin
   SetLength(FFieldNameArray,0);
@@ -291,6 +322,8 @@ begin
   SetLength(FFieldDataTypeArray,0);
   SetLength(FFieldIsNullArray,0);
   SetLength(FFieldSQLTypeArray,0);
+  SetLength(FFieldVisibleArray,0);
+  SetLength(FFieldCaptionArray,0);
 end;
 
 procedure TTable.Add(AOwner: TComponent);
@@ -320,6 +353,23 @@ begin
       Exit;
     end;  
   end;    
+end;
+
+procedure TTable.SaveTableConfig;
+var
+  aConfig : TXmlHandle;
+begin
+  aConfig := TXmlHandle.Create(Self);
+  try
+    aConfig.SaveFile;
+  finally
+    aConfig.Free;
+  end;
+end;
+    
+procedure TTable.ReadTableConfig;
+begin
+
 end;
 
 
