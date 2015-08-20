@@ -4,69 +4,66 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls,
-  Dialogs,StdCtrls,unitFileHandle;
+  Dialogs,StdCtrls,unitFileHandle,unitTable;
 
 type
   TStandardHandle = class(TFileHandle)
   private
-    FFile : Textfile;
     FData : TStringList;
   protected
-    procedure LoadFile; override;
-    procedure LoadData;    
   public
     destructor Destroy; override;
-    constructor Create(aFilePath : String); override;
+    constructor Create;override;
+    function SaveFile(aFilePath : String ; aData : String) : Boolean; overload;
+    function ReadFile(aFilePath : String) : Boolean; override;
     property FileData: TStringList read FData write FData;
-
-    class procedure SaveFile(aFilePath : String; aData : String);
   end;
 
 implementation
 
-constructor TStandardHandle.Create(aFilePath : String);
+constructor TStandardHandle.Create;
 begin
-  FData := TStringList.Create;
   inherited;
+  FData := TStringList.Create;  
 end;
 
-class procedure TStandardHandle.SaveFile(aFilePath : String; aData : String);
+
+
+function TStandardHandle.SaveFile(aFilePath : String ; aData : String) : Boolean;
 var
   aFile: TextFile;
-begin
-  AssignFile(aFile,aFilePath);
-  Rewrite(aFile);
-  Writeln(aFile, aData);
-  CloseFile(aFile);
-end;
-
-
-procedure TStandardHandle.LoadFile;
-begin
-  inherited;
-  AssignFile(FFile, FFilePath);
-  LoadData;
-end;
-
-procedure TStandardHandle.LoadData;
-var
   aStr : String;
 begin
-  Reset(FFile);
-  while not Eof(FFile) do
-  begin
-    Readln(FFile, aStr);
-    FData.Add(aStr) ;
-  end;
+  inherited SaveFile(aFilePath);
+  aStr := aData;
+  AssignFile(aFile,aFilePath);
+  Rewrite(aFile);
+  Writeln(aFile, aStr);
+  CloseFile(aFile);
+  Result := True;
 end;
 
+function TStandardHandle.ReadFile(aFilePath : String) : Boolean;
+var
+  aStr : String;
+  aFile : Textfile;
+begin
+  AssignFile(aFile, aFilePath);
+  Reset(aFile);
+  while not Eof(aFile) do
+  begin
+    Readln(aFile, aStr);
+    FData.Add(aStr) ;
+  end;
+  Closefile(aFile);
+  Result := True;    
+end;
 
 
 
 destructor TStandardHandle.Destroy;
 begin
   FData.Free;
-  Closefile(FFile);
   inherited;
 end;
 

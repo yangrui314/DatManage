@@ -21,6 +21,7 @@ type
     levelProperty: TcxGridLevel;
     dgPropertySelected: TcxGridColumn;
     dgPropertyCaption: TcxGridColumn;
+    dgPropertyIsIndex: TcxGridColumn;
   private
     FTable : TTable;
     FSelect : Boolean;
@@ -112,6 +113,7 @@ begin
       dgProperty.DataController.Values[ANewRecId,dgPropertyDataType.Index] := FTable.TableFieldSQLTypeArray[I];
       dgProperty.DataController.Values[ANewRecId,dgPropertySize.Index] := FTable.TableFieldSizeArray[I];
       dgProperty.DataController.Values[ANewRecId,dgPropertyIsNull.Index] := FTable.TableFieldIsNullArray[I];
+      dgProperty.DataController.Values[ANewRecId,dgPropertyIsIndex.Index] := FTable.TableFieldMainArray[I];
       dgProperty.DataController.Post();
     finally
       dgProperty.EndUpdate;

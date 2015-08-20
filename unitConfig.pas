@@ -22,6 +22,7 @@ type
     procedure SetRootPath(aRootPath : String);
     procedure SetSQL(const aSQL : String);
     procedure ExecSQL(const aSQL : String);
+    procedure ExecSQLs(const aSQLs :  array of String);
     destructor Destroy;
     constructor Create(AOwner: TComponent;aRootPath : String);
     property MainData: TDBISAMQuery read aMain write aMain;
@@ -132,7 +133,32 @@ begin
   end;    
 end;
 
+procedure TConfig.ExecSQLs(const aSQLs :  array of String);
+var
+  I : Integer;
+  Len : Integer;
+begin
+  Len := Length(aSQLs);
+  try
+    aExecSQL.Close;
+    aExecSQL.SQL.Clear;
+    for I := 0 to Len -1 do
+    begin
+      if aSQLs[I] = '' then Continue;
+      aExecSQL.SQL.Add(aSQLs[I]+';');
+    end;
+    aExecSQL.Prepare;
+    aExecSQL.ExecSQL;
 
+    ShowMessage('执行语句共'+ IntToStr(Len) + '条,'+'执行SQL成功!')
+  except
+    on E: Exception do
+      showmessage('执行语句共'+ IntToStr(Len) + '条,'+'执行SQL失败'
+       + #13#10 + 
+      '异常类名称:' + E.ClassName
+        + #13#10 + '异常信息:' + E.Message);
+  end;    
+end;
 
 function TConfig.Clone:TConfig;
 begin

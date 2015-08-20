@@ -23,7 +23,8 @@ type
     FFieldIsNullArray: array of Boolean;
     FFieldSQLTypeArray: array of String;
     FFieldVisibleArray: array of Boolean;
-    FFieldCaptionArray: array of String;            
+    FFieldCaptionArray: array of String;
+    FFieldMainArray: array of Boolean;                
     procedure InitData;
     procedure SetFieldNameArray(index:Integer;Value: String);
     function GetFieldNameArray(index:Integer): String;
@@ -40,6 +41,10 @@ type
 
     procedure SetFieldCaptionArray(index:Integer;Value: String);
     function GetFieldCaptionArray(index:Integer): String;
+
+    procedure SetFieldMainArray(index:Integer;Value: Boolean);
+    function GetFieldMainArray(index:Integer): Boolean;
+
     function GetSQLType(aFieldType : TFieldType) : String;
   protected
   public
@@ -50,9 +55,12 @@ type
 
     procedure SaveTableConfig;
     procedure ReadTableConfig;
-    
+
     function ConvertString(aValue : Variant;aType :TFieldType):String;
     function GetOrderID(aName : String) : Integer;
+
+    procedure  SaveFile(aFilePath : String;aData : String);
+
     property TableField: TStringList read FField write FField;
     property TableValue: TStringList read FValue write FValue;
     property TableName: String read FTableName write FTableName;    
@@ -65,9 +73,10 @@ type
     property TableFieldSQLTypeArray[Index:Integer]: String read GetFieldSQLTypeArray write SetFieldSQLTypeArray;
     property TableFieldVisibleArray[Index:Integer]: Boolean read GetFieldVisibleArray write SetFieldVisibleArray;
     property TableFieldCaptionArray[Index:Integer]: String read GetFieldCaptionArray write SetFieldCaptionArray;
+    property TableFieldMainArray[Index:Integer]: Boolean read GetFieldMainArray write SetFieldMainArray;
 
     property Config  : TConfig  read  FConfig write FConfig;
-    property ContainData : Boolean read  FContainData write FContainData;    
+    property ContainData : Boolean read  FContainData write FContainData;
   end;
 
 implementation
@@ -228,7 +237,8 @@ begin
   SetLength(FFieldIsNullArray,FFieldCount);
   SetLength(FFieldSQLTypeArray,FFieldCount);
   SetLength(FFieldVisibleArray,FFieldCount);
-  SetLength(FFieldCaptionArray,FFieldCount);  
+  SetLength(FFieldCaptionArray,FFieldCount);
+  SetLength(FFieldMainArray,FFieldCount);     
   for I:=0 to  FFieldCount - 1 do
   begin
     FFieldNameArray[I] :=  FConfig.MainData.Fields.Fields[I].FieldName;
@@ -238,6 +248,7 @@ begin
     FFieldSQLTypeArray[I] := GetSQLType(FFieldDataTypeArray[I]);
     FFieldVisibleArray[I] := True;
     FFieldCaptionArray[I] := '';
+    FFieldMainArray[I] := FConfig.MainData.Fields.Fields[I].IsIndexField;
   end;
 
   ReadTableConfig;  
@@ -308,6 +319,16 @@ begin
 end;
 
 
+function TTable.GetFieldMainArray(index:Integer): Boolean;
+begin
+  Result := FFieldMainArray[index];    
+end;
+
+procedure TTable.SetFieldMainArray(index:Integer;Value: Boolean);
+begin
+  FFieldMainArray[index] := Value;
+end;
+
 function TTable.GetFieldCaptionArray(index:Integer): String;
 begin  
     Result := FFieldCaptionArray[index];
@@ -327,6 +348,7 @@ begin
   SetLength(FFieldSQLTypeArray,0);
   SetLength(FFieldVisibleArray,0);
   SetLength(FFieldCaptionArray,0);
+  SetLength(FFieldMainArray,0);  
 end;
 
 procedure TTable.Add(AOwner: TComponent);
@@ -361,10 +383,17 @@ end;
 procedure TTable.SaveTableConfig;
 var
   aConfig : TXmlHandle;
+  aFilePath : String;
 begin
+  if TableName = '' then
+  begin
+    ShowMessage('无法保存表格的配置。');
+    Exit;
+  end;
   aConfig := TXmlHandle.Create(Self);
   try
-    aConfig.SaveFile;
+    aFilePath := ExtractFileDir(ParamStr(0)) + '\Template\' + TableName + '.xml';
+    aConfig.SaveFile(aFilePath);
   finally
     aConfig.Free;
   end;
@@ -373,10 +402,18 @@ end;
 procedure TTable.ReadTableConfig;
 var
   aConfig : TXmlHandle;
+  aFilePath : String;  
 begin
+  if TableName = '' then
+  begin
+    ShowMessage('无法读取表格的配置。');
+    Exit;
+  end;
+
   aConfig := TXmlHandle.Create(Self);
   try
-    aConfig.ReadFile;
+    aFilePath := ExtractFileDir(ParamStr(0)) + '\Template\' + TableName + '.xml';
+    aConfig.ReadFile(aFilePath);
   finally
     aConfig.Free;
   end;
@@ -465,8 +502,21 @@ begin
     else aSQL := aSQL +#13#10  + aPrefixSQL + aPostfixSQL + ';' ;
     TableData.Next;
   end;
-  TStandardHandle.SaveFile(aFilePath,aSQL);
+  SaveFile(aFilePath,aSQL);
   ShowMessage('保存成功！');
+end;
+
+procedure  TTable.SaveFile(aFilePath : String;aData : String);
+var
+  aFile : TStandardHandle;
+begin
+  aFile := TStandardHandle.Create;
+  try
+    aFile.SaveFile(aFilePath,aData);
+  finally
+    aFile.Free;
+  end;
+
 end;
 
 

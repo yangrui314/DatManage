@@ -4,25 +4,19 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls,
-  Dialogs,StdCtrls,unitFileHandle,unitTable, xmldom, XMLIntf, msxmldom, XMLDoc;
+  Dialogs,StdCtrls,unitTableHandle,unitTable, xmldom, XMLIntf, msxmldom, XMLDoc;
 
 type
-  TXmlHandle = class(TFileHandle)
+  TXmlHandle = class(TTableHandle)
   private
-    FTable : TTable;
     XMLFile: TXMLDocument;
     XMLRead : TXMLDocument;
-    FAppPath : String;
-    FSavePath : String;
-    FConfigFile : String;
-    procedure SetPath;
   protected
-    procedure LoadFile; override;
   public
     destructor Destroy; override;
-    constructor Create(aTable : TTable);
-    procedure SaveFile;
-    procedure ReadFile;
+    constructor Create(aTable : TTable);override;
+    function SaveFile(aFilePath : String) : Boolean; override;
+    function ReadFile(aFilePath : String) : Boolean; override;
   end;
 
 
@@ -31,52 +25,49 @@ implementation
 
 constructor TXmlHandle.Create(aTable : TTable);
 begin
-  FTable := aTable;
-  XMLFile := TXMLDocument.Create(nil);
-  SetPath;
-  LoadFile;
-end;
-
-procedure TXmlHandle.SetPath;
-begin
-  FAppPath := ExtractFileDir(ParamStr(0));
-  FSavePath := FAppPath + '\Template';
-  FConfigFile := FSavePath + '\'+ FTable.TableName + '.xml';
-end;
-
-
-procedure TXmlHandle.LoadFile;
-begin
   inherited;
+  XMLFile := TXMLDocument.Create(nil);
 end;
 
-procedure TXmlHandle.ReadFile;
+//procedure TXmlHandle.SetPath;
+//begin
+//  FAppPath := ExtractFileDir(ParamStr(0));
+//  FSavePath := FAppPath + '\Template';
+//  FConfigFile := FSavePath + '\'+ FTable.TableName + '.xml';
+//end;
+
+
+
+function TXmlHandle.ReadFile(aFilePath : String) : Boolean;
 var
   nodeList: IXMLNodeList;
   node: IXMLNode;
   num,i: Integer;
   comp : TComponent;
 begin
-  if not FileExists(FConfigFile) then
+  Result := False;
+  if not FileExists(aFilePath) then
   begin
     Exit;
   end;
   comp :=TComponent.create(nil);
   XMLRead := TXMLDocument.Create(comp);
-  XMLRead.LoadFromFile(FConfigFile);
+  XMLRead.LoadFromFile(aFilePath);
   
   for I:=0 to FTable.TableFieldCount - 1 do
   begin
      FTable.TableFieldCaptionArray[I] :=  XMLRead.DocumentElement.ChildNodes[I].ChildNodes['Caption'].Text;
      FTable.TableFieldSizeArray[I] :=  StrToInt(XMLRead.DocumentElement.ChildNodes[I].ChildNodes['Size'].Text);
   end;
+  Result := True;
 end;
 
 
-procedure TXmlHandle.SaveFile;
+function TXmlHandle.SaveFile(aFilePath : String) : Boolean;
 var
   pNode,tNode,cNode: IXMLNode; {定义两个节点: 父节点、子节点}
   I : Integer;
+  aSavePath : String;
 begin
   XMLFile.XML.Clear;
   XMLFile.Active := True;                {必须先激活}
@@ -112,25 +103,28 @@ begin
 //  {查看}
 //  ShowMessage(XMLFile.XML.Text);
 
-  if not DirectoryExists(FSavePath) then
+  aSavePath := ExtractFilePath(aFilePath);
+
+  if not DirectoryExists(aSavePath) then
   try
     begin
-      CreateDir(FSavePath);
+      CreateDir(aSavePath);
 //      ForceDirectories(Edit1.Text);
     end;
   finally
-    raise Exception.Create('Cannot Create '+FSavePath);
+    raise Exception.Create('Cannot Create '+aSavePath);
   end;
 
 
   {保存}
-  XMLFile.SaveToFile(FConfigFile);
-  ShowMessage('生成'+FConfigFile+ '成功');
+  XMLFile.SaveToFile(aFilePath);
+  ShowMessage('生成'+aFilePath+ '成功');
 end;
 
 
 destructor TXmlHandle.Destroy;
 begin
+  XMLFile.Free;
   inherited;
 end;
 

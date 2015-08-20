@@ -1,14 +1,14 @@
 object frmTableProperty: TfrmTableProperty
   Left = 0
   Top = 0
-  Width = 634
-  Height = 249
+  Width = 700
+  Height = 266
   TabOrder = 0
   object gridProperty: TcxGrid
     Left = 0
     Top = 0
-    Width = 634
-    Height = 249
+    Width = 700
+    Height = 266
     Align = alClient
     TabOrder = 0
     object dgProperty: TcxGridTableView
@@ -88,6 +88,13 @@ object frmTableProperty: TfrmTableProperty
         GroupSummaryAlignment = taCenter
         HeaderAlignmentHorz = taCenter
         Width = 73
+      end
+      object dgPropertyIsIndex: TcxGridColumn
+        Caption = #20027#38190
+        PropertiesClassName = 'TcxCheckBoxProperties'
+        FooterAlignmentHorz = taCenter
+        HeaderAlignmentHorz = taCenter
+        HeaderGlyphAlignmentHorz = taCenter
       end
     end
     object levelProperty: TcxGridLevel

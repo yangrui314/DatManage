@@ -3,15 +3,13 @@ unit unitExcelHandle;
 interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls,
-  Dialogs,StdCtrls,unitFileHandle,ComObj,unitTable;
+  Dialogs,StdCtrls,unitTableHandle,ComObj,unitTable,unitStandardHandle;
 
 type
-  TExcelHandle = class(TFileHandle)
+  TExcelHandle = class(TTableHandle)
   private
     Excel,Sheet:Variant;
     aInsertSQLs:  array of String;
-    FTestSQL : String;
-    FTable : TTable;
     FSheetRow : Integer;
     FSheetColumn : Integer;    
     function OpenExcel(AFileName : String): Variant;
@@ -19,29 +17,26 @@ type
     function LoadInsertSQL(RowNum : Integer): String;
     procedure ExecSQL;
   protected
-    procedure LoadFile; override;
   public
     destructor Destroy; override;
-    constructor Create(aFilePath : String;aTable : TTable);
-    property TestSQL: String read FTestSQL write FTestSQL;    
+    constructor Create(aTable : TTable);override;
+    function ReadFile(aFilePath : String) : Boolean; override;        
   end;
 
 
 implementation
 
 
-constructor TExcelHandle.Create(aFilePath : String ;aTable : TTable);
+constructor TExcelHandle.Create(aTable : TTable);
 begin
-  FTable := aTable;
-  inherited Create(aFilePath);
+  inherited;
 end;
 
-procedure TExcelHandle.LoadFile;
+function TExcelHandle.ReadFile(aFilePath : String) : Boolean;
 var
   I : Integer;
 begin
-  inherited;
-  Excel := OpenExcel(FFilePath);
+  Excel := OpenExcel(aFilePath);
   Sheet:= Excel.Workbooks[1].WorkSheets[1];
   FSheetRow:= Sheet.Usedrange.Rows.count;
   FSheetColumn := Sheet.UsedRange.Columns.Count;
@@ -54,14 +49,25 @@ begin
   ExecSQL;
 end;
 
+
+
+
+
 procedure TExcelHandle.ExecSQL;
 var
   I : Integer;
+  s : String;
 begin
+//  FTable.Config.ExecSQLs(aInsertSQLs);
+
   for I := 0 to FSheetRow-2 do
   begin
-    FTable.Config.ExecSQL(aInsertSQLs[I]);
+    if s = ''
+    then s := s +  aInsertSQLs[I]
+    else s := s + ';' + #13#10 + aInsertSQLs[I];
   end;
+  FTable.SaveFile(ExtractFileDir(ParamStr(0)) + '\xls.sql',s);
+  ShowMessage('导出'+ExtractFileDir(ParamStr(0)) + '\xls.sql'+'成功');
 end;
 
 
@@ -95,19 +101,33 @@ function TExcelHandle.LoadInsertSQL(RowNum : Integer): String;
     I : Integer;
     TableFieldOrderID : Integer;
     aFieldName : String;
+    aFirst : Boolean;
   begin
     Result := '';
+    aFirst := True;
     for I := 1 to FSheetColumn do
     begin
       aFieldName :=  Sheet.Cells[1,I].Value;
-      if  aField  = ''
+      TableFieldOrderID := FTable.GetOrderID(aFieldName);
+      if TableFieldOrderID = -1 then Continue;
+
+      if (not FTable.TableFieldIsNullArray[TableFieldOrderID]) and (Sheet.Cells[RowNum ,I].Value = '') then
+      begin
+        Result := '';
+        Exit;;
+      end;
+
+
+      if  aFirst
       then  aField :=  Sheet.Cells[1,I].Value
       else  aField := aField + ',' + aFieldName;
-      TableFieldOrderID := FTable.GetOrderID(aFieldName);
 
-      if aValue = ''
-      then aValue := Sheet.Cells[RowNum ,I].Value
+
+      if aFirst
+      then aValue := FTable.ConvertString(Sheet.Cells[RowNum ,I].Value,FTable.TableFieldDataTypeArray[TableFieldOrderID])
       else aValue := aValue + ',' + FTable.ConvertString(Sheet.Cells[RowNum ,I].Value,FTable.TableFieldDataTypeArray[TableFieldOrderID]);
+
+      aFirst := False;
     end;
     Sql := ' INSERT INTO ' + FTable.TableName + ' (' +aField + ')';
     SqlValue := ' VALUES ( ' + aValue + ')';

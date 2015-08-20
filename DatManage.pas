@@ -55,6 +55,8 @@ type
     btnRefresh: TButton;
     dMainItem14: TdxLayoutItem;
     btnTest: TButton;
+    MainMenu: TMainMenu;
+    MenuAbout: TMenuItem;
     procedure btnResultClick(Sender: TObject);
     procedure btnCreatePathPropertiesButtonClick(Sender: TObject;
       AButtonIndex: Integer);
@@ -76,6 +78,7 @@ type
     procedure btnExportClick(Sender: TObject);
     procedure btnExportSQLClick(Sender: TObject);
     procedure btnRefreshClick(Sender: TObject);
+    procedure MenuAboutClick(Sender: TObject);
   private
     FRootPath : String;
     FTableName : String;
@@ -106,7 +109,7 @@ implementation
 {$R *.dfm}
 
 uses
-   FileCtrl,StrUtils,unitStandardHandle,formTableProperty,unitExcelHandle,formExport;
+   FileCtrl,StrUtils,unitStandardHandle,formTableProperty,unitExcelHandle,formExport,formAbout;
 
 
 
@@ -217,7 +220,7 @@ end;
 procedure TfmMain.FormShow(Sender: TObject);
 begin
   inherited;
-  FRootPath :=  'D:\Project\new_omni\trunk\engineering\deploy\client\gd-n-tax(GuiZhou)\deploy(WS)\data\';
+  FRootPath :=  'D:\Project\new_omni\trunk\engineering\deploy\client\gd-n-tax(GuiZhou)\deploy(DS)\data\';
   edtCreatePath.Text := FRootPath;
   LoadTableName(FRootPath);
   FConfig := TConfig.Create(Self,FRootPath);
@@ -227,6 +230,7 @@ begin
   FResult.Align := alClient;
   CheckState;
   FGetTable := False;
+  dMain.Height := 250;
   ShowResult;
 end;
 
@@ -241,9 +245,10 @@ var
   aFile : TStandardHandle;
   I : Integer;
 begin
-  aFile := TStandardHandle.Create(aFilePath);
+  aFile := TStandardHandle.Create;
   try
     edtSQL.Clear;
+    aFile.ReadFile(aFilePath);
     for I := 0 to aFile.FileData.Count - 1 do
     begin
       edtSQL.Lines.Add(aFile.FileData[I]);
@@ -426,9 +431,9 @@ begin
   begin
     Exit;
   end;
-  aExcel := TExcelHandle.Create(aFilePath,FTable);
+  aExcel := TExcelHandle.Create(FTable);
   try
-  
+    aExcel.ReadFile(aFilePath);
   finally
     aExcel.Destroy;
   end;
@@ -482,6 +487,18 @@ end;
 procedure TfmMain.btnRefreshClick(Sender: TObject);
 begin
   FResult.Update(FTable);
+end;
+
+procedure TfmMain.MenuAboutClick(Sender: TObject);
+var
+  aAbout : TfmAbout;
+begin
+  aAbout := TfmAbout.Create(Self);
+  try
+    aAbout.ShowModal;
+  finally
+    aAbout.Free;
+  end;
 end;
 
 end.

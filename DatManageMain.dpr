@@ -14,7 +14,10 @@ uses
   unitExcelHandle in 'FileHandle\unitExcelHandle.pas',
   formExport in 'formExport.pas' {fmExport},
   frameTableProperty in 'frameTableProperty.pas' {frmTableProperty: TFrame},
-  unitXmlHandle in 'FileHandle\unitXmlHandle.pas';
+  unitXmlHandle in 'FileHandle\unitXmlHandle.pas',
+  formAbout in 'formAbout.pas' {fmAbout},
+  unitTableHandle in 'FileHandle\unitTableHandle.pas',
+  unitUnTableHandle in 'FileHandle\unitUnTableHandle.pas';
 
 {$R *.res}
 
@@ -24,5 +27,6 @@ begin
   Application.CreateForm(TfmTableProperty, fmTableProperty);
   Application.CreateForm(TfmInsert, fmInsert);
   Application.CreateForm(TfmExport, fmExport);
+  Application.CreateForm(TfmAbout, fmAbout);
   Application.Run;
 end.

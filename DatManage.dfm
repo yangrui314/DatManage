@@ -1,15 +1,15 @@
 object fmMain: TfmMain
-  Left = 268
-  Top = 88
+  Left = 329
+  Top = 44
   Width = 925
-  Height = 642
-  Caption = 'fmMain'
+  Height = 664
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Font.Style = []
+  Menu = MainMenu
   OldCreateOrder = False
   OnClose = FormClose
   OnShow = FormShow
@@ -19,7 +19,7 @@ object fmMain: TfmMain
     Left = 0
     Top = 0
     Width = 909
-    Height = 225
+    Height = 249
     Align = alTop
     ParentBackground = True
     TabOrder = 0
@@ -287,9 +287,9 @@ object fmMain: TfmMain
   end
   object pnlResult: TPanel
     Left = 0
-    Top = 225
+    Top = 249
     Width = 909
-    Height = 379
+    Height = 357
     Align = alClient
     Caption = 'pnlResult'
     ParentBackground = True
@@ -302,5 +302,13 @@ object fmMain: TfmMain
   object dlgSave: TSaveDialog
     Left = 448
     Top = 40
+  end
+  object MainMenu: TMainMenu
+    Left = 392
+    Top = 352
+    object MenuAbout: TMenuItem
+      Caption = #20851#20110
+      OnClick = MenuAboutClick
+    end
   end
 end

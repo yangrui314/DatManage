@@ -4,71 +4,42 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls,
-  Dialogs,StdCtrls;
+  Dialogs,StdCtrls,unitTable;
 
 
 type
   TFileHandle = class
   private
-    procedure Delete;
   protected
-    FFilePath : String;
-    procedure LoadFile; virtual;
-    procedure ImportFile; virtual;
-    procedure ExportFile; virtual;
-    function IsExist: Boolean;virtual;
   public
+    function SaveFile(aFilePath : String) : Boolean; virtual;
+    function ReadFile(aFilePath : String) : Boolean; virtual;  
     destructor Destroy; virtual;
-    constructor Create(aFilePath : String); virtual;
+    constructor Create; virtual;
   end;
 
 
 implementation
 
-constructor TFileHandle.Create(aFilePath : String);
-begin
-  FFilePath := aFilePath;
-  LoadFile;    
-end;
 
-procedure TFileHandle.Delete;
-begin
-  if IsExist then
-    DeleteFile(FFilePath);
-end;
-
-
-procedure TFileHandle.LoadFile;
+constructor TFileHandle.Create;
 begin
 
 end;
 
-
-procedure TFileHandle.ImportFile;
+function TFileHandle.SaveFile(aFilePath : String) : Boolean;
 begin
-
+  Result := False;  
 end;
 
-
-procedure TFileHandle.ExportFile;
-begin
-
-end;
-
-function TFileHandle.IsExist : Boolean;
+function TFileHandle.ReadFile(aFilePath : String) : Boolean;
 begin
   Result := False;
-  if FFilePath = '' then
-  begin
-    Exit;
-  end;
-  Result := FileExists(FFilePath);
 end;
 
 destructor TFileHandle.Destroy; 
 begin
     
 end;
-
 
 end.
