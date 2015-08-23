@@ -11,7 +11,11 @@ type
     Excel,Sheet:Variant;
     aInsertSQLs:  array of String;
     FSheetRow : Integer;
-    FSheetColumn : Integer;    
+    FSheetColumn : Integer;
+    FExcelName : String;
+    FContainDelSQL : Boolean;
+    FDelKeyField : String;
+    FDelCondition : String;
     function OpenExcel(AFileName : String): Variant;
     procedure AddInsertSQL(RowNum : Integer);
     function LoadInsertSQL(RowNum : Integer): String;
@@ -20,7 +24,7 @@ type
   public
     destructor Destroy; override;
     constructor Create(aTable : TTable);override;
-    function ReadFile(aFilePath : String) : Boolean; override;        
+    function ReadFile(aFilePath : String;aContainDelSQL : Boolean;aDelKeyField : String) : Boolean;        
   end;
 
 
@@ -30,12 +34,17 @@ implementation
 constructor TExcelHandle.Create(aTable : TTable);
 begin
   inherited;
+  FContainDelSQL := False;
+  FDelKeyField :='';
+  FDelCondition :='';  
 end;
 
-function TExcelHandle.ReadFile(aFilePath : String) : Boolean;
+function TExcelHandle.ReadFile(aFilePath : String;aContainDelSQL : Boolean;aDelKeyField : String) : Boolean;
 var
   I : Integer;
 begin
+  FContainDelSQL := aContainDelSQL;
+  FDelKeyField := aDelKeyField;
   Excel := OpenExcel(aFilePath);
   Sheet:= Excel.Workbooks[1].WorkSheets[1];
   FSheetRow:= Sheet.Usedrange.Rows.count;
@@ -57,8 +66,16 @@ procedure TExcelHandle.ExecSQL;
 var
   I : Integer;
   s : String;
+  DelSQL : String;
 begin
 //  FTable.Config.ExecSQLs(aInsertSQLs);
+  //FExcelName := AFileName;
+
+  if FContainDelSQL and (FTable.TableName <> '') and (FDelKeyField <> '') then
+  begin
+    DelSQL := 'delete from ' + FTable.TableName +
+    'where '+ FDelKeyField + ' in (  ' + FDelCondition +' )' + ';';
+  end;
 
   for I := 0 to FSheetRow-2 do
   begin
@@ -66,7 +83,7 @@ begin
     then s := s +  aInsertSQLs[I]
     else s := s + ';' + #13#10 + aInsertSQLs[I];
   end;
-  FTable.SaveFile(ExtractFileDir(ParamStr(0)) + '\xls.sql',s);
+  FTable.SaveFile(ExtractFileDir(ParamStr(0)) + '\xls.sql',DelSQL + s);
   ShowMessage('导出'+ExtractFileDir(ParamStr(0)) + '\xls.sql'+'成功');
 end;
 
@@ -111,11 +128,11 @@ function TExcelHandle.LoadInsertSQL(RowNum : Integer): String;
       TableFieldOrderID := FTable.GetOrderID(aFieldName);
       if TableFieldOrderID = -1 then Continue;
 
-      if (not FTable.TableFieldIsNullArray[TableFieldOrderID]) and (Sheet.Cells[RowNum ,I].Value = '') then
-      begin
-        Result := '';
-        Exit;;
-      end;
+//      if (not FTable.TableFieldIsNullArray[TableFieldOrderID]) and (Sheet.Cells[RowNum ,I].Value = '') then
+//      begin
+//        Result := '';
+//        Exit;;
+//      end;
 
 
       if  aFirst
@@ -127,6 +144,14 @@ function TExcelHandle.LoadInsertSQL(RowNum : Integer): String;
       then aValue := FTable.ConvertString(Sheet.Cells[RowNum ,I].Value,FTable.TableFieldDataTypeArray[TableFieldOrderID])
       else aValue := aValue + ',' + FTable.ConvertString(Sheet.Cells[RowNum ,I].Value,FTable.TableFieldDataTypeArray[TableFieldOrderID]);
 
+
+      //获取删除语句的条件。
+      if aFieldName = FDelKeyField then
+      begin
+        if FDelCondition = ''
+        then FDelCondition := FTable.ConvertString(Sheet.Cells[RowNum ,I].Value,FTable.TableFieldDataTypeArray[TableFieldOrderID])
+        else FDelCondition := FDelCondition + ',' + FTable.ConvertString(Sheet.Cells[RowNum ,I].Value,FTable.TableFieldDataTypeArray[TableFieldOrderID]); 
+      end;
       aFirst := False;
     end;
     Sql := ' INSERT INTO ' + FTable.TableName + ' (' +aField + ')';

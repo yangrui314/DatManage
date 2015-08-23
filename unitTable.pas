@@ -17,6 +17,7 @@ type
     FConfig : TConfig;
     FData: TDBISAMQuery;
     FTableName : String;
+    FKeyField : String;
     FFieldNameArray: array of String;
     FFieldSizeArray: array of Integer;
     FFieldDataTypeArray: array of TFieldType;
@@ -91,7 +92,9 @@ begin
   FSQL := aSQL;
   FTableName := aTableName;
   FData := TDBISAMQuery.Create(nil);
-  FContainData := FConfig.IsContainData;  
+  FContainData := FConfig.IsContainData;
+  if  FTableName <> '' then 
+  FKeyField := FConfig.GetPrimary(FTableName);
   InitData;    
 end;
 
@@ -248,10 +251,9 @@ begin
     FFieldSQLTypeArray[I] := GetSQLType(FFieldDataTypeArray[I]);
     FFieldVisibleArray[I] := True;
     FFieldCaptionArray[I] := '';
-    FFieldMainArray[I] := FConfig.MainData.Fields.Fields[I].IsIndexField;
+    FFieldMainArray[I] := (FFieldNameArray[I] = FKeyField);
   end;
-
-  ReadTableConfig;  
+  ReadTableConfig;
 end;
 
 

@@ -13,6 +13,7 @@ type
     dMain: TDBISAMDatabase;
     aExecSQL : TDBISAMQuery;
     dExecSQL: TDBISAMDatabase;
+    FTableDB : TDBISAMTable;
     FRootPath : String;
     FOwner : TComponent;
     FContainData : Boolean;
@@ -29,6 +30,7 @@ type
     property InitOwner: TComponent read FOwner write FOwner;
     function Clone:TConfig;
     function IsContainData : Boolean;
+    function GetPrimary(aTableName : String) : String;
   end;
 
 implementation
@@ -39,6 +41,7 @@ begin
   FOwner := AOwner;
   aMain := TDBISAMQuery.Create(AOwner);
   dMain := TDBISAMDatabase.Create(AOwner);
+  FTableDB :=  TDBISAMTable.Create(AOwner);
 
   aExecSQL := TDBISAMQuery.Create(AOwner);
   dExecSQL := TDBISAMDatabase.Create(AOwner);  
@@ -52,12 +55,15 @@ begin
   dMain.Close;
   dMain.Directory := FRootPath;
   dMain.Open;
+
   dExecSQL.Close;
   dExecSQL.Directory := FRootPath;
   dExecSQL.Open;
 end;
 
 procedure TConfig.InitData;
+var
+  Test : String;
 begin
   dMain.Directory := FRootPath;
   dMain.DatabaseName := 'OmniDatabase';
@@ -66,6 +72,9 @@ begin
   dMain.Session.AddPassword('YouAreNotPrepared');
   dMain.Session.AddPassword('YouAreNotPreparedForIT');
   aMain.DatabaseName := dMain.DatabaseName;
+
+
+  FTableDB.DatabaseName := dMain.DatabaseName;
 
   dExecSQL.Directory := FRootPath;
   dExecSQL.DatabaseName := 'OmniExecSQL';
@@ -93,6 +102,28 @@ begin
   end;    
 end;
 
+
+function TConfig.GetPrimary(aTableName : String) : String;
+var
+  I : Integer;
+begin
+  with FTableDB do
+  begin
+    Close;
+    TableName:=aTableName;
+    Open;
+
+    for I:=0 to  IndexDefs.Count - 1 do
+    begin
+       if ixPrimary in IndexDefs.Items[I].Options  then
+       begin
+        Result := IndexDefs.Items[I].Fields;
+        Exit;
+       end;
+    end;
+  end;
+end;
+
 function TConfig.IsContainData : Boolean;
 begin
   Result := FContainData;
@@ -101,10 +132,13 @@ end;
 
 destructor TConfig.Destroy; 
 begin
+  FTableDB.Close;
+  FTableDB.CloseDatabase(dMain);
   aMain.Close;
   aMain.CloseDatabase(dMain);
   dMain.Close;
   dMain.CloseDataSets;
+  FTableDB.Free;
   aMain.Free;
   dMain.Free;
 

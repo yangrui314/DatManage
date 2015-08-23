@@ -38,7 +38,6 @@ type
     cbSQL: TcxRadioButton;
     dMainGroup3: TdxLayoutGroup;
     dMainGroup4: TdxLayoutGroup;
-    dMainGroup5: TdxLayoutGroup;
     pnlResult: TPanel;
     dMainItem1: TdxLayoutItem;
     btnProperty: TButton;
@@ -53,10 +52,9 @@ type
     dlgSave: TSaveDialog;
     dMainItem12: TdxLayoutItem;
     btnRefresh: TButton;
-    dMainItem14: TdxLayoutItem;
-    btnTest: TButton;
     MainMenu: TMainMenu;
     MenuAbout: TMenuItem;
+    dMainGroup5: TdxLayoutGroup;
     procedure btnResultClick(Sender: TObject);
     procedure btnCreatePathPropertiesButtonClick(Sender: TObject;
       AButtonIndex: Integer);
@@ -109,7 +107,8 @@ implementation
 {$R *.dfm}
 
 uses
-   FileCtrl,StrUtils,unitStandardHandle,formTableProperty,unitExcelHandle,formExport,formAbout;
+   FileCtrl,StrUtils,unitStandardHandle,formTableProperty,unitExcelHandle,formExport,
+   formAbout,formImport;
 
 
 
@@ -416,9 +415,7 @@ end;
 
 procedure TfmMain.btnImportExcelClick(Sender: TObject);
 var
-  aExcel : TExcelHandle;
-  I : Integer;
-  aFilePath : String;  
+  fmImport : TfmImport;
 begin
   if not FGetTable then
   begin
@@ -426,16 +423,11 @@ begin
     Exit;
   end;
 
-  aFilePath := SelectFile('xls');
-  if aFilePath = '' then
-  begin
-    Exit;
-  end;
-  aExcel := TExcelHandle.Create(FTable);
+  fmImport := TfmImport.Create(self,FTable);
   try
-    aExcel.ReadFile(aFilePath);
+    fmImport.ShowModal;
   finally
-    aExcel.Destroy;
+    fmImport.Free;
   end;
 end;
 

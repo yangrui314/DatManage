@@ -17,7 +17,8 @@ uses
   unitXmlHandle in 'FileHandle\unitXmlHandle.pas',
   formAbout in 'formAbout.pas' {fmAbout},
   unitTableHandle in 'FileHandle\unitTableHandle.pas',
-  unitUnTableHandle in 'FileHandle\unitUnTableHandle.pas';
+  unitUnTableHandle in 'FileHandle\unitUnTableHandle.pas',
+  formImport in 'formImport.pas' {fmImport};
 
 {$R *.res}
 
@@ -28,5 +29,6 @@ begin
   Application.CreateForm(TfmInsert, fmInsert);
   Application.CreateForm(TfmExport, fmExport);
   Application.CreateForm(TfmAbout, fmAbout);
+  Application.CreateForm(TfmImport, fmImport);
   Application.Run;
 end.
