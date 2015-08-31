@@ -14,9 +14,11 @@ object ShowResultFrame: TShowResultFrame
     TabOrder = 0
     object dgField: TcxGridTableView
       NavigatorButtons.ConfirmDelete = False
+      OnCellDblClick = dgFieldCellDblClick
       DataController.Summary.DefaultGroupSummaryItems = <>
       DataController.Summary.FooterSummaryItems = <>
       DataController.Summary.SummaryGroups = <>
+      OptionsData.Editing = False
       OptionsView.GroupByBox = False
     end
     object levelField: TcxGridLevel

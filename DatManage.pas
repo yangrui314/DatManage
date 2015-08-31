@@ -25,8 +25,6 @@ type
     edtSQL: TcxMemo;
     dMainItem9: TdxLayoutItem;
     btnLoadTableName: TButton;
-    dMainItem10: TdxLayoutItem;
-    btnImport: TButton;
     dlgOpen: TOpenDialog;
     dMainGroup1: TdxLayoutGroup;
     dMainGroup2: TdxLayoutGroup;
@@ -60,7 +58,6 @@ type
       AButtonIndex: Integer);
     procedure FormShow(Sender: TObject);
     procedure btnLoadTableNameClick(Sender: TObject);
-    procedure btnImportClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure cbTablePropertiesValidate(Sender: TObject;
       var DisplayValue: Variant; var ErrorText: TCaption;
@@ -89,7 +86,6 @@ type
     procedure LoadField(aSQL : String);
     procedure WorkRun;
     function GetSQL : String;
-    procedure LoadFile(aFilePath : String);
     function SelectFile(aExt : String) : String;
     function SaveFile: String;    
     procedure CheckState;
@@ -239,27 +235,6 @@ begin
   LoadTableName(FRootPath);
 end;
 
-procedure TfmMain.LoadFile(aFilePath : String);
-var
-  aFile : TStandardHandle;
-  I : Integer;
-begin
-  aFile := TStandardHandle.Create;
-  try
-    edtSQL.Clear;
-    aFile.ReadFile(aFilePath);
-    for I := 0 to aFile.FileData.Count - 1 do
-    begin
-      edtSQL.Lines.Add(aFile.FileData[I]);
-    end;
-  finally
-    aFile.Destroy;
-  end;
-end;
-
-
-
-
 
 
 function TfmMain.SelectFile(aExt : String) : String;
@@ -267,8 +242,7 @@ var
   I : Integer;
 begin
   Result := '';
-  dlgOpen.Filter := '*.' + aExt;
-  dlgOpen.DefaultExt := '.'+aExt;
+  dlgOpen.Filter := '相关文档('+aExt +')|'+'*.' + aExt;
   if dlgOpen.Execute then
   begin
     for I := 0 to dlgOpen.Files.Count-1 do
@@ -293,24 +267,6 @@ begin
 end;
 
 
-procedure TfmMain.btnImportClick(Sender: TObject);
-var
-  aFilePath : String;
-begin
-  try
-    aFilePath := SelectFile('*');
-    if aFilePath = '' then
-    begin
-      Exit;
-    end;
-    LoadFile(aFilePath);
-    ShowMessage('数据导入成功！');
-  except
-    ShowMessage('数据未成功导入！');
-  end;
-
-end;
-
 procedure TfmMain.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   FTable.Destroy;
@@ -332,7 +288,6 @@ begin
     edtTable.Enabled := True;
     btnLoadTableName.Enabled := True;
     edtSQL.Enabled := False;
-    btnImport.Enabled := False;
     btnResult.Enabled := False;
   end
   else
@@ -340,7 +295,6 @@ begin
     edtTable.Enabled := False;
     btnLoadTableName.Enabled := False;
     edtSQL.Enabled := True;
-    btnImport.Enabled := True;
     btnResult.Enabled := True;
   end;
 end;

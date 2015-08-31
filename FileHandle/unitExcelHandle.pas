@@ -3,7 +3,7 @@ unit unitExcelHandle;
 interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls,
-  Dialogs,StdCtrls,unitTableHandle,ComObj,unitTable,unitStandardHandle;
+  Dialogs,StdCtrls,unitTableHandle,ComObj,unitTable,unitStandardHandle,formProgress;
 
 type
   TExcelHandle = class(TTableHandle)
@@ -16,6 +16,7 @@ type
     FContainDelSQL : Boolean;
     FDelKeyField : String;
     FDelCondition : String;
+    FSQLSavePath : String;
     function OpenExcel(AFileName : String): Variant;
     procedure AddInsertSQL(RowNum : Integer);
     function LoadInsertSQL(RowNum : Integer): String;
@@ -24,7 +25,7 @@ type
   public
     destructor Destroy; override;
     constructor Create(aTable : TTable);override;
-    function ReadFile(aFilePath : String;aContainDelSQL : Boolean;aDelKeyField : String) : Boolean;        
+    function ReadFile(aFilePath : String;aContainDelSQL : Boolean;aDelKeyField : String;aSQLSavePath : String) : Boolean;        
   end;
 
 
@@ -39,23 +40,40 @@ begin
   FDelCondition :='';  
 end;
 
-function TExcelHandle.ReadFile(aFilePath : String;aContainDelSQL : Boolean;aDelKeyField : String) : Boolean;
+function TExcelHandle.ReadFile(aFilePath : String;aContainDelSQL : Boolean;aDelKeyField : String;aSQLSavePath : String) : Boolean;
 var
   I : Integer;
+  aProgress : TfmProgress;
 begin
   FContainDelSQL := aContainDelSQL;
   FDelKeyField := aDelKeyField;
+  FSQLSavePath := aSQLSavePath;
   Excel := OpenExcel(aFilePath);
   Sheet:= Excel.Workbooks[1].WorkSheets[1];
   FSheetRow:= Sheet.Usedrange.Rows.count;
   FSheetColumn := Sheet.UsedRange.Columns.Count;
   SetLength(aInsertSQLs,FSheetRow-1);
-  for I := 0 to FSheetRow-2 do
-  begin
-    aInsertSQLs[I] := LoadInsertSQL(I + 2);
-//    ShowMessage(aInsertSQLs[I]);
+  aProgress := TfmProgress.Create(nil);
+  try
+    aProgress.FProgressBar.SetMax(FSheetRow - 1);
+    aProgress.FProgressBar.SetPosition(0);
+    aProgress.Show;
+    for I := 0 to FSheetRow-2 do
+    begin
+      if aProgress.FProgressBar.GetCancel then
+      begin
+        Exit;
+      end;
+      aInsertSQLs[I] := LoadInsertSQL(I + 2);
+  //    ShowMessage(aInsertSQLs[I]);
+      aProgress.FProgressBar.UpdateProcess;
+    end;
+    aProgress.FProgressBar.SetCaption('执行SQL...');
+    ExecSQL;
+    aProgress.FProgressBar.SetCaption('导入成功!');
+  finally
+    aProgress.Free;
   end;
-  ExecSQL;
 end;
 
 
@@ -74,7 +92,7 @@ begin
   if FContainDelSQL and (FTable.TableName <> '') and (FDelKeyField <> '') then
   begin
     DelSQL := 'delete from ' + FTable.TableName +
-    'where '+ FDelKeyField + ' in (  ' + FDelCondition +' )' + ';';
+    ' where '+ FDelKeyField + ' in (  ' + FDelCondition +' )' + ';';
   end;
 
   for I := 0 to FSheetRow-2 do
@@ -83,8 +101,16 @@ begin
     then s := s +  aInsertSQLs[I]
     else s := s + ';' + #13#10 + aInsertSQLs[I];
   end;
-  FTable.SaveFile(ExtractFileDir(ParamStr(0)) + '\xls.sql',DelSQL + s);
-  ShowMessage('导出'+ExtractFileDir(ParamStr(0)) + '\xls.sql'+'成功');
+
+  try
+    FTable.SaveFile(FSQLSavePath,DelSQL + #13#10 + s);
+    ShowMessage('导出'+FSQLSavePath+'成功');
+  except
+  on E: Exception do
+    showmessage('导出失败。'
+      +#13#10 + '异常类名称:' + E.ClassName
+      + #13#10 + '异常信息:' + E.Message);
+  end;
 end;
 
 

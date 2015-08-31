@@ -7,13 +7,16 @@ uses
   Dialogs, cxStyles, cxCustomData, cxGraphics, cxFilter, cxData,
   cxDataStorage, cxEdit, cxGridLevel, cxClasses, cxControls,
   cxGridCustomView, cxGridCustomTableView, cxGridTableView, cxGrid,DB, dbisamtb,unitTable,
-  cxGridBandedTableView,cxGridExportLink;
+  cxGridBandedTableView,cxGridExportLink,formInsert;
 
 type
   TShowResultFrame = class(TFrame)
     gridField: TcxGrid;
     levelField: TcxGridLevel;
     dgField: TcxGridTableView;
+    procedure dgFieldCellDblClick(Sender: TcxCustomGridTableView;
+      ACellViewInfo: TcxGridTableDataCellViewInfo; AButton: TMouseButton;
+      AShift: TShiftState; var AHandled: Boolean);
   private
     { Private declarations }
     FTable : TTable;
@@ -194,6 +197,24 @@ begin
 //  col.Options.Editing := False;
   col.Properties.ReadOnly := True;
   col.Width := width ;
+end;
+
+procedure TShowResultFrame.dgFieldCellDblClick(
+  Sender: TcxCustomGridTableView;
+  ACellViewInfo: TcxGridTableDataCellViewInfo; AButton: TMouseButton;
+  AShift: TShiftState; var AHandled: Boolean);
+var
+  fmInsert : TfmInsert;
+  aRow : Integer;
+begin
+  aRow := dgField.Controller.FocusedRowIndex;
+  fmInsert := TfmInsert.Create(Self,FTable,emUpdate,aRow);
+  with fmInsert do
+  try
+    ShowModal;
+  finally
+    Free;
+  end;
 end;
 
 end.

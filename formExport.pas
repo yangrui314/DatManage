@@ -219,8 +219,16 @@ procedure TfmExport.btnFilePathPropertiesButtonClick(Sender: TObject;
   AButtonIndex: Integer);
 var
   I : Integer;
+  aExt : String;  
 begin
   btnFilePath.Text := '';
+  aExt := cmbExportType.EditText;
+  if aExt = '' then
+  begin
+    ShowMessage('请选择对应的导出类型。');
+    Exit;
+  end;
+  dlgSave.Filter := '相关文档('+aExt +')|'+'*' + aExt;  
   if dlgSave.Execute then
   begin
     for I := 0 to dlgSave.Files.Count-1 do

@@ -18,7 +18,7 @@ object fmExport: TfmExport
     Top = 0
     Width = 507
     Height = 185
-    ActivePage = SheetFinish
+    ActivePage = SheetWay
     Align = alTop
     HideTabs = True
     TabOrder = 0
@@ -39,6 +39,7 @@ object fmExport: TfmExport
         object cmbExportType: TcxImageComboBox
           Left = 75
           Top = 10
+          EditValue = 0
           Properties.ImmediatePost = True
           Properties.Items = <
             item

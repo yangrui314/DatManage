@@ -70,15 +70,6 @@ object fmMain: TfmMain
       TabOrder = 4
       OnClick = btnLoadTableNameClick
     end
-    object btnImport: TButton
-      Left = 91
-      Top = 162
-      Width = 50
-      Height = 25
-      Caption = #23548#20837#25991#20214
-      TabOrder = 9
-      OnClick = btnImportClick
-    end
     object edtTable: TcxComboBox
       Left = 63
       Top = 60
@@ -113,7 +104,7 @@ object fmMain: TfmMain
       Width = 75
       Height = 25
       Caption = #34920#26684#23646#24615
-      TabOrder = 11
+      TabOrder = 10
       OnClick = btnPropertyClick
     end
     object btnAdd: TButton
@@ -122,7 +113,7 @@ object fmMain: TfmMain
       Width = 75
       Height = 25
       Caption = #22686#21152#25968#25454
-      TabOrder = 12
+      TabOrder = 11
       OnClick = btnAddClick
     end
     object btnImportExcel: TButton
@@ -135,12 +126,12 @@ object fmMain: TfmMain
       OnClick = btnImportExcelClick
     end
     object btnExport: TButton
-      Left = 147
+      Left = 91
       Top = 162
       Width = 75
       Height = 25
       Caption = #23548#20986
-      TabOrder = 10
+      TabOrder = 9
       OnClick = btnExportClick
     end
     object btnRefresh: TButton
@@ -241,12 +232,6 @@ object fmMain: TfmMain
             object dMainItem11: TdxLayoutItem
               ShowCaption = False
               Control = btnImportExcel
-              ControlOptions.ShowBorder = False
-            end
-            object dMainItem10: TdxLayoutItem
-              AutoAligns = [aaVertical]
-              ShowCaption = False
-              Control = btnImport
               ControlOptions.ShowBorder = False
             end
             object dMainItem13: TdxLayoutItem

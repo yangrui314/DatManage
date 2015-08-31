@@ -18,6 +18,7 @@ type
     FData: TDBISAMQuery;
     FTableName : String;
     FKeyField : String;
+    FKeyValue : String;
     FFieldNameArray: array of String;
     FFieldSizeArray: array of Integer;
     FFieldDataTypeArray: array of TFieldType;
@@ -76,6 +77,7 @@ type
     property TableFieldCaptionArray[Index:Integer]: String read GetFieldCaptionArray write SetFieldCaptionArray;
     property TableFieldMainArray[Index:Integer]: Boolean read GetFieldMainArray write SetFieldMainArray;
 
+    property TableKeyField: String read FKeyField;
     property Config  : TConfig  read  FConfig write FConfig;
     property ContainData : Boolean read  FContainData write FContainData;
   end;
@@ -120,7 +122,7 @@ begin
   end
   else
   begin
-    Result := ' ''' + aValue + ''' ' ;
+    Result := ' ''' + VarToStr(aValue) + ''' ' ;
   end;    
 end;
 

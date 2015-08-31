@@ -18,7 +18,9 @@ uses
   formAbout in 'formAbout.pas' {fmAbout},
   unitTableHandle in 'FileHandle\unitTableHandle.pas',
   unitUnTableHandle in 'FileHandle\unitUnTableHandle.pas',
-  formImport in 'formImport.pas' {fmImport};
+  formImport in 'formImport.pas' {fmImport},
+  frameProgressBar in 'frameProgressBar.pas' {frmProgressBar: TFrame},
+  formProgress in 'formProgress.pas' {fmProgress};
 
 {$R *.res}
 
@@ -30,5 +32,6 @@ begin
   Application.CreateForm(TfmExport, fmExport);
   Application.CreateForm(TfmAbout, fmAbout);
   Application.CreateForm(TfmImport, fmImport);
+  Application.CreateForm(TfmProgress, fmProgress);
   Application.Run;
 end.
