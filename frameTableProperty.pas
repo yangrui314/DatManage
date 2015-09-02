@@ -88,7 +88,7 @@ begin
       dgProperty.EndUpdate;
     end;
   end;
-  FTable.SaveTableConfig;
+  FTable.SaveTableEnvironment;
 end;
 
 

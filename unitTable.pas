@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls,
-  Dialogs,StdCtrls,unitConfig,DB, dbisamtb;
+  Dialogs,StdCtrls,unitEnvironment,DB, dbisamtb;
 
 type
   TTable = class
@@ -14,7 +14,7 @@ type
     FField : TStringList;
     FValue : TStringList;
     FSQL : String;
-    FConfig : TConfig;
+    FEnvironment : TEnvironment;
     FData: TDBISAMQuery;
     FTableName : String;
     FKeyField : String;
@@ -51,12 +51,12 @@ type
   protected
   public
     destructor Destroy;
-    constructor Create(aConfig : TConfig ; aSQL : String;aTableName : String);
+    constructor Create(aEnvironment : TEnvironment ; aSQL : String;aTableName : String);
     procedure Add(AOwner: TComponent);
     procedure SaveSQLFile(aFilePath : String);
 
-    procedure SaveTableConfig;
-    procedure ReadTableConfig;
+    procedure SaveTableEnvironment;
+    procedure ReadTableEnvironment;
 
     function ConvertString(aValue : Variant;aType :TFieldType):String;
     function GetOrderID(aName : String) : Integer;
@@ -78,7 +78,7 @@ type
     property TableFieldMainArray[Index:Integer]: Boolean read GetFieldMainArray write SetFieldMainArray;
 
     property TableKeyField: String read FKeyField;
-    property Config  : TConfig  read  FConfig write FConfig;
+    property Environment  : TEnvironment  read  FEnvironment write FEnvironment;
     property ContainData : Boolean read  FContainData write FContainData;
   end;
 
@@ -87,16 +87,16 @@ implementation
 uses
   formInsert,unitStandardHandle,unitXmlHandle;
 
-constructor TTable.Create(aConfig : TConfig ; aSQL : String;aTableName : String);
+constructor TTable.Create(aEnvironment : TEnvironment ; aSQL : String;aTableName : String);
 begin
-  aConfig.SetSQL(aSQL);
-  FConfig := aConfig;
+  aEnvironment.SetSQL(aSQL);
+  FEnvironment := aEnvironment;
   FSQL := aSQL;
   FTableName := aTableName;
   FData := TDBISAMQuery.Create(nil);
-  FContainData := FConfig.IsContainData;
+  FContainData := FEnvironment.IsContainData;
   if  FTableName <> '' then 
-  FKeyField := FConfig.GetPrimary(FTableName);
+  FKeyField := FEnvironment.GetPrimary(FTableName);
   InitData;    
 end;
 
@@ -233,8 +233,8 @@ begin
   end;
 
 
-  FData := FConfig.MainData;
-  FFieldCount := FConfig.MainData.Fields.Count;
+  FData := FEnvironment.MainData;
+  FFieldCount := FEnvironment.MainData.Fields.Count;
 
   SetLength(FFieldNameArray,FFieldCount);
   SetLength(FFieldSizeArray,FFieldCount);
@@ -246,16 +246,16 @@ begin
   SetLength(FFieldMainArray,FFieldCount);     
   for I:=0 to  FFieldCount - 1 do
   begin
-    FFieldNameArray[I] :=  FConfig.MainData.Fields.Fields[I].FieldName;
-    FFieldSizeArray[I] :=  FConfig.MainData.Fields.Fields[I].Size;
-    FFieldDataTypeArray[I] := FConfig.MainData.Fields.Fields[I].DataType;
-    FFieldIsNullArray[I] := FConfig.MainData.Fields.Fields[I].IsNull;
+    FFieldNameArray[I] :=  FEnvironment.MainData.Fields.Fields[I].FieldName;
+    FFieldSizeArray[I] :=  FEnvironment.MainData.Fields.Fields[I].Size;
+    FFieldDataTypeArray[I] := FEnvironment.MainData.Fields.Fields[I].DataType;
+    FFieldIsNullArray[I] := FEnvironment.MainData.Fields.Fields[I].IsNull;
     FFieldSQLTypeArray[I] := GetSQLType(FFieldDataTypeArray[I]);
     FFieldVisibleArray[I] := True;
     FFieldCaptionArray[I] := '';
     FFieldMainArray[I] := (FFieldNameArray[I] = FKeyField);
   end;
-  ReadTableConfig;
+  ReadTableEnvironment;
 end;
 
 
@@ -384,7 +384,7 @@ begin
   end;    
 end;
 
-procedure TTable.SaveTableConfig;
+procedure TTable.SaveTableEnvironment;
 var
   aConfig : TXmlHandle;
   aFilePath : String;
@@ -403,7 +403,7 @@ begin
   end;
 end;
 
-procedure TTable.ReadTableConfig;
+procedure TTable.ReadTableEnvironment;
 var
   aConfig : TXmlHandle;
   aFilePath : String;  

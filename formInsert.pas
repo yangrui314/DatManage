@@ -7,7 +7,7 @@ uses
   Dialogs,unitTable, cxStyles, cxGraphics, cxEdit, cxCalc, cxVGrid,
   cxControls, cxInplaceContainer,cxTextEdit,DB, dbisamtb,cxCheckBox,cxCalendar,cxSpinEdit,
   Menus, cxLookAndFeelPainters, dxLayoutControl, StdCtrls, cxButtons,
-  ExtCtrls,unitConfig;
+  ExtCtrls,unitEnvironment;
 
 type
 
@@ -216,7 +216,7 @@ begin
 
   aSQL := aPrefixSQL + aPostfixSQL;
 
-  FTable.Config.ExecSQL(aSQL);
+  FTable.Environment.ExecSQL(aSQL);
   ShowMessage('执行成功！SQL执行脚本:'+ aSQL)    
 end;
 
@@ -281,7 +281,7 @@ begin
 
   aSQL := aPrefixSQL + aPostfixSQL;
 
-  FTable.Config.ExecSQL(aSQL);
+  FTable.Environment.ExecSQL(aSQL);
   ShowMessage('执行成功！SQL执行脚本:'+ aSQL)    
 end;
 

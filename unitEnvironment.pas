@@ -1,4 +1,4 @@
-unit unitConfig;
+unit unitEnvironment;
 
 interface
 
@@ -7,7 +7,7 @@ uses
   Dialogs,StdCtrls,DB, dbisamtb;
 
 type
-  TConfig = class
+  TEnvironment = class
   private
     aMain: TDBISAMQuery;
     dMain: TDBISAMDatabase;
@@ -28,7 +28,7 @@ type
     constructor Create(AOwner: TComponent;aRootPath : String);
     property MainData: TDBISAMQuery read aMain write aMain;
     property InitOwner: TComponent read FOwner write FOwner;
-    function Clone:TConfig;
+    function Clone : TEnvironment;
     function IsContainData : Boolean;
     function GetPrimary(aTableName : String) : String;
   end;
@@ -36,7 +36,7 @@ type
 implementation
 
 
-constructor TConfig.Create(AOwner: TComponent;aRootPath : String);
+constructor TEnvironment.Create(AOwner: TComponent;aRootPath : String);
 begin
   FOwner := AOwner;
   aMain := TDBISAMQuery.Create(AOwner);
@@ -49,7 +49,7 @@ begin
   InitData;
 end;
 
-procedure TConfig.SetRootPath(aRootPath : String);
+procedure TEnvironment.SetRootPath(aRootPath : String);
 begin
   FRootPath := aRootPath;
   dMain.Close;
@@ -61,7 +61,7 @@ begin
   dExecSQL.Open;
 end;
 
-procedure TConfig.InitData;
+procedure TEnvironment.InitData;
 var
   Test : String;
 begin
@@ -85,7 +85,7 @@ begin
   aExecSQL.DatabaseName := dExecSQL.DatabaseName;
 end;
 
-procedure TConfig.SetSQL(const aSQL : String);
+procedure TEnvironment.SetSQL(const aSQL : String);
 begin
   try
     if aSQL = '' then Exit;
@@ -103,7 +103,7 @@ begin
 end;
 
 
-function TConfig.GetPrimary(aTableName : String) : String;
+function TEnvironment.GetPrimary(aTableName : String) : String;
 var
   I : Integer;
 begin
@@ -124,13 +124,13 @@ begin
   end;
 end;
 
-function TConfig.IsContainData : Boolean;
+function TEnvironment.IsContainData : Boolean;
 begin
   Result := FContainData;
 end;
 
 
-destructor TConfig.Destroy; 
+destructor TEnvironment.Destroy; 
 begin
   FTableDB.Close;
   FTableDB.CloseDatabase(dMain);
@@ -150,7 +150,7 @@ begin
   dExecSQL.Free;  
 end;
 
-procedure TConfig.ExecSQL(const aSQL : String);
+procedure TEnvironment.ExecSQL(const aSQL : String);
 begin
   try
     if aSQL = '' then Exit;
@@ -167,7 +167,7 @@ begin
   end;    
 end;
 
-procedure TConfig.ExecSQLs(const aSQLs :  array of String);
+procedure TEnvironment.ExecSQLs(const aSQLs :  array of String);
 var
   I : Integer;
   Len : Integer;
@@ -194,9 +194,9 @@ begin
   end;    
 end;
 
-function TConfig.Clone:TConfig;
+function TEnvironment.Clone:TEnvironment;
 begin
-//  Result := TConfig.Create(Self.FOwner,Self.FRootPath);
+//  Result := TEnvironment.Create(Self.FOwner,Self.FRootPath);
 //  Result.dMain.Assign(Self.dMain);
 //  Result.aMain.Assign(Self.aMain);
 end;

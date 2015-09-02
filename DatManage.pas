@@ -9,7 +9,7 @@ uses
   cxFilter, cxData, cxDataStorage, cxDBData, cxGridLevel, cxClasses,
   cxGridCustomView, cxGridCustomTableView, cxGridTableView,
   cxGridDBTableView, cxGrid, cxCheckBox, ExtCtrls, cxMemo, cxVGrid,
-  cxDBVGrid, cxInplaceContainer,unitConfig,frameShowResult, dxLayoutControl,
+  cxDBVGrid, cxInplaceContainer,unitEnvironment,frameShowResult, dxLayoutControl,
   cxDropDownEdit, cxRadioGroup,unitTable, Menus,
   cxLookAndFeelPainters, cxButtons,cxGridExportLink;
 
@@ -77,7 +77,7 @@ type
   private
     FRootPath : String;
     FTableName : String;
-    FConfig : TConfig;
+    FEnvironment : TEnvironment;
     FResult : TShowResultFrame;
     FTable : TTable;
     FGetTable : Boolean;
@@ -156,7 +156,7 @@ end;
 
 procedure TfmMain.LoadField(aSQL : String);
 begin
-  FTable := TTable.Create(FConfig,aSQL,FTableName);
+  FTable := TTable.Create(FEnvironment,aSQL,FTableName);
   FGetTable := True;
   FResult.Update(FTable);
 end;
@@ -201,7 +201,7 @@ begin
 
   FRootPath := edtCreatePath.Text;
   LoadTableName(FRootPath);
-  FConfig.SetRootPath(FRootPath);
+  FEnvironment.SetRootPath(FRootPath);
 end;
 end;
 
@@ -218,8 +218,8 @@ begin
   FRootPath :=  'D:\Project\new_omni\trunk\engineering\deploy\client\gd-n-tax(GuiZhou)\deploy(DS)\data\';
   edtCreatePath.Text := FRootPath;
   LoadTableName(FRootPath);
-  FConfig := TConfig.Create(Self,FRootPath);
-  FTable := TTable.Create(FConfig,'','');
+  FEnvironment := TEnvironment.Create(Self,FRootPath);
+  FTable := TTable.Create(FEnvironment,'','');
   FResult := TShowResultFrame.Create(Self);
   FResult.Parent := pnlResult;
   FResult.Align := alClient;
@@ -270,7 +270,7 @@ end;
 procedure TfmMain.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   FTable.Destroy;
-  FConfig.Destroy;
+  FEnvironment.Destroy;
   inherited;
 end;
 
@@ -390,7 +390,7 @@ procedure TfmMain.edtCreatePathPropertiesValidate(Sender: TObject;
 begin
   FRootPath := DisplayValue;
   LoadTableName(FRootPath);
-  FConfig.SetRootPath(FRootPath);
+  FEnvironment.SetRootPath(FRootPath);
 end;
 
 procedure TfmMain.btnExportClick(Sender: TObject);

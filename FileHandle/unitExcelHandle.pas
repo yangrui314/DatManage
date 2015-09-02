@@ -86,7 +86,7 @@ var
   s : String;
   DelSQL : String;
 begin
-//  FTable.Config.ExecSQLs(aInsertSQLs);
+//  FTable.Environment.ExecSQLs(aInsertSQLs);
   //FExcelName := AFileName;
 
   if FContainDelSQL and (FTable.TableName <> '') and (FDelKeyField <> '') then

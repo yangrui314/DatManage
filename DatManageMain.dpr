@@ -7,7 +7,7 @@ uses
   UnitFileHandle in 'FileHandle\unitFileHandle.pas',
   unitStandardHandle in 'FileHandle\unitStandardHandle.pas',
   unitTable in 'unitTable.pas',
-  unitConfig in 'unitConfig.pas',
+  unitEnvironment in 'unitEnvironment.pas',
   frameShowResult in 'frameShowResult.pas' {ShowResultFrame: TFrame},
   formTableProperty in 'formTableProperty.pas' {fmTableProperty},
   formInsert in 'formInsert.pas' {fmInsert},
