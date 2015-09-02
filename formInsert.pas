@@ -316,11 +316,11 @@ begin
   begin
     if (VarToStr(aValue) = 'True') or (VarToStr(aValue) = '1') then
     begin
-      Result :=  '''' + '1'  + '''';
+      Result :=  '1';
     end
     else
     begin
-      Result :=  '''' + '0'  + '''';
+      Result :=  '0';
     end;
   end
   else if aType =  ftDateTime then
