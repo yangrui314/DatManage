@@ -86,7 +86,7 @@ var
   s : String;
   DelSQL : String;
 begin
-//  FTable.Environment.ExecSQLs(aInsertSQLs);
+//  FTable.Config.ExecSQLs(aInsertSQLs);
   //FExcelName := AFileName;
 
   if FContainDelSQL and (FTable.TableName <> '') and (FDelKeyField <> '') then
@@ -102,15 +102,9 @@ begin
     else s := s + ';' + #13#10 + aInsertSQLs[I];
   end;
 
-  try
-    FTable.SaveFile(FSQLSavePath,DelSQL + #13#10 + s);
-    ShowMessage('导出'+FSQLSavePath+'成功');
-  except
-  on E: Exception do
-    showmessage('导出失败。'
-      +#13#10 + '异常类名称:' + E.ClassName
-      + #13#10 + '异常信息:' + E.Message);
-  end;
+
+  FTable.SaveFile(FSQLSavePath,DelSQL + #13#10 + s);
+  ShowMessage('导出'+FSQLSavePath+'成功');
 end;
 
 
