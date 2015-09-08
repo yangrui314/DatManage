@@ -7,10 +7,10 @@ uses
   Dialogs, ExtCtrls, cxStyles, cxCustomData, cxGraphics, cxFilter, cxData,
   cxDataStorage, cxEdit, DB, cxDBData, cxGridLevel, cxClasses, cxControls,
   cxGridCustomView, cxGridCustomTableView, cxGridTableView,
-  cxGridDBTableView, cxGrid, cxCheckBox,unitTable, cxSpinEdit, cxTextEdit,frameTableProperty;
+  cxGridDBTableView, cxGrid, cxCheckBox,unitTable, cxSpinEdit, cxTextEdit,frameTableProperty,formParent;
 
 type
-  TfmTableProperty = class(TForm)
+  TfmTableProperty = class(TParentForm)
     pnlProperty: TPanel;
   private
     FTable : TTable;

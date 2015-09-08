@@ -7,10 +7,10 @@ uses
   Dialogs, cxPC, cxControls, cxGraphics, dxLayoutControl, cxContainer,
   cxEdit, cxTextEdit, cxMaskEdit, cxDropDownEdit, cxImageComboBox, Menus,
   cxLookAndFeelPainters, StdCtrls, cxButtons, ExtCtrls,unitTable,frameTableProperty,frameShowResult,
-  cxButtonEdit;
+  cxButtonEdit,formParent;
 
 type
-  TfmExport = class(TForm)
+  TfmExport = class(TParentForm)
     PageExport: TcxPageControl;
     SheetWay: TcxTabSheet;
     SheetField: TcxTabSheet;

@@ -20,7 +20,11 @@ uses
   unitUnTableHandle in 'FileHandle\unitUnTableHandle.pas',
   formImport in 'formImport.pas' {fmImport},
   frameProgressBar in 'frameProgressBar.pas' {frmProgressBar: TFrame},
-  formProgress in 'formProgress.pas' {fmProgress};
+  formProgress in 'formProgress.pas' {fmProgress},
+  unitConfig in 'unitConfig.pas',
+  unitConfigFile in 'ConfigFile\unitConfigFile.pas',
+  unitConfigDat in 'ConfigFile\unitConfigDat.pas',
+  formParent in 'Parent\formParent.pas' {ParentForm};
 
 {$R *.res}
 
@@ -33,5 +37,6 @@ begin
   Application.CreateForm(TfmAbout, fmAbout);
   Application.CreateForm(TfmImport, fmImport);
   Application.CreateForm(TfmProgress, fmProgress);
+  Application.CreateForm(TParentForm, ParentForm);
   Application.Run;
 end.

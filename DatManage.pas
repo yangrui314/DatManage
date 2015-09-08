@@ -11,16 +11,14 @@ uses
   cxGridDBTableView, cxGrid, cxCheckBox, ExtCtrls, cxMemo, cxVGrid,
   cxDBVGrid, cxInplaceContainer,unitEnvironment,frameShowResult, dxLayoutControl,
   cxDropDownEdit, cxRadioGroup,unitTable, Menus,
-  cxLookAndFeelPainters, cxButtons,cxGridExportLink;
+  cxLookAndFeelPainters, cxButtons,cxGridExportLink,unitConfigFile,unitConfigDat,formParent;
 
 type
-  TfmMain = class(TForm)
+  TfmMain = class(TParentForm)
     dMainGroup_Root: TdxLayoutGroup;
     dMain: TdxLayoutControl;
     dMainItem2: TdxLayoutItem;
     btnResult: TButton;
-    dMainItem4: TdxLayoutItem;
-    edtCreatePath: TcxButtonEdit;
     dMainItem5: TdxLayoutItem;
     edtSQL: TcxMemo;
     dMainItem9: TdxLayoutItem;
@@ -53,9 +51,12 @@ type
     MainMenu: TMainMenu;
     MenuAbout: TMenuItem;
     dMainGroup5: TdxLayoutGroup;
+    btnSelectPath: TcxButton;
+    dMainItem10: TdxLayoutItem;
+    dMainGroup6: TdxLayoutGroup;
+    edtCreatePath: TcxComboBox;
+    dMainItem14: TdxLayoutItem;
     procedure btnResultClick(Sender: TObject);
-    procedure btnCreatePathPropertiesButtonClick(Sender: TObject;
-      AButtonIndex: Integer);
     procedure FormShow(Sender: TObject);
     procedure btnLoadTableNameClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
@@ -67,13 +68,14 @@ type
     procedure btnPropertyClick(Sender: TObject);
     procedure btnAddClick(Sender: TObject);
     procedure btnImportExcelClick(Sender: TObject);
-    procedure edtCreatePathPropertiesValidate(Sender: TObject;
-      var DisplayValue: Variant; var ErrorText: TCaption;
-      var Error: Boolean);
     procedure btnExportClick(Sender: TObject);
     procedure btnExportSQLClick(Sender: TObject);
     procedure btnRefreshClick(Sender: TObject);
     procedure MenuAboutClick(Sender: TObject);
+    procedure btnSelectPathClick(Sender: TObject);
+    procedure cxComboBox1PropertiesValidate(Sender: TObject;
+      var DisplayValue: Variant; var ErrorText: TCaption;
+      var Error: Boolean);
   private
     FRootPath : String;
     FTableName : String;
@@ -81,6 +83,7 @@ type
     FResult : TShowResultFrame;
     FTable : TTable;
     FGetTable : Boolean;
+    FConfigFile : TConfigFile;
     procedure LoadTableName(const sPath : String);
     procedure AddTable(const aTableName: String);
     procedure LoadField(aSQL : String);
@@ -104,7 +107,7 @@ implementation
 
 uses
    FileCtrl,StrUtils,unitStandardHandle,formTableProperty,unitExcelHandle,formExport,
-   formAbout,formImport;
+   formAbout,formImport,unitConfig;
 
 
 
@@ -188,23 +191,6 @@ begin
   FindClose(SearchRec);
 end;
 
-procedure TfmMain.btnCreatePathPropertiesButtonClick(Sender: TObject;
-  AButtonIndex: Integer);
-var
-  DirectoryPath : String;
-begin
-if SelectDirectory('请指定文件夹','',DirectoryPath) then
-begin
-  if RightStr(DirectoryPath, 1) = '\'
-  then edtCreatePath.Text := DirectoryPath
-  else edtCreatePath.Text := DirectoryPath  + '\';
-
-  FRootPath := edtCreatePath.Text;
-  LoadTableName(FRootPath);
-  FEnvironment.SetRootPath(FRootPath);
-end;
-end;
-
 procedure TfmMain.AddTable(const aTableName: String);
 begin
   edtTable.Properties.Items.Add(aTableName);
@@ -215,7 +201,9 @@ end;
 procedure TfmMain.FormShow(Sender: TObject);
 begin
   inherited;
-  FRootPath :=  'D:\Project\new_omni\trunk\engineering\deploy\client\gd-n-tax(GuiZhou)\deploy(DS)\data\';
+  FConfigFile := TConfigDat.Create;
+  FRootPath := Config.LastFolderPath;
+  if FRootPath = '' then FRootPath := Config.InitFolderPath;  
   edtCreatePath.Text := FRootPath;
   LoadTableName(FRootPath);
   FEnvironment := TEnvironment.Create(Self,FRootPath);
@@ -269,6 +257,8 @@ end;
 
 procedure TfmMain.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
+  Config.LastFolderPath := FRootPath;
+  FConfigFile.Destroy;
   FTable.Destroy;
   FEnvironment.Destroy;
   inherited;
@@ -385,14 +375,6 @@ begin
   end;
 end;
 
-procedure TfmMain.edtCreatePathPropertiesValidate(Sender: TObject;
-  var DisplayValue: Variant; var ErrorText: TCaption; var Error: Boolean);
-begin
-  FRootPath := DisplayValue;
-  LoadTableName(FRootPath);
-  FEnvironment.SetRootPath(FRootPath);
-end;
-
 procedure TfmMain.btnExportClick(Sender: TObject);
 var
   fmExport : TfmExport;
@@ -445,6 +427,31 @@ begin
   finally
     aAbout.Free;
   end;
+end;
+
+procedure TfmMain.btnSelectPathClick(Sender: TObject);
+var
+  DirectoryPath : String;
+begin
+if SelectDirectory('请指定文件夹','',DirectoryPath) then
+begin
+  if RightStr(DirectoryPath, 1) = '\'
+  then edtCreatePath.Text := DirectoryPath
+  else edtCreatePath.Text := DirectoryPath  + '\';
+
+  FRootPath := edtCreatePath.Text;
+  LoadTableName(FRootPath);
+  FEnvironment.SetRootPath(FRootPath);
+end;
+end;
+
+procedure TfmMain.cxComboBox1PropertiesValidate(Sender: TObject;
+  var DisplayValue: Variant; var ErrorText: TCaption; var Error: Boolean);
+begin
+  inherited;
+  FRootPath := DisplayValue;
+  LoadTableName(FRootPath);
+  FEnvironment.SetRootPath(FRootPath);
 end;
 
 end.
