@@ -7,7 +7,7 @@ uses
   Dialogs, cxPC, cxControls, cxGraphics, dxLayoutControl, cxContainer,
   cxEdit, cxTextEdit, cxMaskEdit, cxDropDownEdit, cxImageComboBox, Menus,
   cxLookAndFeelPainters, StdCtrls, cxButtons, ExtCtrls,unitTable,frameTableProperty,frameShowResult,
-  cxButtonEdit,formParent;
+  cxButtonEdit,formParent, cxCheckBox;
 
 type
   TfmExport = class(TParentForm)
@@ -34,6 +34,8 @@ type
     dlgSave: TSaveDialog;
     lcMainItem1: TdxLayoutItem;
     btnFilePath: TcxButtonEdit;
+    cbSelectField: TcxCheckBox;
+    lcMainItem3: TdxLayoutItem;
     procedure btnNextClick(Sender: TObject);
     procedure btnPreviousClick(Sender: TObject);
     procedure btnFinishClick(Sender: TObject);
@@ -78,7 +80,7 @@ begin
   NavigateChange(0);
   InitField;
   InitPreview;
-  FWay := 0;
+  FWay := 1;
 end;
 
 procedure TfmExport.InitField;
@@ -139,8 +141,8 @@ begin
       2:begin
           ActivePage := 2;
           btnPrevious.Visible := True;
-          btnNext.Visible := True;
-          btnFinish.Visible := False;
+          btnNext.Visible := False;
+          btnFinish.Visible := True;
           Self.Caption := '第三步：预览';
           LoadPreview;
         end;
@@ -172,10 +174,22 @@ begin
     Exit;
   end;
 
+
+
+
+
   aActivePageIndex := ActivePage;
   try
-    if aActivePageIndex <> PageExport.PageCount - 1 then
-      NavigateChange(aActivePageIndex + 1);
+    if (not cbSelectField.Checked) and (aActivePageIndex = 0) then
+    begin
+      if aActivePageIndex <= PageExport.PageCount - 2 then
+        NavigateChange(aActivePageIndex + 2);
+    end
+    else
+    begin
+      if aActivePageIndex <> PageExport.PageCount - 1 then
+        NavigateChange(aActivePageIndex + 1);  
+    end;
   except on E: Exception do
     begin
       NavigateChange(aActivePageIndex);
@@ -191,8 +205,18 @@ begin
   (* 上一步 *)
   aActivePageIndex := ActivePage;
   try
-    if ActivePage <> 0 then
-      NavigateChange(ActivePage - 1 );
+    if (not cbSelectField.Checked) and (aActivePageIndex = 2) then
+    begin
+      if ActivePage >= 2 then
+        NavigateChange(ActivePage - 2);
+    end
+    else
+    begin
+      if ActivePage <> 0 then
+        NavigateChange(ActivePage - 1 );
+    end;
+
+
   except on E: Exception do
     begin
       NavigateChange(aActivePageIndex);
@@ -207,11 +231,13 @@ begin
   begin
     FPreview.ExportExcel(FFilePath);
     ShowMessage('导出excel成功！');
+    Close;
   end
   else if FWay = 2 then
   begin
     FTable.SaveSQLFile(FFilePath);
-    ShowMessage('导出SQL脚本成功！');  
+    ShowMessage('导出SQL脚本成功！');
+    Close;  
   end;
 end;
 
@@ -233,7 +259,9 @@ begin
   begin
     for I := 0 to dlgSave.Files.Count-1 do
     begin
-      btnFilePath.Text := dlgSave.Files.Strings[I];
+      if ExtractFileExt(dlgSave.Files.Strings[I]) <> ''
+      then  btnFilePath.Text := dlgSave.Files.Strings[I]
+      else  btnFilePath.Text := dlgSave.Files.Strings[I] + ExtractFileExt(aExt);
       FFilePath := btnFilePath.Text;
     end;
   end;

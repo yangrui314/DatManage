@@ -24,7 +24,8 @@ uses
   unitConfig in 'unitConfig.pas',
   unitConfigFile in 'ConfigFile\unitConfigFile.pas',
   unitConfigDat in 'ConfigFile\unitConfigDat.pas',
-  formParent in 'Parent\formParent.pas' {ParentForm};
+  formParent in 'Parent\formParent.pas' {ParentForm},
+  unitHistory in 'unitHistory.pas';
 
 {$R *.res}
 

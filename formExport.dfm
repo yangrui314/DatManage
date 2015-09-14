@@ -1,8 +1,8 @@
 object fmExport: TfmExport
   Left = 454
   Top = 227
-  Width = 523
-  Height = 272
+  Width = 612
+  Height = 268
   Caption = #23548#20986
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -16,14 +16,14 @@ object fmExport: TfmExport
   object PageExport: TcxPageControl
     Left = 0
     Top = 0
-    Width = 507
+    Width = 596
     Height = 185
     ActivePage = SheetWay
     Align = alTop
     HideTabs = True
     TabOrder = 0
     ClientRectBottom = 185
-    ClientRectRight = 507
+    ClientRectRight = 596
     ClientRectTop = 0
     object SheetWay: TcxTabSheet
       Caption = #23548#20986#26041#24335
@@ -31,11 +31,12 @@ object fmExport: TfmExport
       object lcMain: TdxLayoutControl
         Left = 0
         Top = 0
-        Width = 507
+        Width = 596
         Height = 185
         Align = alClient
         TabOrder = 0
         TabStop = False
+        AutoContentSizes = [acsWidth, acsHeight]
         object cmbExportType: TcxImageComboBox
           Left = 75
           Top = 10
@@ -69,6 +70,14 @@ object fmExport: TfmExport
           TabOrder = 1
           Width = 121
         end
+        object cbSelectField: TcxCheckBox
+          Left = 10
+          Top = 64
+          Caption = #36807#28388#23383#27573
+          Properties.ImmediatePost = True
+          TabOrder = 2
+          Width = 121
+        end
         object lcMainGroup_Root: TdxLayoutGroup
           ShowCaption = False
           Hidden = True
@@ -83,6 +92,12 @@ object fmExport: TfmExport
             Control = btnFilePath
             ControlOptions.ShowBorder = False
           end
+          object lcMainItem3: TdxLayoutItem
+            Caption = 'cxCheckBox1'
+            ShowCaption = False
+            Control = cbSelectField
+            ControlOptions.ShowBorder = False
+          end
         end
       end
     end
@@ -92,8 +107,8 @@ object fmExport: TfmExport
       object pnlField: TPanel
         Left = 0
         Top = 0
-        Width = 507
-        Height = 161
+        Width = 596
+        Height = 185
         Align = alClient
         Caption = 'pnlField'
         TabOrder = 0
@@ -105,7 +120,7 @@ object fmExport: TfmExport
       object pnlPreview: TPanel
         Left = 0
         Top = 0
-        Width = 507
+        Width = 596
         Height = 185
         Align = alClient
         Caption = 'pnlPreview'
@@ -120,16 +135,16 @@ object fmExport: TfmExport
   object pnlCommand: TPanel
     Left = 0
     Top = 185
-    Width = 507
-    Height = 49
+    Width = 596
+    Height = 45
     Align = alClient
     Caption = 'pnlCommand'
     TabOrder = 1
     object dxLayoutControl1: TdxLayoutControl
       Left = 1
       Top = 1
-      Width = 505
-      Height = 47
+      Width = 594
+      Height = 43
       Align = alClient
       TabOrder = 0
       TabStop = False

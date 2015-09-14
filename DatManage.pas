@@ -56,6 +56,11 @@ type
     dMainGroup6: TdxLayoutGroup;
     edtCreatePath: TcxComboBox;
     dMainItem14: TdxLayoutItem;
+    dMainItem4: TdxLayoutItem;
+    edtPathName: TcxComboBox;
+    dMainItem15: TdxLayoutItem;
+    btnSavePath: TcxButton;
+    dMainGroup7: TdxLayoutGroup;
     procedure btnResultClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure btnLoadTableNameClick(Sender: TObject);
@@ -69,11 +74,13 @@ type
     procedure btnAddClick(Sender: TObject);
     procedure btnImportExcelClick(Sender: TObject);
     procedure btnExportClick(Sender: TObject);
-    procedure btnExportSQLClick(Sender: TObject);
     procedure btnRefreshClick(Sender: TObject);
     procedure MenuAboutClick(Sender: TObject);
     procedure btnSelectPathClick(Sender: TObject);
-    procedure cxComboBox1PropertiesValidate(Sender: TObject;
+    procedure edtCreatePathPropertiesValidate(Sender: TObject;
+      var DisplayValue: Variant; var ErrorText: TCaption;
+      var Error: Boolean);
+    procedure edtPathNamePropertiesValidate(Sender: TObject;
       var DisplayValue: Variant; var ErrorText: TCaption;
       var Error: Boolean);
   private
@@ -94,6 +101,7 @@ type
     procedure CheckState;
     procedure ShowResult(bShow : Boolean);overload;
     procedure ShowResult;overload;
+    procedure LoadConfig;
   public
     { Public declarations }
   end;
@@ -107,7 +115,7 @@ implementation
 
 uses
    FileCtrl,StrUtils,unitStandardHandle,formTableProperty,unitExcelHandle,formExport,
-   formAbout,formImport,unitConfig;
+   formAbout,formImport,unitConfig,unitHistory;
 
 
 
@@ -201,9 +209,7 @@ end;
 procedure TfmMain.FormShow(Sender: TObject);
 begin
   inherited;
-  FConfigFile := TConfigDat.Create;
-  FRootPath := Config.LastFolderPath;
-  if FRootPath = '' then FRootPath := Config.InitFolderPath;  
+  LoadConfig;
   edtCreatePath.Text := FRootPath;
   LoadTableName(FRootPath);
   FEnvironment := TEnvironment.Create(Self,FRootPath);
@@ -213,9 +219,31 @@ begin
   FResult.Align := alClient;
   CheckState;
   FGetTable := False;
-  dMain.Height := 250;
+  dMain.Height := 266;
   ShowResult;
 end;
+
+
+procedure TfmMain.LoadConfig;
+var
+  I : Integer;
+  aTest : String;
+begin
+  FConfigFile := TConfigDat.Create;
+  edtPathName.Properties.Items.Add('最后一条记录');
+  edtCreatePath.Properties.Items.Add(Config.LastFolderPath);
+  edtPathName.EditValue := '最后一条记录';
+
+  FRootPath := Config.LastFolderPath;
+  if FRootPath = '' then FRootPath := Config.InitFolderPath;
+
+  for I := 0 to Config.Historys.Count - 1 do
+  begin
+    edtPathName.Properties.Items.Add(THistory(Config.Historys[I]).Name);
+    edtCreatePath.Properties.Items.Add(THistory(Config.Historys[I]).Path);
+  end;
+end;
+
 
 procedure TfmMain.btnLoadTableNameClick(Sender: TObject);
 begin
@@ -315,7 +343,7 @@ begin
   if pnlResult.Visible = bShow then
     Exit;
   pnlResult.Visible := bShow;
-  aDefaultHeight := 411;
+  aDefaultHeight := 286;
   if bShow then
   begin
     fmMain.Height := fmMain.Height + aDefaultHeight;
@@ -393,25 +421,6 @@ begin
   end;
 end;
 
-procedure TfmMain.btnExportSQLClick(Sender: TObject);
-var
-  I : Integer;
-  aFilePath : String;  
-begin
-  if not FGetTable then
-  begin
-    ShowMessage('未选择对应表。无法导出SQL。');
-    Exit;
-  end;
-
-  aFilePath := SaveFile;
-  if aFilePath = '' then
-  begin
-    Exit;
-  end;
-  FTable.SaveSQLFile(aFilePath);
-end;
-
 procedure TfmMain.btnRefreshClick(Sender: TObject);
 begin
   FResult.Update(FTable);
@@ -445,13 +454,24 @@ begin
 end;
 end;
 
-procedure TfmMain.cxComboBox1PropertiesValidate(Sender: TObject;
+procedure TfmMain.edtCreatePathPropertiesValidate(Sender: TObject;
   var DisplayValue: Variant; var ErrorText: TCaption; var Error: Boolean);
 begin
   inherited;
+  edtPathName.EditValue := Config.GetHistoryName(DisplayValue);
   FRootPath := DisplayValue;
   LoadTableName(FRootPath);
   FEnvironment.SetRootPath(FRootPath);
+end;
+
+procedure TfmMain.edtPathNamePropertiesValidate(Sender: TObject;
+  var DisplayValue: Variant; var ErrorText: TCaption; var Error: Boolean);
+begin
+  inherited;
+  edtCreatePath.EditValue := Config.GetHistoryPath(DisplayValue);
+  FRootPath := edtCreatePath.EditValue;
+  LoadTableName(FRootPath);
+  FEnvironment.SetRootPath(FRootPath);  
 end;
 
 end.

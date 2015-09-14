@@ -54,6 +54,7 @@ object frmTableProperty: TfrmTableProperty
       object dgPropertyCaption: TcxGridColumn
         Caption = #20013#25991#21517
         PropertiesClassName = 'TcxTextEditProperties'
+        Properties.OnValidate = dgPropertyCaptionPropertiesValidate
         FooterAlignmentHorz = taCenter
         GroupSummaryAlignment = taCenter
         HeaderAlignmentHorz = taCenter

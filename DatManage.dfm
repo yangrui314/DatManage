@@ -1,8 +1,8 @@
 object fmMain: TfmMain
   Left = 329
-  Top = 89
+  Top = 64
   Width = 925
-  Height = 664
+  Height = 610
   Color = clBtnFace
   ParentFont = True
   Menu = MainMenu
@@ -15,129 +15,165 @@ object fmMain: TfmMain
     Left = 0
     Top = 0
     Width = 909
-    Height = 289
-    Align = alTop
+    Height = 266
+    Align = alClient
     ParentBackground = True
     TabOrder = 0
     TabStop = False
+    AutoContentSizes = [acsWidth, acsHeight]
     object btnResult: TButton
-      Left = 558
-      Top = 95
+      Left = 824
+      Top = 126
       Width = 75
       Height = 25
       Caption = #25191#34892'SQL'
-      TabOrder = 8
+      TabOrder = 10
       OnClick = btnResultClick
     end
     object edtSQL: TcxMemo
-      Left = 63
-      Top = 95
-      TabOrder = 7
+      Left = 75
+      Top = 126
+      TabOrder = 9
       Height = 65
       Width = 489
     end
     object btnLoadTableName: TButton
-      Left = 190
-      Top = 64
+      Left = 202
+      Top = 95
       Width = 75
       Height = 25
       Caption = #21047#26032#34920#21517#31216
-      TabOrder = 5
+      TabOrder = 7
       OnClick = btnLoadTableNameClick
     end
     object edtTable: TcxComboBox
-      Left = 63
-      Top = 64
+      Left = 75
+      Top = 95
       Properties.ImmediatePost = True
       Properties.OnValidate = cbTablePropertiesValidate
-      TabOrder = 4
+      TabOrder = 6
       Width = 121
     end
     object cbTable: TcxRadioButton
       Left = 10
-      Top = 41
+      Top = 72
       Width = 113
       Height = 17
       Caption = #34920#26684
       Checked = True
-      TabOrder = 2
+      TabOrder = 4
       TabStop = True
       OnClick = cbTableClick
     end
     object cbSQL: TcxRadioButton
       Left = 129
-      Top = 41
+      Top = 72
       Width = 113
       Height = 17
       Caption = 'SQL'#26597#35810
-      TabOrder = 3
+      TabOrder = 5
       OnClick = cbSQLClick
     end
     object btnProperty: TButton
-      Left = 558
-      Top = 166
+      Left = 824
+      Top = 197
       Width = 75
       Height = 25
       Caption = #34920#26684#23646#24615
-      TabOrder = 11
+      TabOrder = 13
       OnClick = btnPropertyClick
     end
     object btnAdd: TButton
       Left = 10
-      Top = 197
+      Top = 228
       Width = 75
       Height = 25
       Caption = #22686#21152#25968#25454
-      TabOrder = 12
+      TabOrder = 14
       OnClick = btnAddClick
     end
     object btnImportExcel: TButton
       Left = 10
-      Top = 166
+      Top = 197
       Width = 75
       Height = 25
       Caption = #23548#20837
-      TabOrder = 9
+      TabOrder = 11
       OnClick = btnImportExcelClick
     end
     object btnExport: TButton
       Left = 91
-      Top = 166
+      Top = 197
       Width = 75
       Height = 25
       Caption = #23548#20986
-      TabOrder = 10
+      TabOrder = 12
       OnClick = btnExportClick
     end
     object btnRefresh: TButton
-      Left = 271
-      Top = 64
+      Left = 283
+      Top = 95
       Width = 75
       Height = 25
       Caption = #21047#26032#20013#25991#21517
-      TabOrder = 6
+      TabOrder = 8
       OnClick = btnRefreshClick
     end
     object btnSelectPath: TcxButton
-      Left = 558
-      Top = 10
+      Left = 824
+      Top = 41
       Width = 75
       Height = 25
       Caption = #36873#25321
-      TabOrder = 1
+      TabOrder = 3
       OnClick = btnSelectPathClick
     end
     object edtCreatePath: TcxComboBox
-      Left = 63
-      Top = 10
-      Properties.OnValidate = cxComboBox1PropertiesValidate
-      TabOrder = 0
+      Left = 75
+      Top = 41
+      Properties.ImmediatePost = True
+      Properties.OnValidate = edtCreatePathPropertiesValidate
+      TabOrder = 2
       Width = 121
+    end
+    object edtPathName: TcxComboBox
+      Left = 75
+      Top = 10
+      Properties.ImmediatePost = True
+      Properties.OnValidate = edtPathNamePropertiesValidate
+      TabOrder = 0
+      Width = 489
+    end
+    object btnSavePath: TcxButton
+      Left = 824
+      Top = 10
+      Width = 75
+      Height = 25
+      Caption = #20445#23384#36335#24452
+      TabOrder = 1
     end
     object dMainGroup_Root: TdxLayoutGroup
       ShowCaption = False
       Hidden = True
       ShowBorder = False
+      object dMainGroup7: TdxLayoutGroup
+        ShowCaption = False
+        Hidden = True
+        LayoutDirection = ldHorizontal
+        ShowBorder = False
+        object dMainItem4: TdxLayoutItem
+          AutoAligns = [aaVertical]
+          AlignHorz = ahClient
+          Caption = #36335#24452#21517#31216#65306
+          Control = edtPathName
+          ControlOptions.ShowBorder = False
+        end
+        object dMainItem15: TdxLayoutItem
+          ShowCaption = False
+          Control = btnSavePath
+          ControlOptions.ShowBorder = False
+        end
+      end
       object dMainGroup6: TdxLayoutGroup
         ShowCaption = False
         Hidden = True
@@ -146,7 +182,7 @@ object fmMain: TfmMain
         object dMainItem14: TdxLayoutItem
           AutoAligns = [aaVertical]
           AlignHorz = ahClient
-          Caption = #36335#24452
+          Caption = #36335#24452':'
           Control = edtCreatePath
           ControlOptions.ShowBorder = False
         end
@@ -264,10 +300,10 @@ object fmMain: TfmMain
   end
   object pnlResult: TPanel
     Left = 0
-    Top = 289
+    Top = 266
     Width = 909
-    Height = 317
-    Align = alClient
+    Height = 286
+    Align = alBottom
     Caption = 'pnlResult'
     ParentBackground = True
     TabOrder = 1

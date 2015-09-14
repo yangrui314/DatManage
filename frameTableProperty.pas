@@ -22,9 +22,13 @@ type
     dgPropertySelected: TcxGridColumn;
     dgPropertyCaption: TcxGridColumn;
     dgPropertyIsIndex: TcxGridColumn;
+    procedure dgPropertyCaptionPropertiesValidate(Sender: TObject;
+      var DisplayValue: Variant; var ErrorText: TCaption;
+      var Error: Boolean);
   private
     FTable : TTable;
     FSelect : Boolean;
+    FUpdateCaption : Boolean;
     procedure SetSelect;
     procedure LoadData;    
   public
@@ -41,6 +45,7 @@ implementation
 constructor TfrmTableProperty.Create(AOwner: TComponent;aTable : TTable;aSelect:Boolean);
 begin
   inherited Create(AOwner);
+  FUpdateCaption := False;
   FTable := aTable;
   FSelect := aSelect;
   SetSelect;
@@ -55,7 +60,7 @@ end;
 
 destructor TfrmTableProperty.Destroy;
 begin
-  RefreshTableFieldCaption;
+  if FUpdateCaption then RefreshTableFieldCaption;
   inherited;
 end;
 
@@ -119,6 +124,13 @@ begin
       dgProperty.EndUpdate;
     end;
   end;
+end;
+
+procedure TfrmTableProperty.dgPropertyCaptionPropertiesValidate(
+  Sender: TObject; var DisplayValue: Variant; var ErrorText: TCaption;
+  var Error: Boolean);
+begin
+  FUpdateCaption := True;
 end;
 
 end.

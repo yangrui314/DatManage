@@ -391,7 +391,6 @@ var
 begin
   if TableName = '' then
   begin
-    ShowMessage('无法保存表格的配置。');
     Exit;
   end;
   aConfig := TXmlHandle.Create(Self);
@@ -410,7 +409,6 @@ var
 begin
   if TableName = '' then
   begin
-    ShowMessage('无法读取表格的配置。');
     Exit;
   end;
 
@@ -507,7 +505,6 @@ begin
     TableData.Next;
   end;
   SaveFile(aFilePath,aSQL);
-  ShowMessage('保存成功！');
 end;
 
 procedure  TTable.SaveFile(aFilePath : String;aData : String);

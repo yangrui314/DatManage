@@ -118,7 +118,7 @@ begin
 
   {保存}
   XMLFile.SaveToFile(aFilePath);
-  ShowMessage('生成'+aFilePath+ '成功');
+//  ShowMessage('生成'+aFilePath+ '成功');
 end;
 
 
