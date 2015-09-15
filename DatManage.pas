@@ -449,6 +449,8 @@ begin
   then edtCreatePath.Text := DirectoryPath
   else edtCreatePath.Text := DirectoryPath  + '\';
 
+  edtPathName.EditValue :='';
+
   FRootPath := edtCreatePath.Text;
   LoadTableName(FRootPath);
   FEnvironment.SetRootPath(FRootPath);
