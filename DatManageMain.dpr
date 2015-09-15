@@ -25,7 +25,8 @@ uses
   unitConfigFile in 'ConfigFile\unitConfigFile.pas',
   unitConfigDat in 'ConfigFile\unitConfigDat.pas',
   formParent in 'Parent\formParent.pas' {ParentForm},
-  unitHistory in 'unitHistory.pas';
+  unitHistory in 'unitHistory.pas',
+  formSavePath in 'formSavePath.pas' {fmSavePath};
 
 {$R *.res}
 
@@ -39,5 +40,6 @@ begin
   Application.CreateForm(TfmImport, fmImport);
   Application.CreateForm(TfmProgress, fmProgress);
   Application.CreateForm(TParentForm, ParentForm);
+  Application.CreateForm(TfmSavePath, fmSavePath);
   Application.Run;
 end.

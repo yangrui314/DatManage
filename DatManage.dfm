@@ -151,6 +151,7 @@ object fmMain: TfmMain
       Height = 25
       Caption = #20445#23384#36335#24452
       TabOrder = 1
+      OnClick = btnSavePathClick
     end
     object dMainGroup_Root: TdxLayoutGroup
       ShowCaption = False

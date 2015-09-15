@@ -83,6 +83,7 @@ type
     procedure edtPathNamePropertiesValidate(Sender: TObject;
       var DisplayValue: Variant; var ErrorText: TCaption;
       var Error: Boolean);
+    procedure btnSavePathClick(Sender: TObject);
   private
     FRootPath : String;
     FTableName : String;
@@ -115,7 +116,7 @@ implementation
 
 uses
    FileCtrl,StrUtils,unitStandardHandle,formTableProperty,unitExcelHandle,formExport,
-   formAbout,formImport,unitConfig,unitHistory;
+   formAbout,formImport,unitConfig,unitHistory,formSavePath;
 
 
 
@@ -474,4 +475,20 @@ begin
   FEnvironment.SetRootPath(FRootPath);  
 end;
 
+procedure TfmMain.btnSavePathClick(Sender: TObject);
+var
+  fmSavePath : TfmSavePath;
+  aName : String;
+  aPath : String;
+begin
+  aName := edtPathName.EditValue;
+  aPath := edtCreatePath.EditValue;
+  fmSavePath := TfmSavePath.Create(Self,aName,aPath);
+  try
+    if fmSavePath.ShowModal = mrOk then
+       FConfigFile.SaveHistory(fmSavePath.PathName,fmSavePath.Path);
+  finally
+    fmSavePath.Free;
+  end;
+end;
 end.
