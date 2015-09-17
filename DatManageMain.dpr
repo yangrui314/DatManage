@@ -1,7 +1,6 @@
 program DatManageMain;
 
 uses
-  ExceptionLog,
   Forms,
   DatManage in 'DatManage.pas' {fmMain},
   UnitFileHandle in 'FileHandle\unitFileHandle.pas',
