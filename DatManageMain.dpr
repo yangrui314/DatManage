@@ -25,12 +25,15 @@ uses
   unitConfigDat in 'ConfigFile\unitConfigDat.pas',
   formParent in 'Parent\formParent.pas' {ParentForm},
   unitHistory in 'unitHistory.pas',
-  formSavePath in 'formSavePath.pas' {fmSavePath};
+  formSavePath in 'formSavePath.pas' {fmSavePath},
+  mLookAndFeelRES in 'mLookAndFeelRES.pas' {LookAndFeelRES: TDataModule},
+  dxSkinsForm in 'dxSkinsForm.pas';
 
 {$R *.res}
 
 begin
   Application.Initialize;
+  Application.CreateForm(TLookAndFeelRES, LookAndFeelRES);
   Application.CreateForm(TfmMain, fmMain);
   Application.CreateForm(TfmTableProperty, fmTableProperty);
   Application.CreateForm(TfmInsert, fmInsert);
