@@ -20,6 +20,11 @@ type
 
     function LoadLastFolderPath : String; virtual;abstract;
     procedure SaveLastFolderPath(aPath : String); virtual;abstract;
+    function LoadShowName : Boolean; virtual;abstract;
+    procedure SaveShowName(aValue : Boolean); virtual;abstract;
+    function LoadShowPath : Boolean; virtual;abstract;
+    procedure SaveShowPath(aValue : Boolean); virtual;abstract;
+
     function LoadHistorys : TList; virtual;abstract;
   public
     constructor Create; virtual;
@@ -58,6 +63,8 @@ var
   aHistorys : TList;
 begin
   Config.LastFolderPath := LoadLastFolderPath;
+  Config.ShowName := LoadShowName;
+  Config.ShowPath := LoadShowPath;
   aHistorys := LoadHistorys;
   Config.Historys := aHistorys;
 end;
@@ -65,6 +72,8 @@ end;
 procedure TConfigFile.SaveFile;
 begin                            
   SaveLastFolderPath(Config.LastFolderPath);
+  SaveShowName(Config.ShowName);
+  SaveShowPath(Config.ShowPath);
 end;
 
 destructor TConfigFile.Destroy; 

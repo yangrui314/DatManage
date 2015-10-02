@@ -17,12 +17,8 @@ type
   TfmMain = class(TParentForm)
     dMainGroup_Root: TdxLayoutGroup;
     dMain: TdxLayoutControl;
-    dMainItem2: TdxLayoutItem;
-    btnResult: TButton;
     dMainItem5: TdxLayoutItem;
     edtSQL: TcxMemo;
-    dMainItem9: TdxLayoutItem;
-    btnLoadTableName: TButton;
     dlgOpen: TOpenDialog;
     dMainGroup1: TdxLayoutGroup;
     dMainGroup2: TdxLayoutGroup;
@@ -35,19 +31,8 @@ type
     dMainGroup3: TdxLayoutGroup;
     dMainGroup4: TdxLayoutGroup;
     pnlResult: TPanel;
-    dMainItem1: TdxLayoutItem;
-    btnProperty: TButton;
-    dMainItem8: TdxLayoutItem;
-    btnAdd: TButton;
-    dMainItem11: TdxLayoutItem;
-    btnImportExcel: TButton;
-    dMainGroup9: TdxLayoutGroup;
     dMainGroup8: TdxLayoutGroup;
-    dMainItem13: TdxLayoutItem;
-    btnExport: TButton;
     dlgSave: TSaveDialog;
-    dMainItem12: TdxLayoutItem;
-    btnRefresh: TButton;
     MainMenu: TMainMenu;
     MenuAbout: TMenuItem;
     dMainGroup5: TdxLayoutGroup;
@@ -61,20 +46,33 @@ type
     dMainItem15: TdxLayoutItem;
     btnSavePath: TcxButton;
     dMainGroup7: TdxLayoutGroup;
-    procedure btnResultClick(Sender: TObject);
+    btnResult: TcxButton;
+    dMainItem16: TdxLayoutItem;
+    dMainGroup9: TdxLayoutGroup;
+    dMainItem2: TdxLayoutItem;
+    btnProperty: TcxButton;
+    dMainItem1: TdxLayoutItem;
+    btnExport: TcxButton;
+    dMainItem17: TdxLayoutItem;
+    btnImportExcel: TcxButton;
+    dMainGroup10: TdxLayoutGroup;
+    dMainItem11: TdxLayoutItem;
+    btnAdd: TcxButton;
+    dMainItem8: TdxLayoutItem;
+    btnRefresh: TcxButton;
+    dMainItem13: TdxLayoutItem;
+    btnLoadTableName: TcxButton;
+    dMainItem9: TdxLayoutItem;
+    cxButton1: TcxButton;
+    dMainGroup11: TdxLayoutGroup;
+    MenuSet: TMenuItem;
     procedure FormShow(Sender: TObject);
-    procedure btnLoadTableNameClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure cbTablePropertiesValidate(Sender: TObject;
       var DisplayValue: Variant; var ErrorText: TCaption;
       var Error: Boolean);
     procedure cbTableClick(Sender: TObject);
     procedure cbSQLClick(Sender: TObject);
-    procedure btnPropertyClick(Sender: TObject);
-    procedure btnAddClick(Sender: TObject);
-    procedure btnImportExcelClick(Sender: TObject);
-    procedure btnExportClick(Sender: TObject);
-    procedure btnRefreshClick(Sender: TObject);
     procedure MenuAboutClick(Sender: TObject);
     procedure btnSelectPathClick(Sender: TObject);
     procedure edtCreatePathPropertiesValidate(Sender: TObject;
@@ -84,6 +82,14 @@ type
       var DisplayValue: Variant; var ErrorText: TCaption;
       var Error: Boolean);
     procedure btnSavePathClick(Sender: TObject);
+    procedure btnResultClick(Sender: TObject);
+    procedure btnPropertyClick(Sender: TObject);
+    procedure btnImportExcelClick(Sender: TObject);
+    procedure btnExportClick(Sender: TObject);
+    procedure btnAddClick(Sender: TObject);
+    procedure btnLoadTableNameClick(Sender: TObject);
+    procedure btnRefreshClick(Sender: TObject);
+    procedure MenuSetClick(Sender: TObject);
   private
     FRootPath : String;
     FTableName : String;
@@ -116,14 +122,8 @@ implementation
 
 uses
    FileCtrl,StrUtils,unitStandardHandle,formTableProperty,unitExcelHandle,formExport,
-   formAbout,formImport,unitConfig,unitHistory,formSavePath;
+   formAbout,formImport,unitConfig,unitHistory,formSavePath,formSet;
 
-
-
-procedure TfmMain.btnResultClick(Sender: TObject);
-begin
-  WorkRun;
-end;
 
 
 function TfmMain.GetSQL : String;
@@ -231,9 +231,9 @@ var
   aTest : String;
 begin
   FConfigFile := TConfigDat.Create;
-  edtPathName.Properties.Items.Add('最后一条记录');
-  edtCreatePath.Properties.Items.Add(Config.LastFolderPath);
-  edtPathName.EditValue := '最后一条记录';
+//  edtPathName.Properties.Items.Add('最后一条记录');
+//  edtCreatePath.Properties.Items.Add(Config.LastFolderPath);
+//  edtPathName.EditValue := '最后一条记录';
 
   FRootPath := Config.LastFolderPath;
   if FRootPath = '' then FRootPath := Config.InitFolderPath;
@@ -243,15 +243,16 @@ begin
     edtPathName.Properties.Items.Add(THistory(Config.Historys[I]).Name);
     edtCreatePath.Properties.Items.Add(THistory(Config.Historys[I]).Path);
   end;
+
+  edtPathName.EditValue := Config.GetHistoryName(FRootPath);
+
+
+  dMainItem4.Visible := Config.ShowName;
+  dMainItem15.Visible := Config.ShowName;
+
+  dMainItem14.Visible := Config.ShowPath;
+  dMainItem10.Visible := Config.ShowPath;
 end;
-
-
-procedure TfmMain.btnLoadTableNameClick(Sender: TObject);
-begin
-  FRootPath := edtCreatePath.Text;
-  LoadTableName(FRootPath);
-end;
-
 
 
 function TfmMain.SelectFile(aExt : String) : String;
@@ -356,77 +357,6 @@ begin
   pnlResult.Height := aDefaultHeight;
 end;
 
-procedure TfmMain.btnPropertyClick(Sender: TObject);
-var
-  fmTableProperty : TfmTableProperty;
-begin
-  if not FGetTable then
-  begin
-    ShowMessage('未选择对应表。无属性。');
-    Exit;
-  end;
-
-  fmTableProperty := TfmTableProperty.Create(Self,FTable);
-  with fmTableProperty do
-  try
-    ShowModal;
-  finally
-    Free;
-  end;
-end;
-
-
-procedure TfmMain.btnAddClick(Sender: TObject);
-begin
-  if not FGetTable then
-  begin
-    ShowMessage('未选择对应表。无属性。');
-    Exit;
-  end;
-  FTable.Add(Self);
-end;
-
-procedure TfmMain.btnImportExcelClick(Sender: TObject);
-var
-  fmImport : TfmImport;
-begin
-  if not FGetTable then
-  begin
-    ShowMessage('未选择对应表。无法导入Excel。');
-    Exit;
-  end;
-
-  fmImport := TfmImport.Create(self,FTable);
-  try
-    fmImport.ShowModal;
-  finally
-    fmImport.Free;
-  end;
-end;
-
-procedure TfmMain.btnExportClick(Sender: TObject);
-var
-  fmExport : TfmExport;
-begin
-  if not FGetTable then
-  begin
-    ShowMessage('未选择对应表。无法导入Excel。');
-    Exit;
-  end;
-
-  fmExport := TfmExport.Create(self,FTable);
-  try
-    fmExport.ShowModal;
-  finally
-    fmExport.Free;
-  end;
-end;
-
-procedure TfmMain.btnRefreshClick(Sender: TObject);
-begin
-  FResult.Update(FTable);
-end;
-
 procedure TfmMain.MenuAboutClick(Sender: TObject);
 var
   aAbout : TfmAbout;
@@ -493,4 +423,101 @@ begin
     fmSavePath.Free;
   end;
 end;
+procedure TfmMain.btnResultClick(Sender: TObject);
+begin
+  inherited;
+  WorkRun;
+end;
+
+procedure TfmMain.btnPropertyClick(Sender: TObject);
+var
+  fmTableProperty : TfmTableProperty;
+begin
+  if not FGetTable then
+  begin
+    ShowMessage('未选择对应表。无属性。');
+    Exit;
+  end;
+
+  fmTableProperty := TfmTableProperty.Create(Self,FTable);
+  with fmTableProperty do
+  try
+    ShowModal;
+  finally
+    Free;
+  end;
+end;
+
+procedure TfmMain.btnImportExcelClick(Sender: TObject);
+var
+  fmImport : TfmImport;
+begin
+  if not FGetTable then
+  begin
+    ShowMessage('未选择对应表。无法导入Excel。');
+    Exit;
+  end;
+
+  fmImport := TfmImport.Create(self,FTable);
+  try
+    fmImport.ShowModal;
+  finally
+    fmImport.Free;
+  end;
+end;
+
+procedure TfmMain.btnExportClick(Sender: TObject);
+var
+  fmExport : TfmExport;
+begin
+  if not FGetTable then
+  begin
+    ShowMessage('未选择对应表。无法导入Excel。');
+    Exit;
+  end;
+
+  fmExport := TfmExport.Create(self,FTable);
+  try
+    fmExport.ShowModal;
+  finally
+    fmExport.Free;
+  end;
+end;
+
+procedure TfmMain.btnAddClick(Sender: TObject);
+begin
+  inherited;
+  if not FGetTable then
+  begin
+    ShowMessage('未选择对应表。无属性。');
+    Exit;
+  end;
+  FTable.Add(Self);
+end;
+
+procedure TfmMain.btnLoadTableNameClick(Sender: TObject);
+begin
+  inherited;
+  FRootPath := edtCreatePath.Text;
+  LoadTableName(FRootPath);
+end;
+
+procedure TfmMain.btnRefreshClick(Sender: TObject);
+begin
+  inherited;
+  FResult.Update(FTable);
+end;
+
+procedure TfmMain.MenuSetClick(Sender: TObject);
+var
+  aSet : TfmSet;
+begin
+  aSet := TfmSet.Create(Self);
+  try
+    aSet.ShowModal;
+  finally
+    aSet.Free;
+  end;
+end;
+
 end.

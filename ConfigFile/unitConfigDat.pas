@@ -19,6 +19,12 @@ type
     procedure InitData; override;
     function LoadLastFolderPath : String; override;
     procedure SaveLastFolderPath(aPath : String); override;
+
+    function LoadShowName : Boolean; override;
+    procedure SaveShowName(aValue : Boolean); override;
+    function LoadShowPath : Boolean; override;
+    procedure SaveShowPath(aValue : Boolean); override;
+
     function LoadHistorys : TList; override;
   public
     constructor Create; override;
@@ -56,10 +62,12 @@ begin
     DatabaseName:= FConfigPath;
     TableName:= LAST_FOLDER_PATH_NAME;
     with FieldDefs do
-    begin 
-      Clear; 
-      Add('ID',ftAutoInc,0,False); 
+    begin
+      Clear;
+      Add('ID',ftAutoInc,0,False);
       Add('LastFolderPath',ftString,255,False);
+      Add('ShowName',ftBoolean,0,False);
+      Add('ShowPath',ftBoolean,0,False);
     end;
     with IndexDefs do
     begin
@@ -142,6 +150,93 @@ begin
     First;
     Edit;
     FieldByName('LastFolderPath').AsString := aPath;
+    Post;
+
+    Close;
+  end;  
+end;
+
+
+function TConfigDat.LoadShowName : Boolean;
+begin
+  inherited;
+  Result := True;
+  with FSystemConfig do
+  begin
+    DatabaseName:= FConfigPath;
+    TableName:= LAST_FOLDER_PATH_NAME;
+    
+    if Active then Close;
+    Open;
+
+    First;
+    while not Eof do
+    begin
+      Result :=  FieldByName('ShowName').AsBoolean;
+      Next;
+    end;
+
+    Close;
+  end;  
+end;
+
+procedure TConfigDat.SaveShowName(aValue : Boolean);
+begin
+  inherited;
+  with FSystemConfig do
+  begin
+    DatabaseName:= FConfigPath;
+    TableName:= LAST_FOLDER_PATH_NAME;
+    
+    if Active then Close;
+    Open;
+
+    First;
+    Edit;
+    FieldByName('ShowName').AsBoolean := aValue;
+    Post;
+
+    Close;
+  end;  
+end;
+
+function TConfigDat.LoadShowPath : Boolean;
+begin
+  inherited;
+  Result := True;
+  with FSystemConfig do
+  begin
+    DatabaseName:= FConfigPath;
+    TableName:= LAST_FOLDER_PATH_NAME;
+    
+    if Active then Close;
+    Open;
+
+    First;
+    while not Eof do
+    begin
+      Result :=  FieldByName('ShowPath').AsBoolean;
+      Next;
+    end;
+
+    Close;
+  end;  
+end;
+
+procedure TConfigDat.SaveShowPath(aValue : Boolean);
+begin
+  inherited;
+  with FSystemConfig do
+  begin
+    DatabaseName:= FConfigPath;
+    TableName:= LAST_FOLDER_PATH_NAME;
+    
+    if Active then Close;
+    Open;
+
+    First;
+    Edit;
+    FieldByName('ShowPath').AsBoolean := aValue;
     Post;
 
     Close;

@@ -26,22 +26,12 @@ uses
   formParent in 'Parent\formParent.pas' {ParentForm},
   unitHistory in 'unitHistory.pas',
   formSavePath in 'formSavePath.pas' {fmSavePath},
-  mLookAndFeelRES in 'mLookAndFeelRES.pas' {LookAndFeelRES: TDataModule},
-  dxSkinsForm in 'dxSkinsForm.pas';
+  formSet in 'formSet.pas' {fmSet};
 
 {$R *.res}
 
 begin
   Application.Initialize;
-  Application.CreateForm(TLookAndFeelRES, LookAndFeelRES);
   Application.CreateForm(TfmMain, fmMain);
-  Application.CreateForm(TfmTableProperty, fmTableProperty);
-  Application.CreateForm(TfmInsert, fmInsert);
-  Application.CreateForm(TfmExport, fmExport);
-  Application.CreateForm(TfmAbout, fmAbout);
-  Application.CreateForm(TfmImport, fmImport);
-  Application.CreateForm(TfmProgress, fmProgress);
-  Application.CreateForm(TParentForm, ParentForm);
-  Application.CreateForm(TfmSavePath, fmSavePath);
   Application.Run;
 end.

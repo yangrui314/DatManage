@@ -6,25 +6,24 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, dxLayoutControl, cxContainer, cxEdit, cxImage, cxControls,
   ExtCtrls, Menus, cxLookAndFeelPainters, StdCtrls, cxButtons, cxLabel,
-  RzStatus,formParent;
+  RzStatus,formParent, cxCheckBox;
 
 type
   TfmSet = class(TParentForm)
-    pnlAbout: TPanel;
+    pnlSet: TPanel;
     lcMainGroup_Root: TdxLayoutGroup;
     lcMain: TdxLayoutControl;
-    ImgIcon: TcxImage;
-    lcMainItem1: TdxLayoutItem;
-    lblCaption: TcxLabel;
-    lcMainItem2: TdxLayoutItem;
-    btnOK: TcxButton;
     lcMainItem3: TdxLayoutItem;
-    lblVersion: TcxLabel;
-    lcMainItem4: TdxLayoutItem;
-    lcMainGroup3: TdxLayoutGroup;
-    RzVersionInfo: TRzVersionInfo;
+    btnOK: TcxButton;
+    cbShowName: TcxCheckBox;
+    lcMainItem1: TdxLayoutItem;
+    lcMainItem2: TdxLayoutItem;
+    cbShowPath: TcxCheckBox;
+    lcMainGroup1: TdxLayoutGroup;
     procedure btnOKClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure cbShowPathClick(Sender: TObject);
+    procedure cbShowNameClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -36,17 +35,34 @@ var
 
 implementation
 
+  uses
+    unitConfig;
+
 {$R *.dfm}
 
 procedure TfmSet.btnOKClick(Sender: TObject);
 begin
+  inherited;
   Close;
 end;
 
-procedure TfmAbout.FormShow(Sender: TObject);
+procedure TfmSet.FormShow(Sender: TObject);
 begin
-  RzVersionInfo.FilePath := Application.Exename;
-  lblVersion.EditValue := RzVersionInfo.FileVersion;
+  inherited;
+  cbShowPath.Checked := Config.ShowPath;
+  cbShowName.Checked := Config.ShowName
+end;
+
+procedure TfmSet.cbShowPathClick(Sender: TObject);
+begin
+  inherited;
+  Config.ShowPath := cbShowPath.Checked;
+end;
+
+procedure TfmSet.cbShowNameClick(Sender: TObject);
+begin
+  inherited;
+  Config.ShowName := cbShowName.Checked;
 end;
 
 end.

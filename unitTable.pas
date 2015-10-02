@@ -470,7 +470,7 @@ begin
       begin
         aValue :=  ''''+ TableData.FieldByName(aFieldName).AsString + '''';
       end
-      else if  (aDataType = ftInteger)  then
+      else if  (aDataType = ftInteger) or (aDataType = ftSmallint)  then
       begin
         aValue := IntToStr(TableData.FieldByName(aFieldName).AsInteger);
       end

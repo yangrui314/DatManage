@@ -12,6 +12,8 @@ type
     FInitFolderPath : String;
     FLastFolderPath : String;
     FHistorys: TList;
+    FShowName : Boolean;
+    FShowPath : Boolean;
     constructor Create;
     procedure InitData;
     procedure SetHistorys(aHistorys : TList);    
@@ -21,6 +23,8 @@ type
   public
     property InitFolderPath: string read FInitFolderPath;
     property LastFolderPath: string read FLastFolderPath write FLastFolderPath;
+    property ShowName: Boolean read FShowName write FShowName;
+    property ShowPath: Boolean read FShowPath write FShowPath;        
     property Historys : TList read FHistorys write FHistorys;
     function GetHistoryName(aPath : String) : String;
     function GetHistoryPath(aName : String) : String;    
@@ -41,6 +45,8 @@ begin
   FHistorys := TList.Create;
   FInitFolderPath :='D:\Project\new_omni\trunk\engineering\deploy\client\'
         +'gd-n-tax(GuiZhou)\deploy(WS)\data\';
+  FShowName := True;
+  FShowPath := True;
 end;
 
 procedure TConfig.FreeHistorys;
@@ -73,11 +79,11 @@ var
   I: Integer;
 begin
   Result := '';
-  if aPath = FLastFolderPath then
-  begin
-    Result := '最后一条记录';
-    Exit;
-  end;
+//  if aPath = FLastFolderPath then
+//  begin
+//    Result := '最后一条记录';
+//    Exit;
+//  end;
   for I := 0 to FHistorys.Count - 1 do
   begin
     if THistory(FHistorys.Items[I]).Path = aPath then
@@ -93,11 +99,11 @@ var
   I: Integer;
 begin
   Result := '';
-  if aName = '最后一条记录' then
-  begin
-    Result := FLastFolderPath;
-    Exit;
-  end;
+//  if aName = '最后一条记录' then
+//  begin
+//    Result := FLastFolderPath;
+//    Exit;
+//  end;
   for I := 0 to FHistorys.Count - 1 do
   begin
     if THistory(FHistorys.Items[I]).Name = aName then
