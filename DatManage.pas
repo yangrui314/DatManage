@@ -11,26 +11,19 @@ uses
   cxGridDBTableView, cxGrid, cxCheckBox, ExtCtrls, cxMemo, cxVGrid,
   cxDBVGrid, cxInplaceContainer,unitEnvironment,frameShowResult, dxLayoutControl,
   cxDropDownEdit, cxRadioGroup,unitTable, Menus,
-  cxLookAndFeelPainters, cxButtons,cxGridExportLink,unitConfigFile,unitConfigDat,formParent;
+  cxLookAndFeelPainters, cxButtons,cxGridExportLink,unitConfigFile,unitConfigDat,formParent,
+  cxPC;
 
 type
   TfmMain = class(TParentForm)
     dMainGroup_Root: TdxLayoutGroup;
     dMain: TdxLayoutControl;
-    dMainItem5: TdxLayoutItem;
-    edtSQL: TcxMemo;
     dlgOpen: TOpenDialog;
-    dMainGroup1: TdxLayoutGroup;
-    dMainGroup2: TdxLayoutGroup;
-    edtTable: TcxComboBox;
-    dMainItem7: TdxLayoutItem;
     cbTable: TcxRadioButton;
     dMainItem3: TdxLayoutItem;
     dMainItem6: TdxLayoutItem;
     cbSQL: TcxRadioButton;
-    dMainGroup4: TdxLayoutGroup;
     pnlResult: TPanel;
-    dMainGroup8: TdxLayoutGroup;
     dlgSave: TSaveDialog;
     MainMenu: TMainMenu;
     MenuAbout: TMenuItem;
@@ -44,26 +37,42 @@ type
     dMainItem15: TdxLayoutItem;
     btnSavePath: TcxButton;
     dMainGroup7: TdxLayoutGroup;
-    btnResult: TcxButton;
-    dMainItem16: TdxLayoutItem;
-    dMainGroup9: TdxLayoutGroup;
     dMainItem2: TdxLayoutItem;
     btnProperty: TcxButton;
     dMainItem1: TdxLayoutItem;
     btnExport: TcxButton;
     dMainItem17: TdxLayoutItem;
     btnImportExcel: TcxButton;
-    dMainGroup10: TdxLayoutGroup;
     dMainItem11: TdxLayoutItem;
     btnAdd: TcxButton;
     dMainItem9: TdxLayoutItem;
     cxButton1: TcxButton;
     MenuSet: TMenuItem;
+    PageSelect: TcxPageControl;
+    dMainItem8: TdxLayoutItem;
+    dMainGroup3: TdxLayoutGroup;
+    SheetTable: TcxTabSheet;
+    SheetSQL: TcxTabSheet;
+    lcTableGroup_Root: TdxLayoutGroup;
+    lcTable: TdxLayoutControl;
+    lcSQL: TdxLayoutControl;
+    dxLayoutGroup1: TdxLayoutGroup;
+    lcTableItem1: TdxLayoutItem;
+    edtTable: TcxComboBox;
+    lcSQLItem1: TdxLayoutItem;
+    edtSQL: TcxMemo;
+    lcSQLItem2: TdxLayoutItem;
+    btnResult: TcxButton;
+    dMainGroup2: TdxLayoutGroup;
+    dMainGroup5: TdxLayoutGroup;
+    dMainGroup4: TdxLayoutGroup;
+    lcTableItem2: TdxLayoutItem;
+    edtCondition: TcxMemo;
+    btnCondition: TcxButton;
+    lcTableItem3: TdxLayoutItem;
+    lcTableGroup1: TdxLayoutGroup;
     procedure FormShow(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
-    procedure cbTablePropertiesValidate(Sender: TObject;
-      var DisplayValue: Variant; var ErrorText: TCaption;
-      var Error: Boolean);
     procedure cbTableClick(Sender: TObject);
     procedure cbSQLClick(Sender: TObject);
     procedure MenuAboutClick(Sender: TObject);
@@ -75,12 +84,16 @@ type
       var DisplayValue: Variant; var ErrorText: TCaption;
       var Error: Boolean);
     procedure btnSavePathClick(Sender: TObject);
-    procedure btnResultClick(Sender: TObject);
     procedure btnPropertyClick(Sender: TObject);
     procedure btnImportExcelClick(Sender: TObject);
     procedure btnExportClick(Sender: TObject);
     procedure btnAddClick(Sender: TObject);
     procedure MenuSetClick(Sender: TObject);
+    procedure cxComboBox1PropertiesValidate(Sender: TObject;
+      var DisplayValue: Variant; var ErrorText: TCaption;
+      var Error: Boolean);
+    procedure btnResultClick(Sender: TObject);
+    procedure btnConditionClick(Sender: TObject);
   private
     FRootPath : String;
     FTableName : String;
@@ -128,6 +141,10 @@ begin
     else
     begin
       Result := 'select * from ' + FTableName;
+      if edtCondition.Text <> '' then
+      begin
+        Result := Result + ' where ' + edtCondition.EditValue;
+      end;
     end;
   end
   else
@@ -285,26 +302,21 @@ begin
   inherited;
 end;
 
-procedure TfmMain.cbTablePropertiesValidate(Sender: TObject;
-  var DisplayValue: Variant; var ErrorText: TCaption; var Error: Boolean);
-begin
-  FTableName := DisplayValue;
-  WorkRun;
-end;
-
 procedure TfmMain.CheckState;
 begin
   if cbTable.Checked then
   begin
-    edtTable.Enabled := True;
-    edtSQL.Enabled := False;
-    btnResult.Enabled := False;
+    PageSelect.ActivePageIndex := 0;
+//    edtTable.Enabled := True;
+//    edtSQL.Enabled := False;
+//    btnResult.Enabled := False;
   end
   else
   begin
-    edtTable.Enabled := False;
-    edtSQL.Enabled := True;
-    btnResult.Enabled := True;
+    PageSelect.ActivePageIndex := 1;
+//    edtTable.Enabled := False;
+//    edtSQL.Enabled := True;
+//    btnResult.Enabled := True;
   end;
 end;
 
@@ -412,12 +424,6 @@ begin
     fmSavePath.Free;
   end;
 end;
-procedure TfmMain.btnResultClick(Sender: TObject);
-begin
-  inherited;
-  WorkRun;
-end;
-
 procedure TfmMain.btnPropertyClick(Sender: TObject);
 var
   fmTableProperty : TfmTableProperty;
@@ -494,6 +500,26 @@ begin
   finally
     aSet.Free;
   end;
+end;
+
+procedure TfmMain.cxComboBox1PropertiesValidate(Sender: TObject;
+  var DisplayValue: Variant; var ErrorText: TCaption; var Error: Boolean);
+begin
+  inherited;
+  FTableName := DisplayValue;
+  WorkRun;
+end;
+
+procedure TfmMain.btnResultClick(Sender: TObject);
+begin
+  inherited;
+  WorkRun;
+end;
+
+procedure TfmMain.btnConditionClick(Sender: TObject);
+begin
+  inherited;
+  WorkRun;
 end;
 
 end.
