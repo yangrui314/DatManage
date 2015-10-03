@@ -30,7 +30,7 @@ object fmMain: TfmMain
       Height = 17
       Caption = #34920#26684
       Checked = True
-      TabOrder = 9
+      TabOrder = 8
       TabStop = True
       OnClick = cbTableClick
     end
@@ -40,7 +40,7 @@ object fmMain: TfmMain
       Width = 113
       Height = 17
       Caption = 'SQL'#26597#35810
-      TabOrder = 10
+      TabOrder = 9
       OnClick = cbSQLClick
     end
     object btnSelectPath: TcxButton
@@ -85,7 +85,7 @@ object fmMain: TfmMain
       Width = 75
       Height = 25
       Caption = #34920#26684#23646#24615
-      TabOrder = 8
+      TabOrder = 7
       OnClick = btnPropertyClick
       LookAndFeel.Kind = lfOffice11
     end
@@ -119,15 +119,6 @@ object fmMain: TfmMain
       OnClick = btnAddClick
       LookAndFeel.Kind = lfOffice11
     end
-    object cxButton1: TcxButton
-      Left = 253
-      Top = 72
-      Width = 75
-      Height = 25
-      Caption = #27979#35797
-      TabOrder = 7
-      LookAndFeel.Kind = lfOffice11
-    end
     object PageSelect: TcxPageControl
       Left = 10
       Top = 126
@@ -137,7 +128,7 @@ object fmMain: TfmMain
       HideTabs = True
       ParentShowHint = False
       ShowHint = False
-      TabOrder = 11
+      TabOrder = 10
       ClientRectBottom = 99
       ClientRectRight = 889
       ClientRectTop = 0
@@ -325,11 +316,6 @@ object fmMain: TfmMain
               AutoAligns = [aaVertical]
               ShowCaption = False
               Control = btnAdd
-              ControlOptions.ShowBorder = False
-            end
-            object dMainItem9: TdxLayoutItem
-              ShowCaption = False
-              Control = cxButton1
               ControlOptions.ShowBorder = False
             end
             object dMainItem2: TdxLayoutItem

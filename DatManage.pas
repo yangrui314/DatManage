@@ -45,8 +45,6 @@ type
     btnImportExcel: TcxButton;
     dMainItem11: TdxLayoutItem;
     btnAdd: TcxButton;
-    dMainItem9: TdxLayoutItem;
-    cxButton1: TcxButton;
     MenuSet: TMenuItem;
     PageSelect: TcxPageControl;
     dMainItem8: TdxLayoutItem;

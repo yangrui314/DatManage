@@ -36,6 +36,8 @@ type
     btnFilePath: TcxButtonEdit;
     cbSelectField: TcxCheckBox;
     lcMainItem3: TdxLayoutItem;
+    edtExportTableName: TcxTextEdit;
+    lcMainItem4: TdxLayoutItem;
     procedure btnNextClick(Sender: TObject);
     procedure btnPreviousClick(Sender: TObject);
     procedure btnFinishClick(Sender: TObject);
@@ -52,7 +54,8 @@ type
     FTable : TTable;
     FPreview : TShowResultFrame;
     FWay : Integer;
-    FFilePath : String;    
+    FFilePath : String;
+    FNotTableName : Boolean;    
     procedure NavigateChange(aPageIndex: Integer);
     function GetActivePage : Integer;
     procedure SetActivePage(const Value: Integer);
@@ -77,10 +80,12 @@ constructor TfmExport.Create(AOwner: TComponent;aTable: TTable);
 begin
   inherited Create(AOwner);
   FTable := aTable;
+  FNotTableName :=  (FTable.TableName = '');
+  FWay := 2;
   NavigateChange(0);
   InitField;
   InitPreview;
-  FWay := 1;
+  lcMainItem4.Visible := FNotTableName and (FWay = 2);  
 end;
 
 procedure TfmExport.InitField;
@@ -130,6 +135,7 @@ begin
           btnNext.Visible := True;
           btnFinish.Visible := False;
           Self.Caption := '第一步：导出方式';
+          cmbExportType.ItemIndex := FWay -1 ;
         end;
       1:begin
           ActivePage := 1;
@@ -235,7 +241,14 @@ begin
   end
   else if FWay = 2 then
   begin
+    if FNotTableName
+    then FTable.TableName := edtExportTableName.EditValue;
+
     FTable.SaveSQLFile(FFilePath);
+
+    if FNotTableName
+    then FTable.TableName := '';
+
     ShowMessage('导出SQL脚本成功！');
     Close;  
   end;
@@ -271,6 +284,7 @@ procedure TfmExport.cmbExportTypePropertiesValidate(Sender: TObject;
   var DisplayValue: Variant; var ErrorText: TCaption; var Error: Boolean);
 begin
   FWay := cmbExportType.ItemIndex + 1;
+  lcMainItem4.Visible := FNotTableName and (FWay = 2);
 end;
 
 procedure TfmExport.btnFilePathPropertiesValidate(Sender: TObject;

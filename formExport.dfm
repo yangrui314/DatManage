@@ -38,7 +38,7 @@ object fmExport: TfmExport
         TabStop = False
         AutoContentSizes = [acsWidth, acsHeight]
         object cmbExportType: TcxImageComboBox
-          Left = 75
+          Left = 99
           Top = 10
           EditValue = 0
           Properties.ImmediatePost = True
@@ -58,7 +58,7 @@ object fmExport: TfmExport
           Width = 121
         end
         object btnFilePath: TcxButtonEdit
-          Left = 75
+          Left = 99
           Top = 37
           Properties.Buttons = <
             item
@@ -72,9 +72,15 @@ object fmExport: TfmExport
         end
         object cbSelectField: TcxCheckBox
           Left = 10
-          Top = 64
+          Top = 91
           Caption = #36807#28388#23383#27573
           Properties.ImmediatePost = True
+          TabOrder = 3
+          Width = 121
+        end
+        object edtExportTableName: TcxTextEdit
+          Left = 99
+          Top = 64
           TabOrder = 2
           Width = 121
         end
@@ -90,6 +96,11 @@ object fmExport: TfmExport
           object lcMainItem1: TdxLayoutItem
             Caption = #20445#23384#20301#32622#65306
             Control = btnFilePath
+            ControlOptions.ShowBorder = False
+          end
+          object lcMainItem4: TdxLayoutItem
+            Caption = #23548#20986#34920#26684#21517#31216#65306
+            Control = edtExportTableName
             ControlOptions.ShowBorder = False
           end
           object lcMainItem3: TdxLayoutItem
