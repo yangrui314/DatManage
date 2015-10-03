@@ -25,8 +25,8 @@ object fmMain: TfmMain
     AutoContentSizes = [acsWidth, acsHeight]
     object edtSQL: TcxMemo
       Left = 75
-      Top = 126
-      TabOrder = 9
+      Top = 122
+      TabOrder = 7
       Height = 65
       Width = 489
     end
@@ -96,17 +96,17 @@ object fmMain: TfmMain
     end
     object btnResult: TcxButton
       Left = 824
-      Top = 126
+      Top = 122
       Width = 75
       Height = 25
       Caption = #25191#34892'SQL'
-      TabOrder = 10
+      TabOrder = 8
       OnClick = btnResultClick
       LookAndFeel.Kind = lfOffice11
     end
     object btnProperty: TcxButton
       Left = 824
-      Top = 197
+      Top = 193
       Width = 75
       Height = 25
       Caption = #34920#26684#23646#24615
@@ -116,61 +116,41 @@ object fmMain: TfmMain
     end
     object btnExport: TcxButton
       Left = 91
-      Top = 197
+      Top = 193
       Width = 75
       Height = 25
       Caption = #23548#20986
-      TabOrder = 12
+      TabOrder = 10
       OnClick = btnExportClick
       LookAndFeel.Kind = lfOffice11
     end
     object btnImportExcel: TcxButton
       Left = 10
-      Top = 197
+      Top = 193
       Width = 75
       Height = 25
       Caption = #23548#20837
-      TabOrder = 11
+      TabOrder = 9
       OnClick = btnImportExcelClick
       LookAndFeel.Kind = lfOffice11
     end
     object btnAdd: TcxButton
-      Left = 10
-      Top = 228
+      Left = 172
+      Top = 193
       Width = 75
       Height = 25
       Caption = #22686#21152#25968#25454
-      TabOrder = 14
+      TabOrder = 11
       OnClick = btnAddClick
       LookAndFeel.Kind = lfOffice11
     end
-    object btnRefresh: TcxButton
-      Left = 283
-      Top = 95
-      Width = 75
-      Height = 25
-      Caption = #21047#26032#20013#25991#21517
-      TabOrder = 8
-      OnClick = btnRefreshClick
-      LookAndFeel.Kind = lfOffice11
-    end
-    object btnLoadTableName: TcxButton
-      Left = 202
-      Top = 95
-      Width = 75
-      Height = 25
-      Caption = #21047#26032#34920#21517#31216
-      TabOrder = 7
-      OnClick = btnLoadTableNameClick
-      LookAndFeel.Kind = lfOffice11
-    end
     object cxButton1: TcxButton
-      Left = 91
-      Top = 228
+      Left = 253
+      Top = 193
       Width = 75
       Height = 25
       Caption = #27979#35797
-      TabOrder = 15
+      TabOrder = 12
       LookAndFeel.Kind = lfOffice11
     end
     object dMainGroup_Root: TdxLayoutGroup
@@ -237,26 +217,11 @@ object fmMain: TfmMain
             ControlOptions.ShowBorder = False
           end
         end
-        object dMainGroup3: TdxLayoutGroup
-          ShowCaption = False
-          Hidden = True
-          LayoutDirection = ldHorizontal
-          ShowBorder = False
-          object dMainItem7: TdxLayoutItem
-            Caption = #34920#26684#21517#31216
-            Control = edtTable
-            ControlOptions.ShowBorder = False
-          end
-          object dMainItem13: TdxLayoutItem
-            ShowCaption = False
-            Control = btnLoadTableName
-            ControlOptions.ShowBorder = False
-          end
-          object dMainItem8: TdxLayoutItem
-            ShowCaption = False
-            Control = btnRefresh
-            ControlOptions.ShowBorder = False
-          end
+        object dMainItem7: TdxLayoutItem
+          AutoAligns = [aaVertical]
+          Caption = #34920#26684#21517#31216
+          Control = edtTable
+          ControlOptions.ShowBorder = False
         end
       end
       object dMainGroup1: TdxLayoutGroup
@@ -285,41 +250,23 @@ object fmMain: TfmMain
         object dMainGroup8: TdxLayoutGroup
           ShowCaption = False
           Hidden = True
+          LayoutDirection = ldHorizontal
           ShowBorder = False
-          object dMainGroup5: TdxLayoutGroup
+          object dMainGroup10: TdxLayoutGroup
             ShowCaption = False
             Hidden = True
             LayoutDirection = ldHorizontal
             ShowBorder = False
-            object dMainGroup10: TdxLayoutGroup
+            object dMainItem17: TdxLayoutItem
               ShowCaption = False
-              Hidden = True
-              LayoutDirection = ldHorizontal
-              ShowBorder = False
-              object dMainItem17: TdxLayoutItem
-                ShowCaption = False
-                Control = btnImportExcel
-                ControlOptions.ShowBorder = False
-              end
-              object dMainItem1: TdxLayoutItem
-                ShowCaption = False
-                Control = btnExport
-                ControlOptions.ShowBorder = False
-              end
-            end
-            object dMainItem2: TdxLayoutItem
-              AutoAligns = [aaVertical]
-              AlignHorz = ahRight
-              ShowCaption = False
-              Control = btnProperty
+              Control = btnImportExcel
               ControlOptions.ShowBorder = False
             end
-          end
-          object dMainGroup11: TdxLayoutGroup
-            ShowCaption = False
-            Hidden = True
-            LayoutDirection = ldHorizontal
-            ShowBorder = False
+            object dMainItem1: TdxLayoutItem
+              ShowCaption = False
+              Control = btnExport
+              ControlOptions.ShowBorder = False
+            end
             object dMainItem11: TdxLayoutItem
               AutoAligns = [aaVertical]
               ShowCaption = False
@@ -331,6 +278,13 @@ object fmMain: TfmMain
               Control = cxButton1
               ControlOptions.ShowBorder = False
             end
+          end
+          object dMainItem2: TdxLayoutItem
+            AutoAligns = [aaVertical]
+            AlignHorz = ahRight
+            ShowCaption = False
+            Control = btnProperty
+            ControlOptions.ShowBorder = False
           end
         end
       end

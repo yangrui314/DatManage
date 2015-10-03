@@ -28,14 +28,12 @@ type
     dMainItem3: TdxLayoutItem;
     dMainItem6: TdxLayoutItem;
     cbSQL: TcxRadioButton;
-    dMainGroup3: TdxLayoutGroup;
     dMainGroup4: TdxLayoutGroup;
     pnlResult: TPanel;
     dMainGroup8: TdxLayoutGroup;
     dlgSave: TSaveDialog;
     MainMenu: TMainMenu;
     MenuAbout: TMenuItem;
-    dMainGroup5: TdxLayoutGroup;
     btnSelectPath: TcxButton;
     dMainItem10: TdxLayoutItem;
     dMainGroup6: TdxLayoutGroup;
@@ -58,13 +56,8 @@ type
     dMainGroup10: TdxLayoutGroup;
     dMainItem11: TdxLayoutItem;
     btnAdd: TcxButton;
-    dMainItem8: TdxLayoutItem;
-    btnRefresh: TcxButton;
-    dMainItem13: TdxLayoutItem;
-    btnLoadTableName: TcxButton;
     dMainItem9: TdxLayoutItem;
     cxButton1: TcxButton;
-    dMainGroup11: TdxLayoutGroup;
     MenuSet: TMenuItem;
     procedure FormShow(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
@@ -87,8 +80,6 @@ type
     procedure btnImportExcelClick(Sender: TObject);
     procedure btnExportClick(Sender: TObject);
     procedure btnAddClick(Sender: TObject);
-    procedure btnLoadTableNameClick(Sender: TObject);
-    procedure btnRefreshClick(Sender: TObject);
     procedure MenuSetClick(Sender: TObject);
   private
     FRootPath : String;
@@ -170,7 +161,7 @@ procedure TfmMain.LoadField(aSQL : String);
 begin
   FTable := TTable.Create(FEnvironment,aSQL,FTableName);
   FGetTable := True;
-  FResult.Update(FTable);
+  FResult.Update(FTable,Config.SelectShowWay);
 end;
 
 
@@ -220,7 +211,7 @@ begin
   FResult.Align := alClient;
   CheckState;
   FGetTable := False;
-  dMain.Height := 266;
+  dMain.Height := 248;
   ShowResult;
 end;
 
@@ -306,14 +297,12 @@ begin
   if cbTable.Checked then
   begin
     edtTable.Enabled := True;
-    btnLoadTableName.Enabled := True;
     edtSQL.Enabled := False;
     btnResult.Enabled := False;
   end
   else
   begin
     edtTable.Enabled := False;
-    btnLoadTableName.Enabled := False;
     edtSQL.Enabled := True;
     btnResult.Enabled := True;
   end;
@@ -345,7 +334,7 @@ begin
   if pnlResult.Visible = bShow then
     Exit;
   pnlResult.Visible := bShow;
-  aDefaultHeight := 286;
+  aDefaultHeight := 256;
   if bShow then
   begin
     fmMain.Height := fmMain.Height + aDefaultHeight;
@@ -493,19 +482,6 @@ begin
     Exit;
   end;
   FTable.Add(Self);
-end;
-
-procedure TfmMain.btnLoadTableNameClick(Sender: TObject);
-begin
-  inherited;
-  FRootPath := edtCreatePath.Text;
-  LoadTableName(FRootPath);
-end;
-
-procedure TfmMain.btnRefreshClick(Sender: TObject);
-begin
-  inherited;
-  FResult.Update(FTable);
 end;
 
 procedure TfmMain.MenuSetClick(Sender: TObject);

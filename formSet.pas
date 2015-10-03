@@ -6,24 +6,39 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, dxLayoutControl, cxContainer, cxEdit, cxImage, cxControls,
   ExtCtrls, Menus, cxLookAndFeelPainters, StdCtrls, cxButtons, cxLabel,
-  RzStatus,formParent, cxCheckBox;
+  RzStatus,formParent, cxCheckBox, cxRadioGroup, cxPC;
 
 type
   TfmSet = class(TParentForm)
     pnlSet: TPanel;
-    lcMainGroup_Root: TdxLayoutGroup;
+    Page: TcxPageControl;
+    SheetShow: TcxTabSheet;
+    SheetSelect: TcxTabSheet;
     lcMain: TdxLayoutControl;
-    lcMainItem3: TdxLayoutItem;
-    btnOK: TcxButton;
     cbShowName: TcxCheckBox;
-    lcMainItem1: TdxLayoutItem;
-    lcMainItem2: TdxLayoutItem;
     cbShowPath: TcxCheckBox;
+    dxLayoutGroup1: TdxLayoutGroup;
+    dxLayoutItem1: TdxLayoutItem;
+    lcMainItem2: TdxLayoutItem;
+    lcSelect: TdxLayoutControl;
+    dxLayoutGroup3: TdxLayoutGroup;
+    rbSelectCaption: TcxRadioButton;
+    lcSelectItem1: TdxLayoutItem;
+    lcSelectItem2: TdxLayoutItem;
+    rbSelectField: TcxRadioButton;
+    pnlOK: TPanel;
+    lcOK: TdxLayoutControl;
+    cxButton2: TcxButton;
+    dxLayoutGroup4: TdxLayoutGroup;
+    dxLayoutItem5: TdxLayoutItem;
+    lcSelectGroup1: TdxLayoutGroup;
     lcMainGroup1: TdxLayoutGroup;
     procedure btnOKClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure cbShowPathClick(Sender: TObject);
     procedure cbShowNameClick(Sender: TObject);
+    procedure rbSelectFieldClick(Sender: TObject);
+    procedure rbSelectCaptionClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -50,7 +65,17 @@ procedure TfmSet.FormShow(Sender: TObject);
 begin
   inherited;
   cbShowPath.Checked := Config.ShowPath;
-  cbShowName.Checked := Config.ShowName
+  cbShowName.Checked := Config.ShowName;
+  if Config.SelectShowWay = '1' then
+  begin
+    rbSelectField.Checked := True;
+    rbSelectCaption.Checked := False;  
+  end
+  else
+  begin
+    rbSelectField.Checked := False;
+    rbSelectCaption.Checked := True;    
+  end;
 end;
 
 procedure TfmSet.cbShowPathClick(Sender: TObject);
@@ -63,6 +88,18 @@ procedure TfmSet.cbShowNameClick(Sender: TObject);
 begin
   inherited;
   Config.ShowName := cbShowName.Checked;
+end;
+
+procedure TfmSet.rbSelectFieldClick(Sender: TObject);
+begin
+  inherited;
+  Config.SelectShowWay := '1';
+end;
+
+procedure TfmSet.rbSelectCaptionClick(Sender: TObject);
+begin
+  inherited;
+  Config.SelectShowWay := '2';
 end;
 
 end.

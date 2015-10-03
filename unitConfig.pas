@@ -14,6 +14,8 @@ type
     FHistorys: TList;
     FShowName : Boolean;
     FShowPath : Boolean;
+    FSelectShowWay : String;
+
     constructor Create;
     procedure InitData;
     procedure SetHistorys(aHistorys : TList);    
@@ -24,7 +26,8 @@ type
     property InitFolderPath: string read FInitFolderPath;
     property LastFolderPath: string read FLastFolderPath write FLastFolderPath;
     property ShowName: Boolean read FShowName write FShowName;
-    property ShowPath: Boolean read FShowPath write FShowPath;        
+    property ShowPath: Boolean read FShowPath write FShowPath;
+    property SelectShowWay: string read FSelectShowWay write FSelectShowWay;
     property Historys : TList read FHistorys write FHistorys;
     function GetHistoryName(aPath : String) : String;
     function GetHistoryPath(aName : String) : String;    
@@ -45,8 +48,12 @@ begin
   FHistorys := TList.Create;
   FInitFolderPath :='D:\Project\new_omni\trunk\engineering\deploy\client\'
         +'gd-n-tax(GuiZhou)\deploy(WS)\data\';
+
+  //这里初始化仅供参考。实际上没起作用。实际上会查询数据库，即第一次的时由于无数据，返回的都是''来判断值。
   FShowName := True;
   FShowPath := True;
+  //查询时，1代表查询字段，2代表查询中文名。默认是直接查询字段。
+  FSelectShowWay := '1';
 end;
 
 procedure TConfig.FreeHistorys;

@@ -20,6 +20,7 @@ type
   private
     { Private declarations }
     FTable : TTable;
+    FFieldShowWay : String;
     procedure LoadData;
     procedure ClearGridField;
     procedure ClearColumn;
@@ -28,7 +29,7 @@ type
     function GetColumnLength(DataSize : Integer): Integer;
   public
     constructor Create(AOwner: TComponent);
-    procedure Update(aTable : TTable);
+    procedure Update(aTable : TTable; aFieldShowWay : String = '1');
     procedure ExportExcel(aFilePath : String);
   end;
 
@@ -119,7 +120,7 @@ begin
     begin
       if FTable.TableFieldVisibleArray[I] then
       begin
-        if FTable.TableFieldCaptionArray[I] ='' then
+        if FFieldShowWay = '1'  then
         begin
           AddColumn(GetColumnLength(FTable.TableFieldSizeArray[I]),FTable.TableFieldNameArray[I],FTable.TableFieldSQLTypeArray[I]);
         end
@@ -175,9 +176,10 @@ begin
   end;
 end;
 
-procedure TShowResultFrame.Update(aTable : TTable);
+procedure TShowResultFrame.Update(aTable : TTable ; aFieldShowWay : String = '1');
 begin
   FTable := aTable;
+  FFieldShowWay := aFieldShowWay;
   LoadData;
 end;
 

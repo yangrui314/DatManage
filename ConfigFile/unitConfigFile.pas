@@ -61,6 +61,7 @@ begin
   Config.LastFolderPath := GetSystemConfigValue('LastFolderPath');
   Config.ShowName := (GetSystemConfigValue('ShowName') = '1');
   Config.ShowPath := (GetSystemConfigValue('ShowPath') = '1');
+  Config.SelectShowWay := GetSystemConfigValue('SelectShowWay');
   aHistorys := LoadHistorys;
   Config.Historys := aHistorys;
 end;
@@ -70,6 +71,7 @@ begin
   SaveSystemConfig('LastFolderPath',Config.LastFolderPath);
   SaveSystemConfigToBoolean('ShowName',Config.ShowName);
   SaveSystemConfigToBoolean('ShowPath',Config.ShowPath);
+  SaveSystemConfig('SelectShowWay',Config.SelectShowWay);
 end;
 
 procedure TConfigFile.SaveSystemConfigToBoolean(aName : String;aValue : Boolean);
