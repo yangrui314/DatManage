@@ -17,13 +17,9 @@ type
     FConfig : TConfig;
     FConfigPath : String;
     procedure InitData; virtual;
-
-    function LoadLastFolderPath : String; virtual;abstract;
-    procedure SaveLastFolderPath(aPath : String); virtual;abstract;
-    function LoadShowName : Boolean; virtual;abstract;
-    procedure SaveShowName(aValue : Boolean); virtual;abstract;
-    function LoadShowPath : Boolean; virtual;abstract;
-    procedure SaveShowPath(aValue : Boolean); virtual;abstract;
+    function GetSystemConfigValue(aName : String) : String; virtual;abstract;
+    procedure SaveSystemConfig(aName : String;aValue : String); virtual;abstract;
+    procedure SaveSystemConfigToBoolean(aName : String;aValue : Boolean);virtual;
 
     function LoadHistorys : TList; virtual;abstract;
   public
@@ -62,19 +58,32 @@ procedure TConfigFile.LoadFile;
 var
   aHistorys : TList;
 begin
-  Config.LastFolderPath := LoadLastFolderPath;
-  Config.ShowName := LoadShowName;
-  Config.ShowPath := LoadShowPath;
+  Config.LastFolderPath := GetSystemConfigValue('LastFolderPath');
+  Config.ShowName := (GetSystemConfigValue('ShowName') = '1');
+  Config.ShowPath := (GetSystemConfigValue('ShowPath') = '1');
   aHistorys := LoadHistorys;
   Config.Historys := aHistorys;
 end;
 
 procedure TConfigFile.SaveFile;
 begin                            
-  SaveLastFolderPath(Config.LastFolderPath);
-  SaveShowName(Config.ShowName);
-  SaveShowPath(Config.ShowPath);
+  SaveSystemConfig('LastFolderPath',Config.LastFolderPath);
+  SaveSystemConfigToBoolean('ShowName',Config.ShowName);
+  SaveSystemConfigToBoolean('ShowPath',Config.ShowPath);
 end;
+
+procedure TConfigFile.SaveSystemConfigToBoolean(aName : String;aValue : Boolean);
+begin
+  if aValue then
+  begin
+    SaveSystemConfig(aName,'1');
+  end
+  else
+  begin
+    SaveSystemConfig(aName,'0');  
+  end;
+end;
+
 
 destructor TConfigFile.Destroy; 
 begin
