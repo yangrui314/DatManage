@@ -124,7 +124,7 @@ object fmMain: TfmMain
       Top = 126
       Width = 889
       Height = 99
-      ActivePage = SheetSQL
+      ActivePage = SheetTable
       HideTabs = True
       ParentShowHint = False
       ShowHint = False
@@ -156,11 +156,11 @@ object fmMain: TfmMain
             Top = 37
             Align = alClient
             TabOrder = 1
-            Height = 40
-            Width = 726
+            Height = 31
+            Width = 386
           end
           object btnCondition: TcxButton
-            Left = 795
+            Left = 455
             Top = 37
             Width = 75
             Height = 25
@@ -184,11 +184,14 @@ object fmMain: TfmMain
               LayoutDirection = ldHorizontal
               ShowBorder = False
               object lcTableItem2: TdxLayoutItem
+                AutoAligns = [aaVertical]
+                AlignHorz = ahClient
                 Caption = #26465#20214#65306
                 Control = edtCondition
                 ControlOptions.ShowBorder = False
               end
               object lcTableItem3: TdxLayoutItem
+                AutoAligns = [aaVertical]
                 Caption = 'cxButton2'
                 ShowCaption = False
                 Control = btnCondition
@@ -384,6 +387,17 @@ object fmMain: TfmMain
     object MenuSet: TMenuItem
       Caption = #35774#32622
       OnClick = MenuSetClick
+    end
+    object MenuSupply: TMenuItem
+      Caption = #36741#21161#39033
+      object N1: TMenuItem
+        Caption = #25171#24320#30446#24405
+        OnClick = N1Click
+      end
+      object N2: TMenuItem
+        Caption = #25171#24320#34920
+        OnClick = N2Click
+      end
     end
   end
 end

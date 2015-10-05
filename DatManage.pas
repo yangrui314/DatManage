@@ -12,7 +12,7 @@ uses
   cxDBVGrid, cxInplaceContainer,unitEnvironment,frameShowResult, dxLayoutControl,
   cxDropDownEdit, cxRadioGroup,unitTable, Menus,
   cxLookAndFeelPainters, cxButtons,cxGridExportLink,unitConfigFile,unitConfigDat,formParent,
-  cxPC;
+  cxPC,ShellAPI;
 
 type
   TfmMain = class(TParentForm)
@@ -68,6 +68,9 @@ type
     edtCondition: TcxMemo;
     btnCondition: TcxButton;
     lcTableItem3: TdxLayoutItem;
+    MenuSupply: TMenuItem;
+    N1: TMenuItem;
+    N2: TMenuItem;
     lcTableGroup1: TdxLayoutGroup;
     procedure FormShow(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
@@ -92,6 +95,8 @@ type
       var Error: Boolean);
     procedure btnResultClick(Sender: TObject);
     procedure btnConditionClick(Sender: TObject);
+    procedure N1Click(Sender: TObject);
+    procedure N2Click(Sender: TObject);
   private
     FRootPath : String;
     FTableName : String;
@@ -518,6 +523,45 @@ procedure TfmMain.btnConditionClick(Sender: TObject);
 begin
   inherited;
   WorkRun;
+end;
+
+procedure TfmMain.N1Click(Sender: TObject);
+var
+  aDatPath : String;
+begin
+  inherited;
+  if (cbSQL.Checked) or (edtTable.Text = '') then
+  begin
+    //打开目录
+    ShellExecute(Handle,'open','Explorer.exe',PChar(FRootPath),nil,1);
+  end
+  else
+  begin
+    //打开目录并定位。
+    if RightStr(FRootPath, 1) = '\'
+    then aDatPath := FRootPath
+    else aDatPath := FRootPath  + '\';
+    aDatPath := aDatPath + edtTable.EditValue + '.dat';
+    ShellExecute(0, nil, PChar('explorer.exe'),PChar('/e, ' + '/select,' + aDatPath), nil, SW_NORMAL);  
+  end;
+end;
+
+procedure TfmMain.N2Click(Sender: TObject);
+var
+  aDatPath : String;
+begin
+  inherited;
+  //打开表
+  if (cbSQL.Checked) or (edtTable.Text = '') then
+  begin
+    ShowMessage('未选择表或SQL查询模式。');
+    Exit;
+  end;
+  if RightStr(FRootPath, 1) = '\'
+  then aDatPath := FRootPath
+  else aDatPath := FRootPath  + '\';
+  aDatPath := aDatPath + edtTable.EditValue + '.dat';
+  ShellExecute(Handle,'open','Explorer.exe',PChar(aDatPath),nil,1);
 end;
 
 end.
