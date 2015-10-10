@@ -30,7 +30,7 @@ object fmSet: TfmSet
       Top = 1
       Width = 272
       Height = 137
-      ActivePage = SheetSelect
+      ActivePage = SheetShow
       Align = alClient
       TabOrder = 0
       ClientRectBottom = 137
@@ -110,6 +110,7 @@ object fmSet: TfmSet
             Caption = #20013#25991#21517
             TabOrder = 1
             OnClick = rbSelectCaptionClick
+            Transparent = True
           end
           object rbSelectField: TcxRadioButton
             Left = 22
@@ -119,6 +120,7 @@ object fmSet: TfmSet
             Caption = #23383#27573
             TabOrder = 0
             OnClick = rbSelectFieldClick
+            Transparent = True
           end
           object dxLayoutGroup3: TdxLayoutGroup
             AutoAligns = [aaVertical]

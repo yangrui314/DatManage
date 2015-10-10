@@ -26,12 +26,14 @@ uses
   formParent in 'Parent\formParent.pas' {ParentForm},
   unitHistory in 'unitHistory.pas',
   formSavePath in 'formSavePath.pas' {fmSavePath},
-  formSet in 'formSet.pas' {fmSet};
+  formSet in 'formSet.pas' {fmSet},
+  formSVN in 'formSVN.pas' {fmSVN};
 
 {$R *.res}
 
 begin
   Application.Initialize;
   Application.CreateForm(TfmMain, fmMain);
+  Application.CreateForm(TfmSVN, fmSVN);
   Application.Run;
 end.

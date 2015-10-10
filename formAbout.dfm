@@ -342,6 +342,7 @@ object fmAbout: TfmAbout
           00030000E000000000070000F0000000000F0000FFFFFFFFFFFF0000FFFFFFFF
           FFFF0000}
         TabOrder = 0
+        Transparent = True
         Height = 55
         Width = 55
       end
@@ -357,6 +358,7 @@ object fmAbout: TfmAbout
         Style.Font.Name = 'MS Sans Serif'
         Style.Font.Style = []
         Style.IsFontAssigned = True
+        Transparent = True
       end
       object btnOK: TcxButton
         Left = 131
@@ -371,6 +373,7 @@ object fmAbout: TfmAbout
         Left = 63
         Top = 71
         Caption = '1.0'
+        Transparent = True
       end
       object lcMainGroup_Root: TdxLayoutGroup
         AutoAligns = [aaVertical]

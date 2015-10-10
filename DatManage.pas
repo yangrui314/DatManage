@@ -4,15 +4,14 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, DB, dbisamtb, cxControls, cxContainer, cxEdit,
-  cxTextEdit, cxMaskEdit, cxButtonEdit, cxStyles, cxCustomData, cxGraphics,
-  cxFilter, cxData, cxDataStorage, cxDBData, cxGridLevel, cxClasses,
-  cxGridCustomView, cxGridCustomTableView, cxGridTableView,
-  cxGridDBTableView, cxGrid, cxCheckBox, ExtCtrls, cxMemo, cxVGrid,
-  cxDBVGrid, cxInplaceContainer,unitEnvironment,frameShowResult, dxLayoutControl,
-  cxDropDownEdit, cxRadioGroup,unitTable, Menus,
-  cxLookAndFeelPainters, cxButtons,cxGridExportLink,unitConfigFile,unitConfigDat,formParent,
-  cxPC,ShellAPI;
+  Dialogs, StdCtrls, DB, dbisamtb, cxControls, cxContainer, cxEdit, cxTextEdit,
+  cxMaskEdit, cxButtonEdit, cxStyles, cxCustomData, cxGraphics, cxFilter, cxData,
+  cxDataStorage, cxDBData, cxGridLevel, cxClasses, cxGridCustomView,
+  cxGridCustomTableView, cxGridTableView, cxGridDBTableView, cxGrid, cxCheckBox,
+  ExtCtrls, cxMemo, cxVGrid, cxDBVGrid, cxInplaceContainer, unitEnvironment,
+  frameShowResult, dxLayoutControl, cxDropDownEdit, cxRadioGroup, unitTable,
+  Menus, cxLookAndFeelPainters, cxButtons, cxGridExportLink, unitConfigFile,
+  unitConfigDat, formParent, cxPC, ShellAPI, WinSkinData, dxBar,formSVN;
 
 type
   TfmMain = class(TParentForm)
@@ -53,68 +52,71 @@ type
     SheetSQL: TcxTabSheet;
     lcTableGroup_Root: TdxLayoutGroup;
     lcTable: TdxLayoutControl;
-    lcSQL: TdxLayoutControl;
-    dxLayoutGroup1: TdxLayoutGroup;
     lcTableItem1: TdxLayoutItem;
     edtTable: TcxComboBox;
-    lcSQLItem1: TdxLayoutItem;
-    edtSQL: TcxMemo;
-    lcSQLItem2: TdxLayoutItem;
-    btnResult: TcxButton;
     dMainGroup2: TdxLayoutGroup;
     dMainGroup5: TdxLayoutGroup;
     dMainGroup4: TdxLayoutGroup;
     lcTableItem2: TdxLayoutItem;
     edtCondition: TcxMemo;
-    btnCondition: TcxButton;
-    lcTableItem3: TdxLayoutItem;
     MenuSupply: TMenuItem;
     N1: TMenuItem;
     N2: TMenuItem;
-    lcTableGroup1: TdxLayoutGroup;
+    SkinData: TSkinData;
+    BarManager: TdxBarManager;
+    BarManagerBar1: TdxBar;
+    dockChange: TdxBarDockControl;
+    dMainItem5: TdxLayoutItem;
+    btnResult1: TdxBarButton;
+    edtSQL: TcxMemo;
+    N3: TMenuItem;
+    N4: TMenuItem;
+    MenuSVN: TMenuItem;
+    N6: TMenuItem;
     procedure FormShow(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure cbTableClick(Sender: TObject);
     procedure cbSQLClick(Sender: TObject);
     procedure MenuAboutClick(Sender: TObject);
     procedure btnSelectPathClick(Sender: TObject);
-    procedure edtCreatePathPropertiesValidate(Sender: TObject;
-      var DisplayValue: Variant; var ErrorText: TCaption;
-      var Error: Boolean);
-    procedure edtPathNamePropertiesValidate(Sender: TObject;
-      var DisplayValue: Variant; var ErrorText: TCaption;
-      var Error: Boolean);
+    procedure edtCreatePathPropertiesValidate(Sender: TObject; var DisplayValue: Variant; var ErrorText: TCaption; var Error: Boolean);
+    procedure edtPathNamePropertiesValidate(Sender: TObject; var DisplayValue: Variant; var ErrorText: TCaption; var Error: Boolean);
     procedure btnSavePathClick(Sender: TObject);
     procedure btnPropertyClick(Sender: TObject);
     procedure btnImportExcelClick(Sender: TObject);
     procedure btnExportClick(Sender: TObject);
     procedure btnAddClick(Sender: TObject);
     procedure MenuSetClick(Sender: TObject);
-    procedure cxComboBox1PropertiesValidate(Sender: TObject;
-      var DisplayValue: Variant; var ErrorText: TCaption;
-      var Error: Boolean);
+    procedure cxComboBox1PropertiesValidate(Sender: TObject; var DisplayValue: Variant; var ErrorText: TCaption; var Error: Boolean);
     procedure btnResultClick(Sender: TObject);
     procedure btnConditionClick(Sender: TObject);
     procedure N1Click(Sender: TObject);
     procedure N2Click(Sender: TObject);
+    procedure btnResult1Click(Sender: TObject);
+    procedure N4Click(Sender: TObject);
+    procedure MenuSVNClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure N3Click(Sender: TObject);
+    procedure N6Click(Sender: TObject);
   private
-    FRootPath : String;
-    FTableName : String;
-    FEnvironment : TEnvironment;
-    FResult : TShowResultFrame;
-    FTable : TTable;
-    FGetTable : Boolean;
-    FConfigFile : TConfigFile;
-    procedure LoadTableName(const sPath : String);
-    procedure AddTable(const aTableName: String);
-    procedure LoadField(aSQL : String);
+    FRootPath: string;
+    FTableName: string;
+    FEnvironment: TEnvironment;
+    FResult: TShowResultFrame;
+    FTable: TTable;
+    FGetTable: Boolean;
+    FConfigFile: TConfigFile;
+    FSVN : TfmSVN;
+    procedure LoadTableName(const sPath: string);
+    procedure AddTable(const aTableName: string);
+    procedure LoadField(aSQL: string);
     procedure WorkRun;
-    function GetSQL : String;
-    function SelectFile(aExt : String) : String;
-    function SaveFile: String;    
+    function GetSQL: string;
+    function SelectFile(aExt: string): string;
+    function SaveFile: string;
     procedure CheckState;
-    procedure ShowResult(bShow : Boolean);overload;
-    procedure ShowResult;overload;
+    procedure ShowResult(bShow: Boolean); overload;
+    procedure ShowResult; overload;
     procedure LoadConfig;
   public
     { Public declarations }
@@ -128,12 +130,11 @@ implementation
 {$R *.dfm}
 
 uses
-   FileCtrl,StrUtils,unitStandardHandle,formTableProperty,unitExcelHandle,formExport,
-   formAbout,formImport,unitConfig,unitHistory,formSavePath,formSet;
+  FileCtrl, StrUtils, unitStandardHandle, formTableProperty, unitExcelHandle,
+  formExport, formAbout, formImport, unitConfig, unitHistory, formSavePath,
+  formSet;
 
-
-
-function TfmMain.GetSQL : String;
+function TfmMain.GetSQL: string;
 begin
   if cbTable.Checked then
   begin
@@ -146,77 +147,73 @@ begin
       Result := 'select * from ' + FTableName;
       if edtCondition.Text <> '' then
       begin
-        Result := Result + ' where ' + edtCondition.EditValue;
+        Result := Result + ' where ' + edtCondition.Text;
       end;
     end;
   end
   else
   begin
     FTableName := '';
-    if edtSQL.SelText = ''
-    then Result  := edtSQL.Text
-    else Result := edtSQL.SelText;
+    if edtSQL.SelText = '' then
+      Result := edtSQL.Text
+    else
+      Result := edtSQL.SelText;
   end;
 end;
 
 procedure TfmMain.WorkRun;
 var
-  aSQL : String;
+  aSQL: string;
 begin
   try
     aSQL := GetSQL;
-    if aSQL = '' then Exit;
+    if aSQL = '' then
+      Exit;
     LoadField(aSQL);
     ShowResult;
   except
-  on E: Exception do
-    showmessage('异常类名称:' + E.ClassName
-      + #13#10 + '异常信息:' + E.Message);
+    on E: Exception do
+      showmessage('异常类名称:' + E.ClassName + #13#10 + '异常信息:' + E.Message);
   end;
 end;
 
-
-
-procedure TfmMain.LoadField(aSQL : String);
+procedure TfmMain.LoadField(aSQL: string);
 begin
-  FTable := TTable.Create(FEnvironment,aSQL,FTableName);
+  FTable := TTable.Create(FEnvironment, aSQL, FTableName);
   FGetTable := True;
-  FResult.Update(FTable,Config.SelectShowWay);
+  FResult.Update(FTable, Config.SelectShowWay);
 end;
 
-
-
-procedure TfmMain.LoadTableName(const sPath : String);
+procedure TfmMain.LoadTableName(const sPath: string);
 var
-  SearchRec:TSearchRec;
-  Found:Integer;
-  NewName : String;
-  TablePath : String;
+  SearchRec: TSearchRec;
+  Found: Integer;
+  NewName: string;
+  TablePath: string;
 begin
 
-  if RightStr(sPath, 1) = '\'
-  then TablePath := sPath
-  else TablePath := sPath  + '\';
+  if RightStr(sPath, 1) = '\' then
+    TablePath := sPath
+  else
+    TablePath := sPath + '\';
 
-  Found:=FindFirst(TablePath+'*.*',faAnyFile,SearchRec);
+  Found := FindFirst(TablePath + '*.*', faAnyFile, SearchRec);
   while Found = 0 do
   begin
-    if (SearchRec.Name <>'.')  and (SearchRec.Name<>'..')
-         and    (SearchRec.Attr <> faDirectory) and ( (ExtractFileExt(SearchRec.Name) = '.dat')) then
+    if (SearchRec.Name <> '.') and (SearchRec.Name <> '..') and (SearchRec.Attr <> faDirectory) and ((ExtractFileExt(SearchRec.Name) = '.dat')) then
     begin
-     AddTable(ChangeFileExt(SearchRec.Name,''));
+      AddTable(ChangeFileExt(SearchRec.Name, ''));
     end;
-    found:=FindNext(SearchRec);
+    found := FindNext(SearchRec);
   end;
   FindClose(SearchRec);
 end;
 
-procedure TfmMain.AddTable(const aTableName: String);
+procedure TfmMain.AddTable(const aTableName: string);
 begin
   edtTable.Properties.Items.Add(aTableName);
 //  if edtTable.Text = '' then edtTable.Text := aTableName;
 end;
-
 
 procedure TfmMain.FormShow(Sender: TObject);
 begin
@@ -224,8 +221,8 @@ begin
   LoadConfig;
   edtCreatePath.Text := FRootPath;
   LoadTableName(FRootPath);
-  FEnvironment := TEnvironment.Create(Self,FRootPath);
-  FTable := TTable.Create(FEnvironment,'','');
+  FEnvironment := TEnvironment.Create(Self, FRootPath);
+  FTable := TTable.Create(FEnvironment, '', '');
   FResult := TShowResultFrame.Create(Self);
   FResult.Parent := pnlResult;
   FResult.Align := alClient;
@@ -235,19 +232,18 @@ begin
   ShowResult;
 end;
 
-
 procedure TfmMain.LoadConfig;
 var
-  I : Integer;
-  aTest : String;
+  I: Integer;
+  aTest: string;
 begin
   FConfigFile := TConfigDat.Create;
 //  edtPathName.Properties.Items.Add('最后一条记录');
 //  edtCreatePath.Properties.Items.Add(Config.LastFolderPath);
 //  edtPathName.EditValue := '最后一条记录';
-
   FRootPath := Config.LastFolderPath;
-  if FRootPath = '' then FRootPath := Config.InitFolderPath;
+  if FRootPath = '' then
+    FRootPath := Config.InitFolderPath;
 
   for I := 0 to Config.Historys.Count - 1 do
   begin
@@ -257,7 +253,6 @@ begin
 
   edtPathName.EditValue := Config.GetHistoryName(FRootPath);
 
-
   dMainItem4.Visible := Config.ShowName;
   dMainItem15.Visible := Config.ShowName;
 
@@ -265,39 +260,38 @@ begin
   dMainItem10.Visible := Config.ShowPath;
 end;
 
-
-function TfmMain.SelectFile(aExt : String) : String;
+function TfmMain.SelectFile(aExt: string): string;
 var
-  I : Integer;
+  I: Integer;
 begin
   Result := '';
-  dlgOpen.Filter := '相关文档('+aExt +')|'+'*.' + aExt;
+  dlgOpen.Filter := '相关文档(' + aExt + ')|' + '*.' + aExt;
   if dlgOpen.Execute then
   begin
-    for I := 0 to dlgOpen.Files.Count-1 do
+    for I := 0 to dlgOpen.Files.Count - 1 do
     begin
       Result := dlgOpen.Files.Strings[I];
     end;
   end;
 end;
 
-function TfmMain.SaveFile: String;
+function TfmMain.SaveFile: string;
 var
-  I : Integer;
+  I: Integer;
 begin
   Result := '';
   if dlgSave.Execute then
   begin
-    for I := 0 to dlgSave.Files.Count-1 do
+    for I := 0 to dlgSave.Files.Count - 1 do
     begin
       Result := dlgSave.Files.Strings[I];
     end;
   end;
 end;
 
-
 procedure TfmMain.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
+  FSVN.Free;
   Config.LastFolderPath := FRootPath;
   FConfigFile.Destroy;
   FTable.Destroy;
@@ -323,7 +317,6 @@ begin
   end;
 end;
 
-
 procedure TfmMain.cbTableClick(Sender: TObject);
 begin
   CheckState;
@@ -339,12 +332,11 @@ begin
   ShowResult(FGetTable);
 end;
 
-
-procedure TfmMain.ShowResult(bShow : Boolean);
+procedure TfmMain.ShowResult(bShow: Boolean);
 var
-  aScrHeight : Integer;
-  aResultHeight : Integer;
-  aDefaultHeight : Integer;
+  aScrHeight: Integer;
+  aResultHeight: Integer;
+  aDefaultHeight: Integer;
 begin
   if pnlResult.Visible = bShow then
     Exit;
@@ -363,7 +355,7 @@ end;
 
 procedure TfmMain.MenuAboutClick(Sender: TObject);
 var
-  aAbout : TfmAbout;
+  aAbout: TfmAbout;
 begin
   aAbout := TfmAbout.Create(Self);
   try
@@ -375,24 +367,24 @@ end;
 
 procedure TfmMain.btnSelectPathClick(Sender: TObject);
 var
-  DirectoryPath : String;
+  DirectoryPath: string;
 begin
-if SelectDirectory('请指定文件夹','',DirectoryPath) then
-begin
-  if RightStr(DirectoryPath, 1) = '\'
-  then edtCreatePath.Text := DirectoryPath
-  else edtCreatePath.Text := DirectoryPath  + '\';
+  if SelectDirectory('请指定文件夹', '', DirectoryPath) then
+  begin
+    if RightStr(DirectoryPath, 1) = '\' then
+      edtCreatePath.Text := DirectoryPath
+    else
+      edtCreatePath.Text := DirectoryPath + '\';
 
-  edtPathName.EditValue :='';
+    edtPathName.EditValue := '';
 
-  FRootPath := edtCreatePath.Text;
-  LoadTableName(FRootPath);
-  FEnvironment.SetRootPath(FRootPath);
+    FRootPath := edtCreatePath.Text;
+    LoadTableName(FRootPath);
+    FEnvironment.SetRootPath(FRootPath);
+  end;
 end;
-end;
 
-procedure TfmMain.edtCreatePathPropertiesValidate(Sender: TObject;
-  var DisplayValue: Variant; var ErrorText: TCaption; var Error: Boolean);
+procedure TfmMain.edtCreatePathPropertiesValidate(Sender: TObject; var DisplayValue: Variant; var ErrorText: TCaption; var Error: Boolean);
 begin
   inherited;
   edtPathName.EditValue := Config.GetHistoryName(DisplayValue);
@@ -401,35 +393,35 @@ begin
   FEnvironment.SetRootPath(FRootPath);
 end;
 
-procedure TfmMain.edtPathNamePropertiesValidate(Sender: TObject;
-  var DisplayValue: Variant; var ErrorText: TCaption; var Error: Boolean);
+procedure TfmMain.edtPathNamePropertiesValidate(Sender: TObject; var DisplayValue: Variant; var ErrorText: TCaption; var Error: Boolean);
 begin
   inherited;
   edtCreatePath.EditValue := Config.GetHistoryPath(DisplayValue);
   FRootPath := edtCreatePath.EditValue;
   LoadTableName(FRootPath);
-  FEnvironment.SetRootPath(FRootPath);  
+  FEnvironment.SetRootPath(FRootPath);
 end;
 
 procedure TfmMain.btnSavePathClick(Sender: TObject);
 var
-  fmSavePath : TfmSavePath;
-  aName : String;
-  aPath : String;
+  fmSavePath: TfmSavePath;
+  aName: string;
+  aPath: string;
 begin
   aName := edtPathName.EditValue;
   aPath := edtCreatePath.EditValue;
-  fmSavePath := TfmSavePath.Create(Self,aName,aPath);
+  fmSavePath := TfmSavePath.Create(Self, aName, aPath);
   try
     if fmSavePath.ShowModal = mrOk then
-       FConfigFile.SaveHistory(fmSavePath.PathName,fmSavePath.Path);
+      FConfigFile.SaveHistory(fmSavePath.PathName, fmSavePath.Path);
   finally
     fmSavePath.Free;
   end;
 end;
+
 procedure TfmMain.btnPropertyClick(Sender: TObject);
 var
-  fmTableProperty : TfmTableProperty;
+  fmTableProperty: TfmTableProperty;
 begin
   if not FGetTable then
   begin
@@ -437,7 +429,7 @@ begin
     Exit;
   end;
 
-  fmTableProperty := TfmTableProperty.Create(Self,FTable);
+  fmTableProperty := TfmTableProperty.Create(Self, FTable);
   with fmTableProperty do
   try
     ShowModal;
@@ -448,7 +440,7 @@ end;
 
 procedure TfmMain.btnImportExcelClick(Sender: TObject);
 var
-  fmImport : TfmImport;
+  fmImport: TfmImport;
 begin
   if not FGetTable then
   begin
@@ -456,7 +448,7 @@ begin
     Exit;
   end;
 
-  fmImport := TfmImport.Create(self,FTable);
+  fmImport := TfmImport.Create(self, FTable);
   try
     fmImport.ShowModal;
   finally
@@ -466,7 +458,7 @@ end;
 
 procedure TfmMain.btnExportClick(Sender: TObject);
 var
-  fmExport : TfmExport;
+  fmExport: TfmExport;
 begin
   if not FGetTable then
   begin
@@ -474,7 +466,7 @@ begin
     Exit;
   end;
 
-  fmExport := TfmExport.Create(self,FTable);
+  fmExport := TfmExport.Create(self, FTable);
   try
     fmExport.ShowModal;
   finally
@@ -495,7 +487,7 @@ end;
 
 procedure TfmMain.MenuSetClick(Sender: TObject);
 var
-  aSet : TfmSet;
+  aSet: TfmSet;
 begin
   aSet := TfmSet.Create(Self);
   try
@@ -505,8 +497,7 @@ begin
   end;
 end;
 
-procedure TfmMain.cxComboBox1PropertiesValidate(Sender: TObject;
-  var DisplayValue: Variant; var ErrorText: TCaption; var Error: Boolean);
+procedure TfmMain.cxComboBox1PropertiesValidate(Sender: TObject; var DisplayValue: Variant; var ErrorText: TCaption; var Error: Boolean);
 begin
   inherited;
   FTableName := DisplayValue;
@@ -527,28 +518,29 @@ end;
 
 procedure TfmMain.N1Click(Sender: TObject);
 var
-  aDatPath : String;
+  aDatPath: string;
 begin
   inherited;
   if (cbSQL.Checked) or (edtTable.Text = '') then
   begin
     //打开目录
-    ShellExecute(Handle,'open','Explorer.exe',PChar(FRootPath),nil,1);
+    ShellExecute(Handle, 'open', 'Explorer.exe', PChar(FRootPath), nil, 1);
   end
   else
   begin
     //打开目录并定位。
-    if RightStr(FRootPath, 1) = '\'
-    then aDatPath := FRootPath
-    else aDatPath := FRootPath  + '\';
+    if RightStr(FRootPath, 1) = '\' then
+      aDatPath := FRootPath
+    else
+      aDatPath := FRootPath + '\';
     aDatPath := aDatPath + edtTable.EditValue + '.dat';
-    ShellExecute(0, nil, PChar('explorer.exe'),PChar('/e, ' + '/select,' + aDatPath), nil, SW_NORMAL);  
+    ShellExecute(0, nil, PChar('explorer.exe'), PChar('/e, ' + '/select,' + aDatPath), nil, SW_NORMAL);
   end;
 end;
 
 procedure TfmMain.N2Click(Sender: TObject);
 var
-  aDatPath : String;
+  aDatPath: string;
 begin
   inherited;
   //打开表
@@ -557,11 +549,72 @@ begin
     ShowMessage('未选择表或SQL查询模式。');
     Exit;
   end;
-  if RightStr(FRootPath, 1) = '\'
-  then aDatPath := FRootPath
-  else aDatPath := FRootPath  + '\';
+  if RightStr(FRootPath, 1) = '\' then
+    aDatPath := FRootPath
+  else
+    aDatPath := FRootPath + '\';
   aDatPath := aDatPath + edtTable.EditValue + '.dat';
-  ShellExecute(Handle,'open','Explorer.exe',PChar(aDatPath),nil,1);
+  ShellExecute(Handle, 'open', 'Explorer.exe', PChar(aDatPath), nil, 1);
+end;
+
+procedure TfmMain.btnResult1Click(Sender: TObject);
+begin
+  inherited;
+  WorkRun;
+end;
+
+procedure TfmMain.N4Click(Sender: TObject);
+begin
+  inherited;
+  ShellExecute(Handle, 'open', 'Explorer.exe', PChar(ExtractFileDir(ParamStr(0)) + '\Config'), nil, 1);
+end;
+
+procedure TfmMain.MenuSVNClick(Sender: TObject);
+var
+  aSVN: TfmSVN;
+begin
+  aSvn := TfmSVN.Create(Self);
+  try
+    if not aSVN.CheckSvnIsExist then
+    begin
+      ShowMessage('未安装SVN,无法使用该功能。');
+      Exit;
+    end;
+    aSvn.ShowModal;
+  finally
+    aSvn.Free;
+  end;
+end;
+
+procedure TfmMain.FormCreate(Sender: TObject);
+begin
+  inherited;
+  FSVN := TfmSVN.Create(Self);
+end;
+
+procedure TfmMain.N3Click(Sender: TObject);
+var
+  aDatPath : string;
+begin
+  inherited;
+  if RightStr(FRootPath, 1) = '\' then
+    aDatPath := FRootPath
+  else
+    aDatPath := FRootPath + '\';  
+  FSVN.WorkRun(aDatPath,'update');
+end;
+
+procedure TfmMain.N6Click(Sender: TObject);
+var
+  aDatPath : string;
+begin
+  inherited;
+  if RightStr(FRootPath, 1) = '\' then
+    aDatPath := FRootPath
+  else
+    aDatPath := FRootPath + '\';    
+  FSVN.WorkRun(aDatPath,'commit');
 end;
 
 end.
+
