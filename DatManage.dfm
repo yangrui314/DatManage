@@ -18,7 +18,7 @@ object fmMain: TfmMain
     Left = 0
     Top = 0
     Width = 909
-    Height = 267
+    Height = 248
     Align = alClient
     ParentBackground = True
     TabOrder = 0
@@ -26,28 +26,28 @@ object fmMain: TfmMain
     AutoContentSizes = [acsWidth, acsHeight]
     object cbTable: TcxRadioButton
       Left = 10
-      Top = 103
+      Top = 72
       Width = 113
       Height = 17
       Caption = #34920#26684
       Checked = True
-      TabOrder = 8
+      TabOrder = 4
       TabStop = True
       OnClick = cbTableClick
       Transparent = True
     end
     object cbSQL: TcxRadioButton
       Left = 129
-      Top = 103
+      Top = 72
       Width = 113
       Height = 17
       Caption = 'SQL'#26597#35810
-      TabOrder = 9
+      TabOrder = 5
       OnClick = cbSQLClick
       Transparent = True
     end
     object btnSelectPath: TcxButton
-      Left = 807
+      Left = 824
       Top = 41
       Width = 75
       Height = 25
@@ -73,7 +73,7 @@ object fmMain: TfmMain
       Width = 489
     end
     object btnSavePath: TcxButton
-      Left = 807
+      Left = 824
       Top = 10
       Width = 75
       Height = 25
@@ -82,56 +82,16 @@ object fmMain: TfmMain
       OnClick = btnSavePathClick
       LookAndFeel.Kind = lfOffice11
     end
-    object btnProperty: TcxButton
-      Left = 807
-      Top = 72
-      Width = 75
-      Height = 25
-      Caption = #34920#26684#23646#24615
-      TabOrder = 7
-      OnClick = btnPropertyClick
-      LookAndFeel.Kind = lfOffice11
-    end
-    object btnExport: TcxButton
-      Left = 91
-      Top = 72
-      Width = 75
-      Height = 25
-      Caption = #23548#20986
-      TabOrder = 5
-      OnClick = btnExportClick
-      LookAndFeel.Kind = lfOffice11
-    end
-    object btnImportExcel: TcxButton
-      Left = 10
-      Top = 72
-      Width = 75
-      Height = 25
-      Caption = #23548#20837
-      TabOrder = 4
-      OnClick = btnImportExcelClick
-      LookAndFeel.Kind = lfOffice11
-    end
-    object btnAdd: TcxButton
-      Left = 172
-      Top = 72
-      Width = 75
-      Height = 25
-      Caption = #22686#21152#25968#25454
-      TabOrder = 6
-      OnClick = btnAddClick
-      LookAndFeel.Kind = lfOffice11
-    end
     object PageSelect: TcxPageControl
       Left = 10
-      Top = 159
+      Top = 95
       Width = 889
       Height = 99
       ActivePage = SheetTable
       HideTabs = True
       ParentShowHint = False
       ShowHint = False
-      TabOrder = 11
+      TabOrder = 6
       ClientRectBottom = 99
       ClientRectRight = 889
       ClientRectTop = 0
@@ -146,6 +106,7 @@ object fmMain: TfmMain
           Align = alClient
           TabOrder = 0
           TabStop = False
+          AutoContentSizes = [acsWidth, acsHeight]
           object edtTable: TcxComboBox
             Left = 63
             Top = 10
@@ -199,7 +160,7 @@ object fmMain: TfmMain
     end
     object dockChange: TdxBarDockControl
       Left = 10
-      Top = 126
+      Top = 200
       Width = 889
       Height = 27
       Align = dalTop
@@ -253,62 +214,21 @@ object fmMain: TfmMain
         object dMainGroup2: TdxLayoutGroup
           ShowCaption = False
           Hidden = True
+          LayoutDirection = ldHorizontal
           ShowBorder = False
-          object dMainGroup4: TdxLayoutGroup
+          object dMainItem3: TdxLayoutItem
+            Caption = 'cxRadioButton1'
             ShowCaption = False
-            Hidden = True
-            LayoutDirection = ldHorizontal
-            ShowBorder = False
-            object dMainItem17: TdxLayoutItem
-              ShowCaption = False
-              Control = btnImportExcel
-              ControlOptions.ShowBorder = False
-            end
-            object dMainItem1: TdxLayoutItem
-              ShowCaption = False
-              Control = btnExport
-              ControlOptions.ShowBorder = False
-            end
-            object dMainItem11: TdxLayoutItem
-              AutoAligns = [aaVertical]
-              ShowCaption = False
-              Control = btnAdd
-              ControlOptions.ShowBorder = False
-            end
-            object dMainItem2: TdxLayoutItem
-              AutoAligns = [aaVertical]
-              AlignHorz = ahRight
-              ShowCaption = False
-              Control = btnProperty
-              ControlOptions.ShowBorder = False
-            end
+            Control = cbTable
+            ControlOptions.AutoColor = True
+            ControlOptions.ShowBorder = False
           end
-          object dMainGroup5: TdxLayoutGroup
+          object dMainItem6: TdxLayoutItem
             ShowCaption = False
-            Hidden = True
-            LayoutDirection = ldHorizontal
-            ShowBorder = False
-            object dMainItem3: TdxLayoutItem
-              Caption = 'cxRadioButton1'
-              ShowCaption = False
-              Control = cbTable
-              ControlOptions.AutoColor = True
-              ControlOptions.ShowBorder = False
-            end
-            object dMainItem6: TdxLayoutItem
-              ShowCaption = False
-              Control = cbSQL
-              ControlOptions.AutoColor = True
-              ControlOptions.ShowBorder = False
-            end
+            Control = cbSQL
+            ControlOptions.AutoColor = True
+            ControlOptions.ShowBorder = False
           end
-        end
-        object dMainItem5: TdxLayoutItem
-          Caption = 'dxBarDockControl1'
-          ShowCaption = False
-          Control = dockChange
-          ControlOptions.AutoColor = True
-          ControlOptions.ShowBorder = False
         end
         object dMainItem8: TdxLayoutItem
           Caption = #33719#21462#25968#25454#19981#21516#26041#24335
@@ -317,14 +237,21 @@ object fmMain: TfmMain
           ControlOptions.AutoColor = True
           ControlOptions.ShowBorder = False
         end
+        object dMainItem5: TdxLayoutItem
+          Caption = 'dxBarDockControl1'
+          ShowCaption = False
+          Control = dockChange
+          ControlOptions.AutoColor = True
+          ControlOptions.ShowBorder = False
+        end
       end
     end
   end
   object pnlResult: TPanel
     Left = 0
-    Top = 267
+    Top = 248
     Width = 909
-    Height = 304
+    Height = 323
     Align = alBottom
     Caption = 'pnlResult'
     ParentBackground = True
@@ -1696,7 +1623,23 @@ object fmMain: TfmMain
         item
           UserDefine = [udPaintStyle]
           Visible = True
-          ItemName = 'btnResult1'
+          ItemName = 'btnResult'
+        end
+        item
+          Visible = True
+          ItemName = 'btnImportExcel'
+        end
+        item
+          Visible = True
+          ItemName = 'btnExport'
+        end
+        item
+          Visible = True
+          ItemName = 'btnAdd'
+        end
+        item
+          Visible = True
+          ItemName = 'btnProperty'
         end>
       OneOnRow = True
       Row = 0
@@ -1704,12 +1647,40 @@ object fmMain: TfmMain
       Visible = True
       WholeRow = True
     end
-    object btnResult1: TdxBarButton
+    object btnResult: TdxBarButton
       Caption = #26597#35810
       Category = 0
       Hint = #26597#35810
       Visible = ivAlways
       OnClick = btnResult1Click
+    end
+    object btnImportExcel: TdxBarButton
+      Caption = #23548#20837
+      Category = 0
+      Hint = #23548#20837
+      Visible = ivAlways
+      OnClick = btnImportExcelClick
+    end
+    object btnExport: TdxBarButton
+      Caption = #23548#20986
+      Category = 0
+      Hint = #23548#20986
+      Visible = ivAlways
+      OnClick = btnExportClick
+    end
+    object btnAdd: TdxBarButton
+      Caption = #22686#21152#25968#25454
+      Category = 0
+      Hint = #22686#21152#25968#25454
+      Visible = ivAlways
+      OnClick = btnAddClick
+    end
+    object btnProperty: TdxBarButton
+      Caption = #34920#26684#23646#24615
+      Category = 0
+      Hint = #34920#26684#23646#24615
+      Visible = ivAlways
+      OnClick = btnPropertyClick
     end
   end
 end
