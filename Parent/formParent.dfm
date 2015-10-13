@@ -1,5 +1,5 @@
 object ParentForm: TParentForm
-  Left = 265
+  Left = 128
   Top = 160
   Width = 928
   Height = 480
