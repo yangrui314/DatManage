@@ -27,13 +27,17 @@ uses
   unitHistory in 'unitHistory.pas',
   formSavePath in 'formSavePath.pas' {fmSavePath},
   formSet in 'formSet.pas' {fmSet},
-  formSVN in 'formSVN.pas' {fmSVN};
+  formSVN in 'formSVN.pas' {fmSVN},
+  formDiff in 'formDiff.pas' {fmDiff},
+  formSelectAll in 'formSelectAll.pas' {fmSelectAll},
+  dxSkinsForm in 'dxSkinsForm.pas',
+  dxSkinOffice2007Blue in 'dxSkinOffice2007Blue.pas',
+  dxSkinsDefaultPainters in 'dxSkinsDefaultPainters.pas';
 
 {$R *.res}
 
 begin
   Application.Initialize;
   Application.CreateForm(TfmMain, fmMain);
-  Application.CreateForm(TfmSVN, fmSVN);
   Application.Run;
 end.

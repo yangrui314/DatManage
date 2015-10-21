@@ -15,50 +15,18 @@ uses
 
 type
   TfmMain = class(TParentForm)
-    dMainGroup_Root: TdxLayoutGroup;
-    dMain: TdxLayoutControl;
     dlgOpen: TOpenDialog;
-    cbTable: TcxRadioButton;
-    dMainItem3: TdxLayoutItem;
-    dMainItem6: TdxLayoutItem;
-    cbSQL: TcxRadioButton;
     pnlResult: TPanel;
     dlgSave: TSaveDialog;
     MainMenu: TMainMenu;
     MenuAbout: TMenuItem;
-    btnSelectPath: TcxButton;
-    dMainItem10: TdxLayoutItem;
-    dMainGroup6: TdxLayoutGroup;
-    edtCreatePath: TcxComboBox;
-    dMainItem14: TdxLayoutItem;
-    dMainItem4: TdxLayoutItem;
-    edtPathName: TcxComboBox;
-    dMainItem15: TdxLayoutItem;
-    btnSavePath: TcxButton;
-    dMainGroup7: TdxLayoutGroup;
     MenuSet: TMenuItem;
-    PageSelect: TcxPageControl;
-    dMainItem8: TdxLayoutItem;
-    dMainGroup3: TdxLayoutGroup;
-    SheetTable: TcxTabSheet;
-    SheetSQL: TcxTabSheet;
-    lcTableGroup_Root: TdxLayoutGroup;
-    lcTable: TdxLayoutControl;
-    lcTableItem1: TdxLayoutItem;
-    edtTable: TcxComboBox;
-    dMainGroup2: TdxLayoutGroup;
-    lcTableItem2: TdxLayoutItem;
-    edtCondition: TcxMemo;
     MenuSupply: TMenuItem;
     N1: TMenuItem;
     N2: TMenuItem;
-    SkinData: TSkinData;
     BarManager: TdxBarManager;
     BarManagerBar1: TdxBar;
-    dockChange: TdxBarDockControl;
-    dMainItem5: TdxLayoutItem;
     btnResult: TdxBarButton;
-    edtSQL: TcxMemo;
     N3: TMenuItem;
     N4: TMenuItem;
     MenuSVN: TMenuItem;
@@ -67,6 +35,46 @@ type
     btnExport: TdxBarButton;
     btnAdd: TdxBarButton;
     btnProperty: TdxBarButton;
+    MenuDiff: TMenuItem;
+    MenuSelectAll: TMenuItem;
+    pnlCondition: TPanel;
+    dMain: TdxLayoutControl;
+    cbTable: TcxRadioButton;
+    cbSQL: TcxRadioButton;
+    btnSelectPath: TcxButton;
+    edtCreatePath: TcxComboBox;
+    edtPathName: TcxComboBox;
+    btnSavePath: TcxButton;
+    PageSelect: TcxPageControl;
+    SheetTable: TcxTabSheet;
+    lcTable: TdxLayoutControl;
+    edtTable: TcxComboBox;
+    edtCondition: TcxMemo;
+    dxLayoutGroup1: TdxLayoutGroup;
+    dxLayoutItem1: TdxLayoutItem;
+    lcTableItem2: TdxLayoutItem;
+    SheetSQL: TcxTabSheet;
+    edtSQL: TcxMemo;
+    dockChange: TdxBarDockControl;
+    dxLayoutGroup2: TdxLayoutGroup;
+    dMainItem4: TdxLayoutItem;
+    dMainItem15: TdxLayoutItem;
+    dMainGroup3: TdxLayoutGroup;
+    dMainItem14: TdxLayoutItem;
+    dMainItem10: TdxLayoutItem;
+    dMainGroup2: TdxLayoutGroup;
+    dMainItem3: TdxLayoutItem;
+    dMainItem6: TdxLayoutItem;
+    dMainItem8: TdxLayoutItem;
+    dMainItem5: TdxLayoutItem;
+    dMainGroup1: TdxLayoutGroup;
+    dMainGroup4: TdxLayoutGroup;
+    btnImport: TdxBarButton;
+    lcTableItem1: TdxLayoutItem;
+    edtFieldName: TcxComboBox;
+    lcTableItem3: TdxLayoutItem;
+    edtKeyword: TcxComboBox;
+    lcTableGroup1: TdxLayoutGroup;
     procedure FormShow(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure cbTableClick(Sender: TObject);
@@ -77,7 +85,6 @@ type
     procedure edtPathNamePropertiesValidate(Sender: TObject; var DisplayValue: Variant; var ErrorText: TCaption; var Error: Boolean);
     procedure btnSavePathClick(Sender: TObject);
     procedure MenuSetClick(Sender: TObject);
-    procedure cxComboBox1PropertiesValidate(Sender: TObject; var DisplayValue: Variant; var ErrorText: TCaption; var Error: Boolean);
     procedure btnResultClick(Sender: TObject);
     procedure btnConditionClick(Sender: TObject);
     procedure N1Click(Sender: TObject);
@@ -92,7 +99,12 @@ type
     procedure btnExportClick(Sender: TObject);
     procedure btnAddClick(Sender: TObject);
     procedure btnPropertyClick(Sender: TObject);
+    procedure MenuSelectAllClick(Sender: TObject);
+    procedure edtTablePropertiesValidate(Sender: TObject;
+      var DisplayValue: Variant; var ErrorText: TCaption;
+      var Error: Boolean);
   private
+
     FRootPath: string;
     FTableName: string;
     FEnvironment: TEnvironment;
@@ -113,7 +125,7 @@ type
     procedure ShowResult; overload;
     procedure LoadConfig;
   public
-    { Public declarations }
+
   end;
 
 var
@@ -126,7 +138,7 @@ implementation
 uses
   FileCtrl, StrUtils, unitStandardHandle, formTableProperty, unitExcelHandle,
   formExport, formAbout, formImport, unitConfig, unitHistory, formSavePath,
-  formSet;
+  formSet,formSelectAll;
 
 function TfmMain.GetSQL: string;
 begin
@@ -139,9 +151,24 @@ begin
     else
     begin
       Result := 'select * from ' + FTableName;
-      if edtCondition.Text <> '' then
+      if  (edtFieldName.Text <> '') and  (edtKeyword.Text <> '') and (edtCondition.Text <> '') then
       begin
-        Result := Result + ' where ' + edtCondition.Text;
+        if edtKeyword.Text = '包含' then
+        begin
+          Result := Result + ' where ' + edtFieldName.Text + ' like ' + '''%'+  edtCondition.Text + '%''';
+        end
+        else if edtKeyword.Text = '等于' then
+        begin
+          Result := Result + ' where ' + edtFieldName.Text + ' = ' +  edtCondition.Text ;
+        end
+        else if edtKeyword.Text = '不等于' then
+        begin
+          Result := Result + ' where ' + edtFieldName.Text + ' <> ' +  edtCondition.Text ;        
+        end;
+      end;
+      if  (edtFieldName.Text = '') and  (edtKeyword.Text = '') and (edtCondition.Text <> '') then
+      begin
+        Result := Result + ' where ' + edtCondition.Text ;     
       end;
     end;
   end
@@ -172,8 +199,17 @@ begin
 end;
 
 procedure TfmMain.LoadField(aSQL: string);
+var
+  I : Integer;
 begin
   FTable := TTable.Create(FEnvironment, aSQL, FTableName);
+
+  edtFieldName.Properties.Items.Clear;
+  for I := 0 to   FTable.TableFieldCount - 1 do
+  begin
+    edtFieldName.Properties.Items.Add(FTable.TableFieldNameArray[I]);
+  end;
+
   FGetTable := True;
   FResult.Update(FTable, Config.SelectShowWay);
 end;
@@ -224,6 +260,11 @@ begin
   FGetTable := False;
   dMain.Height := 248;
   ShowResult;
+
+  edtKeyword.Properties.Items.Clear;
+  edtKeyword.Properties.Items.Add('包含');
+  edtKeyword.Properties.Items.Add('等于');
+  edtKeyword.Properties.Items.Add('不等于');  
 end;
 
 procedure TfmMain.LoadConfig;
@@ -425,13 +466,6 @@ begin
   end;
 end;
 
-procedure TfmMain.cxComboBox1PropertiesValidate(Sender: TObject; var DisplayValue: Variant; var ErrorText: TCaption; var Error: Boolean);
-begin
-  inherited;
-  FTableName := DisplayValue;
-  WorkRun;
-end;
-
 procedure TfmMain.btnResultClick(Sender: TObject);
 begin
   inherited;
@@ -608,6 +642,26 @@ begin
   finally
     Free;
   end;
+end;
+
+procedure TfmMain.MenuSelectAllClick(Sender: TObject);
+var
+  aSelect: TfmSelectAll;
+begin
+  aSelect := TfmSelectAll.Create(Self,FRootPath);
+  try
+    aSelect.ShowModal;
+  finally
+    aSelect.Free;
+  end;
+end;
+
+procedure TfmMain.edtTablePropertiesValidate(Sender: TObject;
+  var DisplayValue: Variant; var ErrorText: TCaption; var Error: Boolean);
+begin
+  inherited;
+  FTableName := DisplayValue;
+  WorkRun;
 end;
 
 end.

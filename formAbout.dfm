@@ -24,6 +24,7 @@ object fmAbout: TfmAbout
     Height = 146
     Align = alClient
     Caption = 'pnlAbout'
+    ParentBackground = True
     TabOrder = 0
     object lcMain: TdxLayoutControl
       Left = 1
@@ -31,6 +32,7 @@ object fmAbout: TfmAbout
       Width = 216
       Height = 144
       Align = alClient
+      ParentBackground = True
       TabOrder = 0
       TabStop = False
       AutoContentSizes = [acsWidth, acsHeight]

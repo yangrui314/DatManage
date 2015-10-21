@@ -66,7 +66,7 @@ var
   Test : String;
 begin
   dMain.Directory := FRootPath;
-  dMain.DatabaseName := 'OmniDatabase';
+  dMain.DatabaseName := 'OmniDatabase' + IntToStr(Random(100));
   dMain.Open;
   dMain.Session.AddPassword('YouAreNotPrepared');
   dMain.Session.AddPassword('YouAreNotPrepared');
@@ -77,7 +77,7 @@ begin
   FTableDB.DatabaseName := dMain.DatabaseName;
 
   dExecSQL.Directory := FRootPath;
-  dExecSQL.DatabaseName := 'OmniExecSQL';
+  dExecSQL.DatabaseName := 'OmniExecSQL' + IntToStr(Random(100));
   dExecSQL.Open;
   dExecSQL.Session.AddPassword('YouAreNotPrepared');
   dExecSQL.Session.AddPassword('YouAreNotPrepared');
@@ -98,7 +98,7 @@ begin
   except
     on E: Exception do
       showmessage('异常类名称:' + E.ClassName
-        + #13#10 + '异常信息:' + E.Message);
+        + #13#10 + '异常信息:' + E.Message + #13#10 +aSQL );
   end;    
 end;
 
