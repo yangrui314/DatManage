@@ -142,6 +142,7 @@ uses
 
 function TfmMain.GetSQL: string;
 begin
+  //²âÊÔGit¹¦ÄÜ¡£
   if cbTable.Checked then
   begin
     if FTableName = '' then
