@@ -1,6 +1,7 @@
 program DatManageMain;
 
 uses
+  ExceptionLog,
   Forms,
   DatManage in 'DatManage.pas' {fmMain},
   UnitFileHandle in 'FileHandle\unitFileHandle.pas',
@@ -30,9 +31,9 @@ uses
   formSVN in 'formSVN.pas' {fmSVN},
   formDiff in 'formDiff.pas' {fmDiff},
   formSelectAll in 'formSelectAll.pas' {fmSelectAll},
-  dxSkinsForm in 'dxSkinsForm.pas',
-  dxSkinOffice2007Blue in 'dxSkinOffice2007Blue.pas',
-  dxSkinsDefaultPainters in 'dxSkinsDefaultPainters.pas';
+  //解决乱码问题
+  cxTextEdit in 'thirdparty\devexpress\cxTextEdit.pas';
+
 
 {$R *.res}
 

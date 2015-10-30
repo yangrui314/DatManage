@@ -11,7 +11,8 @@ uses
   ExtCtrls, cxMemo, cxVGrid, cxDBVGrid, cxInplaceContainer, unitEnvironment,
   frameShowResult, dxLayoutControl, cxDropDownEdit, cxRadioGroup, unitTable,
   Menus, cxLookAndFeelPainters, cxButtons, cxGridExportLink, unitConfigFile,
-  unitConfigDat, formParent, cxPC, ShellAPI, WinSkinData, dxBar,formSVN;
+  unitConfigDat, formParent, cxPC, ShellAPI, WinSkinData, dxBar,formSVN,
+  cxLookAndFeels;
 
 type
   TfmMain = class(TParentForm)

@@ -11,8 +11,12 @@ object ParentForm: TParentForm
   Font.Name = 'MS Sans Serif'
   Font.Style = []
   OldCreateOrder = False
-  OnCreate = FormCreate
-  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
+  object lafMain: TcxLookAndFeelController
+    Kind = lfOffice11
+    SkinName = 'UserSkin'
+    Left = 8
+    Top = 16
+  end
 end
