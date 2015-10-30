@@ -104,6 +104,7 @@ type
     procedure edtTablePropertiesValidate(Sender: TObject;
       var DisplayValue: Variant; var ErrorText: TCaption;
       var Error: Boolean);
+    procedure MenuDiffClick(Sender: TObject);
   private
 
     FRootPath: string;
@@ -139,7 +140,7 @@ implementation
 uses
   FileCtrl, StrUtils, unitStandardHandle, formTableProperty, unitExcelHandle,
   formExport, formAbout, formImport, unitConfig, unitHistory, formSavePath,
-  formSet,formSelectAll;
+  formSet,formSelectAll,frmMain;
 
 function TfmMain.GetSQL: string;
 begin
@@ -664,6 +665,18 @@ begin
   inherited;
   FTableName := DisplayValue;
   WorkRun;
+end;
+
+procedure TfmMain.MenuDiffClick(Sender: TObject);
+var
+  aDiff: TMainForm;
+begin
+  aDiff := TMainForm.Create(Self);
+  try
+    aDiff.ShowModal;
+  finally
+    aDiff.Free;
+  end;
 end;
 
 end.

@@ -347,6 +347,7 @@ object fmMain: TfmMain
     end
     object MenuDiff: TMenuItem
       Caption = #23545#27604
+      OnClick = MenuDiffClick
     end
     object MenuSelectAll: TMenuItem
       Caption = #26597#35810#25152#26377#34920

@@ -29,10 +29,16 @@ uses
   formSavePath in 'formSavePath.pas' {fmSavePath},
   formSet in 'formSet.pas' {fmSet},
   formSVN in 'formSVN.pas' {fmSVN},
-  formDiff in 'formDiff.pas' {fmDiff},
   formSelectAll in 'formSelectAll.pas' {fmSelectAll},
   //解决乱码问题
-  cxTextEdit in 'thirdparty\devexpress\cxTextEdit.pas';
+  cxTextEdit in 'thirdparty\devexpress\cxTextEdit.pas',
+
+  //Dat对比工具 create 邓灿武
+  frmMain in 'Diff\frmMain.pas' {MainForm},
+  UnitSys in 'Diff\UnitSys.pas' {dmSys: TDataModule},
+  UnitContrast in 'Diff\UnitContrast.pas',
+  UnitShowDiff in 'Diff\UnitShowDiff.pas' {frmShowDiff};
+
 
 
 {$R *.res}
@@ -40,5 +46,6 @@ uses
 begin
   Application.Initialize;
   Application.CreateForm(TfmMain, fmMain);
+  Application.CreateForm(TdmSys, dmSys);
   Application.Run;
 end.
