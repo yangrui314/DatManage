@@ -18,7 +18,7 @@ type
 
     constructor Create;
     procedure InitData;
-    procedure SetHistorys(aHistorys : TList);    
+    procedure SetHistorys(aHistorys : TList);
     procedure FreeHistorys;
     destructor Destroy;
   protected
@@ -30,7 +30,8 @@ type
     property SelectShowWay: string read FSelectShowWay write FSelectShowWay;
     property Historys : TList read FHistorys write FHistorys;
     function GetHistoryName(aPath : String) : String;
-    function GetHistoryPath(aName : String) : String;    
+    function GetHistoryPath(aName : String) : String;
+
   end;
 
 var

@@ -1,25 +1,25 @@
 inherited fmSelectAll: TfmSelectAll
   Left = 489
   Top = 194
-  Width = 526
-  Height = 135
+  Width = 537
+  Height = 117
   Caption = 'fmSelectAll'
   Position = poDefault
   PixelsPerInch = 96
   TextHeight = 13
-  object pnlMain: TPanel
+  object pnlMain: TPanel [0]
     Left = 0
     Top = 0
-    Width = 510
-    Height = 97
+    Width = 521
+    Height = 79
     Align = alClient
     Caption = 'pnlMain'
     TabOrder = 0
     object lcMain: TdxLayoutControl
       Left = 1
       Top = 1
-      Width = 508
-      Height = 95
+      Width = 519
+      Height = 71
       Align = alClient
       TabOrder = 0
       TabStop = False
@@ -31,7 +31,7 @@ inherited fmSelectAll: TfmSelectAll
         Width = 121
       end
       object cbSelectAll: TcxButton
-        Left = 423
+        Left = 417
         Top = 37
         Width = 75
         Height = 25

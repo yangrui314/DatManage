@@ -1,7 +1,7 @@
 object fmMain: TfmMain
-  Left = 186
+  Left = 235
   Top = 124
-  Width = 925
+  Width = 876
   Height = 629
   Color = clBtnFace
   ParentFont = True
@@ -17,7 +17,7 @@ object fmMain: TfmMain
   object pnlResult: TPanel
     Left = 0
     Top = 273
-    Width = 909
+    Width = 860
     Height = 298
     Align = alClient
     Caption = 'pnlResult'
@@ -27,7 +27,7 @@ object fmMain: TfmMain
   object pnlCondition: TPanel
     Left = 0
     Top = 0
-    Width = 909
+    Width = 860
     Height = 273
     Align = alTop
     Caption = 'pnlCondition'
@@ -36,7 +36,7 @@ object fmMain: TfmMain
     object dMain: TdxLayoutControl
       Left = 1
       Top = 1
-      Width = 907
+      Width = 858
       Height = 271
       Align = alClient
       ParentBackground = True
@@ -66,7 +66,7 @@ object fmMain: TfmMain
         Transparent = True
       end
       object btnSelectPath: TcxButton
-        Left = 822
+        Left = 773
         Top = 41
         Width = 75
         Height = 25
@@ -92,7 +92,7 @@ object fmMain: TfmMain
         Width = 489
       end
       object btnSavePath: TcxButton
-        Left = 822
+        Left = 773
         Top = 10
         Width = 75
         Height = 25
@@ -353,6 +353,10 @@ object fmMain: TfmMain
       Caption = #26597#35810#25152#26377#34920
       OnClick = MenuSelectAllClick
     end
+    object MenuUpadate: TMenuItem
+      Caption = #26356#26032
+      OnClick = MenuUpadateClick
+    end
   end
   object BarManager: TdxBarManager
     Font.Charset = DEFAULT_CHARSET
@@ -455,5 +459,9 @@ object fmMain: TfmMain
       Hint = 'New Button'
       Visible = ivAlways
     end
+  end
+  object RzVersionInfo: TRzVersionInfo
+    Left = 353
+    Top = 41
   end
 end

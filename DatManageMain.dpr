@@ -30,16 +30,11 @@ uses
   formSet in 'formSet.pas' {fmSet},
   formSVN in 'formSVN.pas' {fmSVN},
   formSelectAll in 'formSelectAll.pas' {fmSelectAll},
-  //解决乱码问题
   cxTextEdit in 'thirdparty\devexpress\cxTextEdit.pas',
-
-  //Dat对比工具 create 邓灿武
   frmMain in 'Diff\frmMain.pas' {MainForm},
   UnitSys in 'Diff\UnitSys.pas' {dmSys: TDataModule},
   UnitContrast in 'Diff\UnitContrast.pas',
   UnitShowDiff in 'Diff\UnitShowDiff.pas' {frmShowDiff};
-
-
 
 {$R *.res}
 

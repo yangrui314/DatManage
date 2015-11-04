@@ -12,7 +12,7 @@ uses
   frameShowResult, dxLayoutControl, cxDropDownEdit, cxRadioGroup, unitTable,
   Menus, cxLookAndFeelPainters, cxButtons, cxGridExportLink, unitConfigFile,
   unitConfigDat, formParent, cxPC, ShellAPI, WinSkinData, dxBar,formSVN,
-  cxLookAndFeels;
+  cxLookAndFeels, RzStatus;
 
 type
   TfmMain = class(TParentForm)
@@ -76,6 +76,8 @@ type
     lcTableItem3: TdxLayoutItem;
     edtKeyword: TcxComboBox;
     lcTableGroup1: TdxLayoutGroup;
+    MenuUpadate: TMenuItem;
+    RzVersionInfo: TRzVersionInfo;
     procedure FormShow(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure cbTableClick(Sender: TObject);
@@ -105,6 +107,7 @@ type
       var DisplayValue: Variant; var ErrorText: TCaption;
       var Error: Boolean);
     procedure MenuDiffClick(Sender: TObject);
+    procedure MenuUpadateClick(Sender: TObject);
   private
 
     FRootPath: string;
@@ -126,6 +129,12 @@ type
     procedure ShowResult(bShow: Boolean); overload;
     procedure ShowResult; overload;
     procedure LoadConfig;
+    procedure StartUpgrade;
+    function NeedUpdate : Boolean;
+    function ReadNowVersion : String;
+    function ReadWebVersion: String;
+    procedure DownloadFile(aFileName : String);
+    function GetNeedUpdateToVersion(aNowVersion : string;aWebVersion : string):Boolean;
   public
 
   end;
@@ -677,6 +686,133 @@ begin
   finally
     aDiff.Free;
   end;
+end;
+
+function TfmMain.ReadNowVersion : String;
+begin
+  Result := '';
+  RzVersionInfo.FilePath := Application.ExeName;
+  Result := RzVersionInfo.FileVersion;    
+end;
+
+function TfmMain.ReadWebVersion : String;
+var
+  aConfigPath : string;
+begin
+  Result := '1.0.0.1';
+  aConfigPath := ExtractFilePath(ParamStr(0)) + 'Upgrade\' + 'Version.ini';
+end;
+
+procedure TfmMain.DownloadFile(aFileName : String);
+var
+  aSrcFilePath : string;
+  aCreateFilePath : string;
+begin
+  aSrcFilePath :=  ExtractFilePath(ParamStr(0))  + 'Web\'+ aFileName;
+  aCreateFilePath := ExtractFilePath(ParamStr(0)) + 'Upgrade\' + aFileName;
+  CopyFile((PChar(aSrcFilePath)),(PChar(aCreateFilePath)),False);        
+end;
+
+function TfmMain.GetNeedUpdateToVersion(aNowVersion : string;aWebVersion : string):Boolean;
+var
+  aNow : Integer;
+  aWeb : Integer;
+  aNowRemain,aWebRemain : string;
+  aNowNumStr,aWebNumStr : String;
+  aNowPostNum,aWebPostNum : Integer;
+  aNowNum,aWebNum : Integer;
+begin
+  Result := False;
+  aNowRemain := aNowVersion;
+  aWebRemain := aWebVersion;
+  while (aNowRemain <> '') or (aWebRemain <> '')  do
+  begin
+    if aNowRemain = '' then
+    begin
+      aNowNum := -1;
+    end
+    else if Pos('.',aNowRemain) = 0  then
+    begin
+      aNowNum := StrToInt(aNowRemain);
+      aNowRemain := '';
+    end
+    else
+    begin
+      aNowPostNum := Pos('.',aNowRemain);
+      aNowNumStr := Copy(aNowRemain,0,aNowPostNum-1);
+      aNowRemain := Copy(aNowRemain,aNowPostNum + 1,Length(aNowRemain)-aNowPostNum);
+      aNowNum :=  StrToInt(aNowNumStr);
+    end;
+
+    if aWebRemain ='' then
+    begin
+      aWebNum := -1;
+    end
+    else if Pos('.',aWebRemain) = 0  then
+    begin
+      aWebNum := StrToInt(aWebRemain);
+      aWebRemain := '';
+    end    
+    else
+    begin
+      aWebPostNum := Pos('.',aWebRemain);
+      aWebNumStr := Copy(aWebRemain,0,aWebPostNum-1);
+      aWebRemain := Copy(aWebRemain,aWebPostNum + 1,Length(aWebRemain)-aWebPostNum);
+      aWebNum :=  StrToInt(aWebNumStr);    
+    end;
+
+
+    if aNowNum < aWebNum then
+    begin
+      Result := True;
+      Exit;
+    end
+    else if aNowNum > aWebNum then
+    begin
+      Result := False;
+      Exit;    
+    end;
+  end;
+end;
+
+function TfmMain.NeedUpdate : Boolean;
+var
+  aNowVersion : string;
+  aWebVersion : string;
+begin
+  Result := False;
+  aNowVersion := ReadNowVersion;
+  DownloadFile('Version.ini');
+  aWebVersion :=  ReadWebVersion;
+  Result :=  GetNeedUpdateToVersion(aNowVersion,aWebVersion);
+end;
+
+
+procedure TfmMain.MenuUpadateClick(Sender: TObject);
+var
+  Version : string;
+  aNum : Integer;
+  aRemainVersion : string;
+  aNumStr : string;
+  i,j,k,l : Integer;
+begin
+  inherited;
+  if not NeedUpdate then
+  begin
+    ShowMessage('已是最新版本,不需要下载。');
+    Exit;
+  end;
+  DownloadFile('DatManageMain.exe');
+  StartUpgrade;
+end;
+
+procedure TfmMain.StartUpgrade;
+var
+  aExec : string;
+begin
+  aExec := ExtractFilePath(ParamStr(0)) + 'Upgrade.exe';
+  WinExec(PChar(aExec), SW_SHOWNORMAL);
+  Application.Terminate;
 end;
 
 end.

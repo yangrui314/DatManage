@@ -28,11 +28,11 @@ type
   private
     { Private declarations }
   public
-    { Public declarations }
   end;
 
 var
   fmAbout: TfmAbout;
+
 
 implementation
 
@@ -48,5 +48,6 @@ begin
   RzVersionInfo.FilePath := Application.Exename;
   lblVersion.EditValue := RzVersionInfo.FileVersion;
 end;
+
 
 end.
