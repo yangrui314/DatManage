@@ -1,8 +1,8 @@
 object ParentForm: TParentForm
-  Left = 128
-  Top = 160
-  Width = 928
-  Height = 480
+  Left = 477
+  Top = 211
+  Width = 462
+  Height = 211
   Caption = 'ParentForm'
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -17,6 +17,6 @@ object ParentForm: TParentForm
     Kind = lfOffice11
     SkinName = 'UserSkin'
     Left = 8
-    Top = 16
+    Top = 8
   end
 end

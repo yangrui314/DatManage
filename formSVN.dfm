@@ -6,7 +6,7 @@ inherited fmSVN: TfmSVN
   Caption = 'formSVN'
   PixelsPerInch = 96
   TextHeight = 13
-  object pnlMain: TPanel
+  object pnlMain: TPanel [0]
     Left = 0
     Top = 0
     Width = 369

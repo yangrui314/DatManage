@@ -6,7 +6,7 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, formParent, dxLayoutControl, cxControls, ExtCtrls, cxGraphics,
   Menus, cxLookAndFeelPainters, StdCtrls, cxButtons, cxContainer, cxEdit,
-  cxTextEdit, cxMaskEdit, cxDropDownEdit;
+  cxTextEdit, cxMaskEdit, cxDropDownEdit, cxLookAndFeels;
 
 type
   TfmSVN = class(TParentForm)

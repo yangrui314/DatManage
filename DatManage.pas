@@ -12,7 +12,7 @@ uses
   frameShowResult, dxLayoutControl, cxDropDownEdit, cxRadioGroup, unitTable,
   Menus, cxLookAndFeelPainters, cxButtons, cxGridExportLink, unitConfigFile,
   unitConfigDat, formParent, cxPC, ShellAPI, WinSkinData, dxBar,formSVN,
-  cxLookAndFeels, RzStatus;
+  cxLookAndFeels, RzStatus,formUpgradeProgress,unitDownLoadFile, cxLabel;
 
 type
   TfmMain = class(TParentForm)
@@ -78,6 +78,9 @@ type
     lcTableGroup1: TdxLayoutGroup;
     MenuUpadate: TMenuItem;
     RzVersionInfo: TRzVersionInfo;
+    lblState: TcxLabel;
+    dMainItem1: TdxLayoutItem;
+    dMainGroup6: TdxLayoutGroup;
     procedure FormShow(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure cbTableClick(Sender: TObject);
@@ -118,6 +121,8 @@ type
     FGetTable: Boolean;
     FConfigFile: TConfigFile;
     FSVN : TfmSVN;
+    FPatchVersion : String;
+    FNowVersion : string;
     procedure LoadTableName(const sPath: string);
     procedure AddTable(const aTableName: string);
     procedure LoadField(aSQL: string);
@@ -133,8 +138,11 @@ type
     function NeedUpdate : Boolean;
     function ReadNowVersion : String;
     function ReadWebVersion: String;
-    procedure DownloadFile(aFileName : String);
+    procedure DownloadFile(aURL : string;aFileName : String;aShowProgress : Boolean = True);
     function GetNeedUpdateToVersion(aNowVersion : string;aWebVersion : string):Boolean;
+    procedure CreateNew;
+    procedure MergeNew;
+    procedure CreateBat;
   public
 
   end;
@@ -144,16 +152,21 @@ var
 
 implementation
 
-{$R *.dfm}
-
 uses
   FileCtrl, StrUtils, unitStandardHandle, formTableProperty, unitExcelHandle,
   formExport, formAbout, formImport, unitConfig, unitHistory, formSavePath,
   formSet,formSelectAll,frmMain;
 
+const
+  VERSION_URL = 'http://sz-btfs.yun.ftn.qq.com/ftn_handler/2b9f99e1565690cd424cf4a2cc2ff3ad4da93155f7ea9365baf46d09c876a3d1/?fname=Version.ini&from=30111&version=2.0.0.2&uin=190200649';
+  UPGRADE_URL = 'http://sz-btfs.yun.ftn.qq.com/ftn_handler/3b301df756b88a0b720798d077c605b69eeda0113c9dc0cc8624625e70dd80d2/?fname=Upgrade.zip&from=30111&version=2.0.0.2&uin=190200649';
+
+
+{$R *.dfm}
+
+
 function TfmMain.GetSQL: string;
 begin
-  //测试Git功能。
   if cbTable.Checked then
   begin
     if FTableName = '' then
@@ -691,27 +704,87 @@ end;
 function TfmMain.ReadNowVersion : String;
 begin
   Result := '';
+  FNowVersion := '';
   RzVersionInfo.FilePath := Application.ExeName;
-  Result := RzVersionInfo.FileVersion;    
+  FNowVersion := RzVersionInfo.FileVersion;
+  Result := RzVersionInfo.FileVersion;
 end;
 
 function TfmMain.ReadWebVersion : String;
 var
   aConfigPath : string;
+  I : Integer;
+  aReadConfig : TStandardHandle;
+  aStr : string;
+  aNum : Integer;
 begin
-  Result := '1.0.0.1';
+  Result := '';
+  FPatchVersion := '';
   aConfigPath := ExtractFilePath(ParamStr(0)) + 'Upgrade\' + 'Version.ini';
+  if not FileExists(aConfigPath) then
+  begin
+    Exit;
+  end;
+  aReadConfig := TStandardHandle.Create;
+  try
+    aReadConfig.ReadFile(aConfigPath);
+    for I := 0 to aReadConfig.FileData.Count - 1 do
+    begin
+      aStr := aReadConfig.FileData[I];
+      if Pos('Patch',aStr) <> 0 then
+      begin
+        aNum := Pos('=',aStr);
+        aStr := Copy(aStr,aNum + 1,Length(aStr)-aNum);
+        FPatchVersion := aStr;
+      end;
+
+      if Pos('Version',aStr) <> 0 then
+      begin
+        aNum := Pos('=',aStr);
+        aStr := Copy(aStr,aNum + 1,Length(aStr)-aNum);
+        Result := aStr;
+        Exit;
+      end;
+    end;
+  finally
+    aReadConfig.Free;
+  end;
 end;
 
-procedure TfmMain.DownloadFile(aFileName : String);
+
+procedure TfmMain.DownloadFile(aURL : string;aFileName : String;aShowProgress : Boolean = True);
 var
   aSrcFilePath : string;
   aCreateFilePath : string;
+  aProgress :  TfmUpgradeProgress;
+  aSavePath : string;
+  aDownLoad : TDownLoadFile;
 begin
-  aSrcFilePath :=  ExtractFilePath(ParamStr(0))  + 'Web\'+ aFileName;
-  aCreateFilePath := ExtractFilePath(ParamStr(0)) + 'Upgrade\' + aFileName;
-  CopyFile((PChar(aSrcFilePath)),(PChar(aCreateFilePath)),False);        
+  lblState.Caption := '下载数据...';
+  aSavePath := ExtractFilePath(ParamStr(0)) + 'Upgrade\';
+
+  if aShowProgress then
+  begin
+    aProgress := TfmUpgradeProgress.Create(Self,aURL,aSavePath + aFileName);
+    try
+    aProgress.ShowModal;
+    finally
+      aProgress.Free;
+    end;  
+  end
+  else
+  begin
+    aDownLoad := TDownLoadFile.Create(Self,aURL,aSavePath + aFileName);
+    try
+    finally
+      aDownLoad.Free;
+    end;
+  end;
+  lblState.Caption := '状态...';
 end;
+
+
+
 
 function TfmMain.GetNeedUpdateToVersion(aNowVersion : string;aWebVersion : string):Boolean;
 var
@@ -782,7 +855,7 @@ var
 begin
   Result := False;
   aNowVersion := ReadNowVersion;
-  DownloadFile('Version.ini');
+  DownloadFile(VERSION_URL,'Version.ini',False);
   aWebVersion :=  ReadWebVersion;
   Result :=  GetNeedUpdateToVersion(aNowVersion,aWebVersion);
 end;
@@ -795,15 +868,68 @@ var
   aRemainVersion : string;
   aNumStr : string;
   i,j,k,l : Integer;
+  aPath : string;
+  FUsePatch : Boolean;
 begin
   inherited;
+  FUsePatch := False;
   if not NeedUpdate then
   begin
     ShowMessage('已是最新版本,不需要下载。');
     Exit;
   end;
-  DownloadFile('DatManageMain.exe');
+  aPath := ExtractFilePath(ParamStr(0))  + 'Patch\';
+  if (FPatchVersion = FNowVersion) and FileExists(aPath + 'xdelta.exe') and FUsePatch then
+  begin
+    DownloadFile('','Patch.xdt');
+    CreateNew;
+  end
+  else
+  begin
+    DownloadFile(UPGRADE_URL,'Upgrade.zip');
+  end;
   StartUpgrade;
+end;
+
+procedure TfmMain.CreateNew;
+var
+  aPatchPath : string;
+  aUpgradePath : string;
+  aName : string;
+begin
+  aPatchPath := ExtractFilePath(ParamStr(0))  + 'Patch\';
+  aUpgradePath := ExtractFilePath(ParamStr(0)) + 'Upgrade\';
+  CopyFile((PChar(aUpgradePath + 'Patch.xdt')),(PChar(aPatchPath + 'Patch.xdt')),False);
+  aName := ExtractFileName(ParamStr(0));
+  CopyFile((PChar(ParamStr(0))),(PChar(aPatchPath + 'Old.exe')),False);
+  MergeNew;
+  CopyFile((PChar(aPatchPath + 'New.exe')),(PChar(aUpgradePath + aName )),False);
+end;
+
+procedure TfmMain.MergeNew;
+var
+  aBat : String;
+begin
+  CreateBat;
+  aBat := ExtractFilePath(ParamStr(0))  + 'Patch\' + 'Patch.bat';
+  winexec(pchar(aBat), SW_HIDE);
+end;
+
+
+procedure TfmMain.CreateBat;
+var
+  aBatText : string;
+  aFile : TStandardHandle;
+  aPath : String;  
+begin
+  aPath := ExtractFilePath(ParamStr(0))  + 'Patch\';
+  aBatText := aPath + 'xdelta.exe' + ' patch ' +  aPath+'Patch.xdt '+ aPath + 'Old.exe '+ aPath +'New.exe';
+  aFile := TStandardHandle.Create;
+  try
+    aFile.SaveFile(ExtractFilePath(ParamStr(0))  + 'Patch\' + 'Patch.bat',aBatText);
+  finally
+    aFile.Free;
+  end;
 end;
 
 procedure TfmMain.StartUpgrade;

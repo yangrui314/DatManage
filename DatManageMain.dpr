@@ -1,7 +1,6 @@
 program DatManageMain;
 
 uses
-  ExceptionLog,
   Forms,
   DatManage in 'DatManage.pas' {fmMain},
   UnitFileHandle in 'FileHandle\unitFileHandle.pas',
@@ -34,7 +33,9 @@ uses
   frmMain in 'Diff\frmMain.pas' {MainForm},
   UnitSys in 'Diff\UnitSys.pas' {dmSys: TDataModule},
   UnitContrast in 'Diff\UnitContrast.pas',
-  UnitShowDiff in 'Diff\UnitShowDiff.pas' {frmShowDiff};
+  UnitShowDiff in 'Diff\UnitShowDiff.pas' {frmShowDiff},
+  formUpgradeProgress in 'formUpgradeProgress.pas' {fmUpgradeProgress},
+  unitDownLoadFile in 'unitDownLoadFile.pas';
 
 {$R *.res}
 
