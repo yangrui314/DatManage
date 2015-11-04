@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, cxLookAndFeels;
+  Dialogs,dxSkinsForm, cxLookAndFeels;
 
 type
   TParentForm = class(TForm)
