@@ -175,7 +175,7 @@ begin
     end
     else
     begin
-      Result := 'select * from ' + FTableName;
+      Result := 'select RecordID,* from ' + FTableName;
       if  (edtFieldName.Text <> '') and  (edtKeyword.Text <> '') and (edtCondition.Text <> '') then
       begin
         if edtKeyword.Text = '°üº¬' then

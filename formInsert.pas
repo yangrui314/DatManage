@@ -177,7 +177,7 @@ begin
 
         if FEditMode = emUpdate  then row.Properties.Value := FTable.TableData.FieldByName(aFieldName).AsString;
       end;
-      if (FEditMode = emUpdate) and  (aFieldName = FTable.TableKeyField) then
+      if (FEditMode = emUpdate) and  FTable.IsKeyNameAccordValue(aFieldName) then
       begin
         row.Properties.EditProperties.ReadOnly := True;
         FKeyValue :=  GetValue(row.Properties.Value,FTable.TableFieldDataTypeArray[I])
@@ -277,6 +277,7 @@ begin
 
   aPrefixSQL := 'update ' + FTable.TableName + ' set ' + aTotal;
   aPostfixSQL := ' where  ' + FTable.TableKeyField + ' = ' + FKeyValue;
+
 
 
   aSQL := aPrefixSQL + aPostfixSQL;
