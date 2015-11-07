@@ -6,7 +6,7 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, formParent, dxLayoutControl, cxContainer, cxEdit, cxTextEdit,
   cxControls, ExtCtrls, Menus, cxLookAndFeelPainters, StdCtrls, cxButtons,unitEnvironment,
-  unitTable,DB, cxLookAndFeels;
+  unitTable,DB, cxLookAndFeels, cxMemo;
 
 type
   TfmSelectAll = class(TParentForm)
@@ -17,6 +17,8 @@ type
     lcMainItem1: TdxLayoutItem;
     cbSelectAll: TcxButton;
     lcMainItem2: TdxLayoutItem;
+    edtMessage: TcxMemo;
+    lcMainItem3: TdxLayoutItem;
     procedure cbSelectAllClick(Sender: TObject);
   private
     FPath : string;
@@ -50,6 +52,8 @@ constructor TfmSelectAll.Create(AOwner: TComponent;const aPath : String);
 begin
   inherited Create(AOwner);
   FPath := aPath;
+  Height := 215;
+  Width := 300;
   FTableList :=  TStringList.Create;
   FEnvironment := TEnvironment.Create(AOwner, FPath);
   FTableField := TTable.Create(FEnvironment, '', '');
@@ -109,12 +113,23 @@ function TfmSelectAll.GetResult : String;
 var
   I : Integer;
   aTableName : String;
+  aStr : string;
 begin
   Result := '';
   for I := 0 to FTableList.Count - 1 do
   begin
     aTableName := FTableList[I];
-    Result := Result + SingleTableSelect(aTableName);
+    if Result = '' then
+    begin
+      Result :=  SingleTableSelect(aTableName);
+    end
+    else
+    begin
+      aStr := SingleTableSelect(aTableName);
+      if aStr <> '' then
+      Result := Result  + #13#10 + SingleTableSelect(aTableName);
+    end;
+
   end;
 
 end;
@@ -124,6 +139,7 @@ function TfmSelectAll.SingleTableSelect(const aTableName : String) : String;
 var
   I : Integer;
   aSQL : string;
+  aStr : string;
 begin
   Result := '';
   try
@@ -133,13 +149,21 @@ begin
   for I := 0 to   FTableField.TableFieldCount - 1 do
   begin
     if (FTableField.TableFieldDataTypeArray[I]  <> ftString) then Continue;
-    aSQL := 'select * from ' + aTableName + ' where ' + FTableField.TableFieldNameArray[I] + ' like '
+    aStr := FTableField.HandleSpecialStr(FTableField.TableFieldNameArray[I]);
+    aSQL := 'select * from ' + aTableName + ' where ' + aStr + ' like '
            + ''''  + '%'  + edtSelectStr.EditValue + '%' + '''' ;
     FTableSQL := TTable.Create(FEnvironment, aSQL, aTableName);
     if FTableSQL.ContainData then
     begin
-      Result := Result +#13#10 + '±í'+aTableName +':'+  FTableField.TableFieldNameArray[I] +';';
-    end;       
+      if Result = '' then
+      begin
+        Result := '±í'+aTableName +':'+  FTableField.TableFieldNameArray[I] +';';
+      end
+      else
+      begin
+        Result := Result +#13#10 + '±í'+aTableName +':'+  FTableField.TableFieldNameArray[I] +';';
+      end;
+    end;
 
   end;
   except
@@ -154,7 +178,7 @@ var
 begin
   inherited;
   aMessage := GetResult;
-  ShowMessage(aMessage);
+  edtMessage.Text := aMessage;
 end;
 
 end.

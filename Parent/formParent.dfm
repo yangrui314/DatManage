@@ -1,8 +1,8 @@
 object ParentForm: TParentForm
   Left = 477
   Top = 211
-  Width = 462
-  Height = 211
+  Width = 406
+  Height = 260
   Caption = 'ParentForm'
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET

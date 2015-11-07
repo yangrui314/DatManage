@@ -1,8 +1,8 @@
 inherited fmSelectAll: TfmSelectAll
-  Left = 489
-  Top = 194
-  Width = 537
-  Height = 117
+  Left = 400
+  Top = 318
+  Width = 348
+  Height = 215
   Caption = 'fmSelectAll'
   Position = poDefault
   PixelsPerInch = 96
@@ -10,16 +10,16 @@ inherited fmSelectAll: TfmSelectAll
   object pnlMain: TPanel [0]
     Left = 0
     Top = 0
-    Width = 521
-    Height = 79
+    Width = 332
+    Height = 177
     Align = alClient
     Caption = 'pnlMain'
     TabOrder = 0
     object lcMain: TdxLayoutControl
       Left = 1
       Top = 1
-      Width = 519
-      Height = 71
+      Width = 330
+      Height = 175
       Align = alClient
       TabOrder = 0
       TabStop = False
@@ -31,13 +31,20 @@ inherited fmSelectAll: TfmSelectAll
         Width = 121
       end
       object cbSelectAll: TcxButton
-        Left = 417
+        Left = 245
         Top = 37
         Width = 75
         Height = 25
         Caption = #26597#25214
         TabOrder = 1
         OnClick = cbSelectAllClick
+      end
+      object edtMessage: TcxMemo
+        Left = 75
+        Top = 68
+        TabOrder = 2
+        Height = 89
+        Width = 185
       end
       object lcMainGroup_Root: TdxLayoutGroup
         ShowCaption = False
@@ -54,6 +61,11 @@ inherited fmSelectAll: TfmSelectAll
           Caption = 'cxButton1'
           ShowCaption = False
           Control = cbSelectAll
+          ControlOptions.ShowBorder = False
+        end
+        object lcMainItem3: TdxLayoutItem
+          Caption = #26597#35810#32467#26524#65306
+          Control = edtMessage
           ControlOptions.ShowBorder = False
         end
       end
