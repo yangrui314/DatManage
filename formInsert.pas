@@ -33,6 +33,7 @@ type
     FUpdateField : TStringList;
     FUpdateValue : TStringList;
     FKeyValue : String;
+    FKeyConditon : string;
     procedure InitData;
     function GetValue(aName : String;aType :TFieldType) : String; overload;
     function GetValue(aValue: Variant;aType :TFieldType) : String; overload;
@@ -84,6 +85,7 @@ var
   aNotEmpty : Boolean;
   aFieldName : String;
 begin
+  FKeyConditon := '';
   gridInsert.BeginUpdate;
 
   try
@@ -180,7 +182,16 @@ begin
       if (FEditMode = emUpdate) and  FTable.IsKeyNameAccordValue(aFieldName) then
       begin
         row.Properties.EditProperties.ReadOnly := True;
-        FKeyValue :=  GetValue(row.Properties.Value,FTable.TableFieldDataTypeArray[I])
+        FKeyValue :=  GetValue(row.Properties.Value,FTable.TableFieldDataTypeArray[I]);
+        if FKeyConditon = '' then
+        begin
+          FKeyConditon :=  FTable.HandleSpecialStr(aFieldName) + ' = ' + FKeyValue;
+        end
+        else
+        begin
+          FKeyConditon := FKeyConditon + ' and ' + FTable.HandleSpecialStr(aFieldName) + ' = ' + FKeyValue;
+        end;
+
       end;
     end;
 
@@ -203,8 +214,8 @@ begin
   for I:=0 to  FTable.TableFieldCount - 1 do
   begin
     if aField = ''
-    then aField := aField + FTable.TableFieldNameArray[I]
-    else aField := aField + ',' + FTable.TableFieldNameArray[I];
+    then aField := aField + FTable.HandleSpecialStr(FTable.TableFieldNameArray[I])
+    else aField := aField + ',' + FTable.HandleSpecialStr(FTable.TableFieldNameArray[I]);
     aType := FTable.TableFieldDataTypeArray[I];
     if aValue = ''
     then aValue := aValue + GetValue(FTable.TableFieldNameArray[I],aType)
@@ -271,12 +282,12 @@ begin
   for I:=0 to  FUpdateField.Count - 1 do
   begin
     if aTotal =''
-    then aTotal := aTotal + FUpdateField[I] + ' = '  + FUpdateValue[I]
-    else aTotal := aTotal + ',' + FUpdateField[I] + ' = '  + FUpdateValue[I];;
+    then aTotal := aTotal + FTable.HandleSpecialStr(FUpdateField[I]) + ' = '  + FUpdateValue[I]
+    else aTotal := aTotal + ',' + FTable.HandleSpecialStr(FUpdateField[I])  + ' = '  + FUpdateValue[I];;
   end;
 
   aPrefixSQL := 'update ' + FTable.TableName + ' set ' + aTotal;
-  aPostfixSQL := ' where  ' + FTable.TableKeyField + ' = ' + FKeyValue;
+  aPostfixSQL := ' where  ' + FKeyConditon + ';';
 
 
 

@@ -61,7 +61,8 @@ type
     function ConvertString(aValue : Variant;aType :TFieldType):String;
     function GetOrderID(aName : String) : Integer;
     function IsKeyNameAccordValue(aFieldName : String) : Boolean;
-
+    function HandleSpecialStr(aFieldName : String) : String;
+    function IsSpecial(aStr : String) : Boolean;
     procedure  SaveFile(aFilePath : String;aData : String);
 
     property TableField: TStringList read FField write FField;
@@ -388,16 +389,42 @@ end;
 function TTable.IsKeyNameAccordValue(aFieldName : String) : Boolean;
 begin
   Result := False;
-  if FKeyField =  'RecordID' then
+  if Pos(';',FKeyField) <> 0 then
   begin
-    Result := (aFieldName ='RecordID_1');
+    Result := (Pos(aFieldName,FKeyField) <> 0);
   end
   else
   begin
-    Result := (aFieldName = FKeyField)
+    if FKeyField =  'RecordID' then
+    begin
+      Result := (aFieldName ='RecordID_1');
+    end
+    else
+    begin
+      Result := (aFieldName = FKeyField)
+    end;
   end;
 end;
 
+
+function TTable.HandleSpecialStr(aFieldName : String) : String;
+begin
+  if IsSpecial(aFieldName) then
+  begin
+    Result :=   '['+ aFieldName + ']';
+  end
+  else
+  begin
+    Result :=  aFieldName;
+  end;
+end;
+
+
+function TTable.IsSpecial(aStr : String) : Boolean;
+begin
+  Result := False;
+  Result := (aStr = 'Sign');
+end;
 
 procedure TTable.SaveTableEnvironment;
 var

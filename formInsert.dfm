@@ -1,8 +1,8 @@
 object fmInsert: TfmInsert
   Left = 265
   Top = 160
-  Width = 928
-  Height = 479
+  Width = 675
+  Height = 439
   Caption = 'fmInsert'
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -17,15 +17,15 @@ object fmInsert: TfmInsert
   object gridInsert: TcxVerticalGrid
     Left = 0
     Top = 0
-    Width = 912
-    Height = 392
+    Width = 659
+    Height = 352
     Align = alClient
     TabOrder = 0
   end
   object pnlButton: TPanel
     Left = 0
-    Top = 392
-    Width = 912
+    Top = 352
+    Width = 659
     Height = 49
     Align = alBottom
     Caption = 'pnlButton'
@@ -33,13 +33,14 @@ object fmInsert: TfmInsert
     object lcButton: TdxLayoutControl
       Left = 1
       Top = 1
-      Width = 910
+      Width = 657
       Height = 47
       Align = alClient
       TabOrder = 0
       TabStop = False
+      AutoContentSizes = [acsWidth, acsHeight]
       object btnOk: TcxButton
-        Left = 10
+        Left = 491
         Top = 10
         Width = 75
         Height = 25
@@ -48,7 +49,7 @@ object fmInsert: TfmInsert
         OnClick = btnOkClick
       end
       object btnCancel: TcxButton
-        Left = 91
+        Left = 572
         Top = 10
         Width = 75
         Height = 25

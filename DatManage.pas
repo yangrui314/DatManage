@@ -78,9 +78,6 @@ type
     lcTableGroup1: TdxLayoutGroup;
     MenuUpadate: TMenuItem;
     RzVersionInfo: TRzVersionInfo;
-    lblState: TcxLabel;
-    dMainItem1: TdxLayoutItem;
-    dMainGroup6: TdxLayoutGroup;
     procedure FormShow(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure cbTableClick(Sender: TObject);
@@ -180,15 +177,15 @@ begin
       begin
         if edtKeyword.Text = '包含' then
         begin
-          Result := Result + ' where ' + edtFieldName.Text + ' like ' + '''%'+  edtCondition.Text + '%''';
+          Result := Result + ' where ' + FTable.HandleSpecialStr(edtFieldName.Text) + ' like ' + '''%'+  edtCondition.Text + '%''';
         end
         else if edtKeyword.Text = '等于' then
         begin
-          Result := Result + ' where ' + edtFieldName.Text + ' = ' +  edtCondition.Text ;
+          Result := Result + ' where ' + FTable.HandleSpecialStr(edtFieldName.Text)  + ' = ' +  edtCondition.Text ;
         end
         else if edtKeyword.Text = '不等于' then
         begin
-          Result := Result + ' where ' + edtFieldName.Text + ' <> ' +  edtCondition.Text ;        
+          Result := Result + ' where ' + FTable.HandleSpecialStr(edtFieldName.Text) + ' <> ' +  edtCondition.Text ;
         end;
       end;
       if  (edtFieldName.Text = '') and  (edtKeyword.Text = '') and (edtCondition.Text <> '') then
@@ -760,7 +757,7 @@ var
   aSavePath : string;
   aDownLoad : TDownLoadFile;
 begin
-  lblState.Caption := '下载数据...';
+//  lblState.Caption := '下载数据...';
   aSavePath := ExtractFilePath(ParamStr(0)) + 'Upgrade\';
 
   if aShowProgress then
@@ -780,7 +777,7 @@ begin
       aDownLoad.Free;
     end;
   end;
-  lblState.Caption := '状态...';
+//  lblState.Caption := '状态...';
 end;
 
 

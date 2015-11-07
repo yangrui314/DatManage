@@ -45,72 +45,72 @@ object fmMain: TfmMain
       AutoContentSizes = [acsWidth, acsHeight]
       object cbTable: TcxRadioButton
         Left = 10
-        Top = 95
+        Top = 72
         Width = 113
         Height = 17
         Caption = #34920#26684
         Checked = True
-        TabOrder = 5
+        TabOrder = 4
         TabStop = True
         OnClick = cbTableClick
         Transparent = True
       end
       object cbSQL: TcxRadioButton
         Left = 129
-        Top = 95
+        Top = 72
         Width = 113
         Height = 17
         Caption = 'SQL'#26597#35810
-        TabOrder = 6
+        TabOrder = 5
         OnClick = cbSQLClick
         Transparent = True
       end
       object btnSelectPath: TcxButton
         Left = 773
-        Top = 64
+        Top = 41
         Width = 75
         Height = 25
         Caption = #36873#25321
-        TabOrder = 4
+        TabOrder = 3
         OnClick = btnSelectPathClick
         LookAndFeel.Kind = lfOffice11
       end
       object edtCreatePath: TcxComboBox
         Left = 75
-        Top = 64
+        Top = 41
         Properties.ImmediatePost = True
         Properties.OnValidate = edtCreatePathPropertiesValidate
-        TabOrder = 3
+        TabOrder = 2
         Width = 121
       end
       object edtPathName: TcxComboBox
         Left = 75
-        Top = 33
+        Top = 10
         Properties.ImmediatePost = True
         Properties.OnValidate = edtPathNamePropertiesValidate
-        TabOrder = 1
+        TabOrder = 0
         Width = 489
       end
       object btnSavePath: TcxButton
         Left = 773
-        Top = 33
+        Top = 10
         Width = 75
         Height = 25
         Caption = #20445#23384#36335#24452
-        TabOrder = 2
+        TabOrder = 1
         OnClick = btnSavePathClick
         LookAndFeel.Kind = lfOffice11
       end
       object PageSelect: TcxPageControl
         Left = 10
-        Top = 118
+        Top = 95
         Width = 887
         Height = 120
         ActivePage = SheetTable
         HideTabs = True
         ParentShowHint = False
         ShowHint = False
-        TabOrder = 7
+        TabOrder = 6
         ClientRectBottom = 120
         ClientRectRight = 887
         ClientRectTop = 0
@@ -211,16 +211,11 @@ object fmMain: TfmMain
       end
       object dockChange: TdxBarDockControl
         Left = 10
-        Top = 244
+        Top = 221
         Width = 887
         Height = 27
         Align = dalNone
         BarManager = BarManager
-      end
-      object lblState: TcxLabel
-        Left = 820
-        Top = 10
-        Caption = #29366#24577
       end
       object dxLayoutGroup2: TdxLayoutGroup
         ShowCaption = False
@@ -233,32 +228,19 @@ object fmMain: TfmMain
           object dMainGroup4: TdxLayoutGroup
             ShowCaption = False
             Hidden = True
+            LayoutDirection = ldHorizontal
             ShowBorder = False
-            object dMainItem1: TdxLayoutItem
+            object dMainItem4: TdxLayoutItem
               AutoAligns = [aaVertical]
-              AlignHorz = ahRight
-              Caption = 'cxLabel1'
-              ShowCaption = False
-              Control = lblState
+              AlignHorz = ahClient
+              Caption = #36335#24452#21517#31216#65306
+              Control = edtPathName
               ControlOptions.ShowBorder = False
             end
-            object dMainGroup6: TdxLayoutGroup
+            object dMainItem15: TdxLayoutItem
               ShowCaption = False
-              Hidden = True
-              LayoutDirection = ldHorizontal
-              ShowBorder = False
-              object dMainItem4: TdxLayoutItem
-                AutoAligns = [aaVertical]
-                AlignHorz = ahClient
-                Caption = #36335#24452#21517#31216#65306
-                Control = edtPathName
-                ControlOptions.ShowBorder = False
-              end
-              object dMainItem15: TdxLayoutItem
-                ShowCaption = False
-                Control = btnSavePath
-                ControlOptions.ShowBorder = False
-              end
+              Control = btnSavePath
+              ControlOptions.ShowBorder = False
             end
           end
           object dMainGroup1: TdxLayoutGroup
