@@ -131,6 +131,7 @@ object fmMain: TfmMain
               Left = 75
               Top = 10
               Properties.ImmediatePost = True
+              Properties.OnChange = edtTablePropertiesChange
               Properties.OnValidate = edtTablePropertiesValidate
               TabOrder = 0
               Width = 200
@@ -407,6 +408,10 @@ object fmMain: TfmMain
         end
         item
           Visible = True
+          ItemName = 'btnDelete'
+        end
+        item
+          Visible = True
           ItemName = 'btnProperty'
         end>
       OneOnRow = True
@@ -455,6 +460,19 @@ object fmMain: TfmMain
       Category = 0
       Hint = 'New Button'
       Visible = ivAlways
+    end
+    object dxBarSubItem1: TdxBarSubItem
+      Caption = 'New SubItem'
+      Category = 0
+      Visible = ivAlways
+      ItemLinks = <>
+    end
+    object btnDelete: TdxBarButton
+      Caption = #21024#38500#25968#25454
+      Category = 0
+      Hint = #21024#38500#25968#25454
+      Visible = ivAlways
+      OnClick = btnDeleteClick
     end
   end
   object RzVersionInfo: TRzVersionInfo

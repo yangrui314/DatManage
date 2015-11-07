@@ -31,6 +31,7 @@ type
     constructor Create(AOwner: TComponent);
     procedure Update(aTable : TTable; aFieldShowWay : String = '1');
     procedure ExportExcel(aFilePath : String);
+    procedure DeleteRow;
   end;
 
 implementation
@@ -214,6 +215,27 @@ begin
   with fmInsert do
   try
     ShowModal;
+  finally
+    Free;
+  end;
+end;
+
+
+procedure TShowResultFrame.DeleteRow;
+var
+  fmInsert : TfmInsert;
+  aRow : Integer;
+begin
+  aRow := dgField.Controller.FocusedRowIndex;
+  if Application.MessageBox(Pchar('您确定删除这条数据吗？'), '警告', MB_ICONQUESTION or MB_OKCANCEL) <> IDOK then
+  begin
+    Exit;
+  end;
+
+  fmInsert := TfmInsert.Create(Self,FTable,emDelete,aRow);
+  with fmInsert do
+  try
+    DeleteRow;
   finally
     Free;
   end;

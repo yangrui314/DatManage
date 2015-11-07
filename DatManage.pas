@@ -77,6 +77,8 @@ type
     edtCondition: TcxTextEdit;
     lcTableItem4: TdxLayoutItem;
     lcTableGroup2: TdxLayoutGroup;
+    dxBarSubItem1: TdxBarSubItem;
+    btnDelete: TdxBarButton;
     procedure FormShow(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure cbTableClick(Sender: TObject);
@@ -107,6 +109,8 @@ type
       var Error: Boolean);
     procedure MenuDiffClick(Sender: TObject);
     procedure MenuUpadateClick(Sender: TObject);
+    procedure edtTablePropertiesChange(Sender: TObject);
+    procedure btnDeleteClick(Sender: TObject);
   private
 
     FRootPath: string;
@@ -120,6 +124,7 @@ type
     FPatchVersion : String;
     FNowVersion : string;
     procedure LoadTableName(const sPath: string);
+    procedure FilteTableName(const sPath: string;aKey : String);
     procedure AddTable(const aTableName: string);
     procedure LoadField(aSQL: string);
     procedure WorkRun;
@@ -252,6 +257,32 @@ begin
   while Found = 0 do
   begin
     if (SearchRec.Name <> '.') and (SearchRec.Name <> '..') and (SearchRec.Attr <> faDirectory) and ((ExtractFileExt(SearchRec.Name) = '.dat')) then
+    begin
+      AddTable(ChangeFileExt(SearchRec.Name, ''));
+    end;
+    found := FindNext(SearchRec);
+  end;
+  FindClose(SearchRec);
+end;
+
+
+procedure TfmMain.FilteTableName(const sPath: string;aKey : String);
+var
+  SearchRec: TSearchRec;
+  Found: Integer;
+  NewName: string;
+  TablePath: string;
+begin
+
+  if RightStr(sPath, 1) = '\' then
+    TablePath := sPath
+  else
+    TablePath := sPath + '\';
+
+  Found := FindFirst(TablePath + '*.*', faAnyFile, SearchRec);
+  while Found = 0 do
+  begin
+    if (Pos(UpperCase(aKey),UpperCase(SearchRec.Name)) <> 0) and (SearchRec.Name <> '.') and (SearchRec.Name <> '..') and (SearchRec.Attr <> faDirectory) and ((ExtractFileExt(SearchRec.Name) = '.dat')) then
     begin
       AddTable(ChangeFileExt(SearchRec.Name, ''));
     end;
@@ -937,6 +968,19 @@ begin
   Application.Terminate;
 end;
 
+
+procedure TfmMain.edtTablePropertiesChange(Sender: TObject);
+begin
+  inherited;
+  edtTable.Properties.Items.Clear;
+  FilteTableName(FRootPath,edtTable.Text);
+end;
+
+procedure TfmMain.btnDeleteClick(Sender: TObject);
+begin
+  inherited;
+  FResult.DeleteRow;
+  WorkRun;  
 end;
 
 end.
