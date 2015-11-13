@@ -18,7 +18,7 @@ object fmExport: TfmExport
     Top = 0
     Width = 596
     Height = 185
-    ActivePage = SheetWay
+    ActivePage = SheetField
     Align = alTop
     HideTabs = True
     TabOrder = 0
