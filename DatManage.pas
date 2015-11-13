@@ -50,10 +50,8 @@ type
     SheetTable: TcxTabSheet;
     lcTable: TdxLayoutControl;
     edtTable: TcxComboBox;
-    edtCondition: TcxMemo;
     dxLayoutGroup1: TdxLayoutGroup;
     dxLayoutItem1: TdxLayoutItem;
-    lcTableItem2: TdxLayoutItem;
     SheetSQL: TcxTabSheet;
     edtSQL: TcxMemo;
     dockChange: TdxBarDockControl;
@@ -68,8 +66,6 @@ type
     dMainItem6: TdxLayoutItem;
     dMainItem8: TdxLayoutItem;
     dMainItem5: TdxLayoutItem;
-    dMainGroup1: TdxLayoutGroup;
-    dMainGroup4: TdxLayoutGroup;
     btnImport: TdxBarButton;
     lcTableItem1: TdxLayoutItem;
     edtFieldName: TcxComboBox;
@@ -78,6 +74,9 @@ type
     lcTableGroup1: TdxLayoutGroup;
     MenuUpadate: TMenuItem;
     RzVersionInfo: TRzVersionInfo;
+    edtCondition: TcxTextEdit;
+    lcTableItem4: TdxLayoutItem;
+    lcTableGroup2: TdxLayoutGroup;
     procedure FormShow(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure cbTableClick(Sender: TObject);
@@ -936,6 +935,8 @@ begin
   aExec := ExtractFilePath(ParamStr(0)) + 'Upgrade.exe';
   WinExec(PChar(aExec), SW_SHOWNORMAL);
   Application.Terminate;
+end;
+
 end;
 
 end.
