@@ -20,8 +20,6 @@ type
     pnlResult: TPanel;
     dlgSave: TSaveDialog;
     MainMenu: TMainMenu;
-    MenuAbout: TMenuItem;
-    MenuSet: TMenuItem;
     MenuSupply: TMenuItem;
     N1: TMenuItem;
     N2: TMenuItem;
@@ -30,14 +28,11 @@ type
     btnResult: TdxBarButton;
     N3: TMenuItem;
     N4: TMenuItem;
-    MenuSVN: TMenuItem;
     N6: TMenuItem;
     btnImportExcel: TdxBarButton;
     btnExport: TdxBarButton;
     btnAdd: TdxBarButton;
     btnProperty: TdxBarButton;
-    MenuDiff: TMenuItem;
-    MenuSelectAll: TMenuItem;
     pnlCondition: TPanel;
     dMain: TdxLayoutControl;
     cbTable: TcxRadioButton;
@@ -83,19 +78,16 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure cbTableClick(Sender: TObject);
     procedure cbSQLClick(Sender: TObject);
-    procedure MenuAboutClick(Sender: TObject);
     procedure btnSelectPathClick(Sender: TObject);
     procedure edtCreatePathPropertiesValidate(Sender: TObject; var DisplayValue: Variant; var ErrorText: TCaption; var Error: Boolean);
     procedure edtPathNamePropertiesValidate(Sender: TObject; var DisplayValue: Variant; var ErrorText: TCaption; var Error: Boolean);
     procedure btnSavePathClick(Sender: TObject);
-    procedure MenuSetClick(Sender: TObject);
     procedure btnResultClick(Sender: TObject);
     procedure btnConditionClick(Sender: TObject);
     procedure N1Click(Sender: TObject);
     procedure N2Click(Sender: TObject);
     procedure btnResult1Click(Sender: TObject);
     procedure N4Click(Sender: TObject);
-    procedure MenuSVNClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure N3Click(Sender: TObject);
     procedure N6Click(Sender: TObject);
@@ -103,11 +95,9 @@ type
     procedure btnExportClick(Sender: TObject);
     procedure btnAddClick(Sender: TObject);
     procedure btnPropertyClick(Sender: TObject);
-    procedure MenuSelectAllClick(Sender: TObject);
     procedure edtTablePropertiesValidate(Sender: TObject;
       var DisplayValue: Variant; var ErrorText: TCaption;
       var Error: Boolean);
-    procedure MenuDiffClick(Sender: TObject);
     procedure MenuUpadateClick(Sender: TObject);
     procedure edtTablePropertiesChange(Sender: TObject);
     procedure btnDeleteClick(Sender: TObject);
@@ -123,6 +113,8 @@ type
     FSVN : TfmSVN;
     FPatchVersion : String;
     FNowVersion : string;
+
+    procedure MenuClick(Sender: TObject);
     procedure LoadTableName(const sPath: string);
     procedure FilteTableName(const sPath: string;aKey : String);
     procedure AddTable(const aTableName: string);
@@ -144,8 +136,11 @@ type
     procedure CreateNew;
     procedure MergeNew;
     procedure CreateBat;
+    procedure UpdateSelf;
+    procedure LoadMenu(aMenuName : String;aHint : String = '');
+    procedure InitMenu;
   public
-
+    class function CreateInstance(var AForm: TParentForm; AFormClassName: String = ''): TParentForm;
   end;
 
 var
@@ -208,6 +203,29 @@ begin
   end;
 end;
 
+class function TfmMain.CreateInstance(var AForm: TParentForm; AFormClassName: String = ''): TParentForm;
+var
+  FormClassName: String;
+  FormClass: TPersistentClass;
+begin
+  FormClass := nil;
+
+  if Trim(AFormClassName) <> '' then
+    FormClass := GetClass(AFormClassName);
+
+  if (FormClass = nil) and (FormClassName <> ClassName) then
+    FormClass := FindClass(ClassName);
+
+  if FormClass = nil then
+    FormClass := TParentForm;
+
+  if FormClass <> nil then begin
+    Application.CreateForm(TComponentClass(FormClass), AForm);
+    Result := TParentForm(AForm);
+  end else
+    Result := nil;
+end;
+
 procedure TfmMain.WorkRun;
 var
   aSQL: string;
@@ -248,6 +266,8 @@ var
   TablePath: string;
 begin
 
+  edtTable.Properties.Items.Clear;
+
   if RightStr(sPath, 1) = '\' then
     TablePath := sPath
   else
@@ -273,6 +293,8 @@ var
   NewName: string;
   TablePath: string;
 begin
+
+  edtTable.Properties.Items.Clear;
 
   if RightStr(sPath, 1) = '\' then
     TablePath := sPath
@@ -311,12 +333,44 @@ begin
   CheckState;
   FGetTable := False;
   dMain.Height := 248;
+  InitMenu;
   ShowResult;
 
   edtKeyword.Properties.Items.Clear;
   edtKeyword.Properties.Items.Add('包含');
   edtKeyword.Properties.Items.Add('等于');
   edtKeyword.Properties.Items.Add('不等于');  
+end;
+
+
+procedure TfmMain.MenuClick(Sender: TObject);
+var
+  aClassName : string;
+  aMenuName : string;
+  aNotShowFormHint : string;
+begin
+  aMenuName := (Sender as TMenuItem).Name;
+  aNotShowFormHint := (Sender as TMenuItem).Hint;
+  aClassName := Copy(aMenuName,5,Length(aMenuName)-4);
+  LoadMenu(aClassName,aNotShowFormHint);
+end;
+
+
+procedure TfmMain.InitMenu;
+var
+  MenuItem:TMenuItem;
+  I : Integer;  
+begin
+  for I := 0 to Length(Config.FMenuList) - 1 do
+  begin
+    MenuItem:=TMenuItem.Create(MainMenu);
+    MenuItem.Name := 'Menu' + Config.FMenuList[I].ClassName;
+    MenuItem.Caption:= Config.FMenuList[I].Caption;
+    MenuItem.Hint := Config.FMenuList[I].NotShowFormHint;
+    MenuItem.Visible := Config.FMenuList[I].Visible;
+    MenuItem.OnClick := MenuClick;  
+    MainMenu.Items.Add(MenuItem);
+  end;
 end;
 
 procedure TfmMain.LoadConfig;
@@ -440,18 +494,6 @@ begin
   pnlResult.Height := aDefaultHeight;
 end;
 
-procedure TfmMain.MenuAboutClick(Sender: TObject);
-var
-  aAbout: TfmAbout;
-begin
-  aAbout := TfmAbout.Create(Self);
-  try
-    aAbout.ShowModal;
-  finally
-    aAbout.Free;
-  end;
-end;
-
 procedure TfmMain.btnSelectPathClick(Sender: TObject);
 var
   DirectoryPath: string;
@@ -503,18 +545,6 @@ begin
       FConfigFile.SaveHistory(fmSavePath.PathName, fmSavePath.Path);
   finally
     fmSavePath.Free;
-  end;
-end;
-
-procedure TfmMain.MenuSetClick(Sender: TObject);
-var
-  aSet: TfmSet;
-begin
-  aSet := TfmSet.Create(Self);
-  try
-    aSet.ShowModal;
-  finally
-    aSet.Free;
   end;
 end;
 
@@ -581,23 +611,6 @@ procedure TfmMain.N4Click(Sender: TObject);
 begin
   inherited;
   ShellExecute(Handle, 'open', 'Explorer.exe', PChar(ExtractFileDir(ParamStr(0)) + '\Config'), nil, 1);
-end;
-
-procedure TfmMain.MenuSVNClick(Sender: TObject);
-var
-  aSVN: TfmSVN;
-begin
-  aSvn := TfmSVN.Create(Self);
-  try
-    if not aSVN.CheckSvnIsExist then
-    begin
-      ShowMessage('未安装SVN,无法使用该功能。');
-      Exit;
-    end;
-    aSvn.ShowModal;
-  finally
-    aSvn.Free;
-  end;
 end;
 
 procedure TfmMain.FormCreate(Sender: TObject);
@@ -696,36 +709,12 @@ begin
   end;
 end;
 
-procedure TfmMain.MenuSelectAllClick(Sender: TObject);
-var
-  aSelect: TfmSelectAll;
-begin
-  aSelect := TfmSelectAll.Create(Self,FRootPath);
-  try
-    aSelect.ShowModal;
-  finally
-    aSelect.Free;
-  end;
-end;
-
 procedure TfmMain.edtTablePropertiesValidate(Sender: TObject;
   var DisplayValue: Variant; var ErrorText: TCaption; var Error: Boolean);
 begin
   inherited;
   FTableName := DisplayValue;
   WorkRun;
-end;
-
-procedure TfmMain.MenuDiffClick(Sender: TObject);
-var
-  aDiff: TMainForm;
-begin
-  aDiff := TMainForm.Create(Self);
-  try
-    aDiff.ShowModal;
-  finally
-    aDiff.Free;
-  end;
 end;
 
 function TfmMain.ReadNowVersion : String;
@@ -888,7 +877,7 @@ begin
 end;
 
 
-procedure TfmMain.MenuUpadateClick(Sender: TObject);
+procedure TfmMain.UpdateSelf;
 var
   Version : string;
   aNum : Integer;
@@ -898,7 +887,6 @@ var
   aPath : string;
   FUsePatch : Boolean;
 begin
-  inherited;
   FUsePatch := False;
   if not NeedUpdate then
   begin
@@ -916,6 +904,12 @@ begin
     DownloadFile(UPGRADE_URL,'Upgrade.zip');
   end;
   StartUpgrade;
+end;
+
+procedure TfmMain.MenuUpadateClick(Sender: TObject);
+begin
+  inherited;
+  UpdateSelf;
 end;
 
 procedure TfmMain.CreateNew;
@@ -973,7 +967,15 @@ procedure TfmMain.edtTablePropertiesChange(Sender: TObject);
 begin
   inherited;
   edtTable.Properties.Items.Clear;
-  FilteTableName(FRootPath,edtTable.Text);
+  if edtTable.Text = '' then
+  begin
+    LoadTableName(FRootPath);
+  end
+  else
+  begin
+    FilteTableName(FRootPath,edtTable.Text);  
+  end;
+
 end;
 
 procedure TfmMain.btnDeleteClick(Sender: TObject);
@@ -982,6 +984,31 @@ begin
   FResult.DeleteRow;
   WorkRun;  
 end;
+
+procedure TfmMain.LoadMenu(aMenuName : String;aHint : String = '');
+var
+  aMenu : TParentForm;
+begin
+  TfmMain.CreateInstance(aMenu,aMenuName);
+  try
+    if not aMenu.CheckIsShow then
+    begin
+      if aHint <> '' then
+      begin
+        ShowMessage(aHint);      
+      end
+      else
+      begin
+        ShowMessage('无法使用该功能。');
+      end;
+      Exit;
+    end;
+    aMenu.ShowModal;
+  finally
+    aMenu.Free;
+  end;
+end;
+
 
 end.
 

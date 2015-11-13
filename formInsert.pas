@@ -180,6 +180,11 @@ begin
 
         if (FEditMode = emUpdate) or  (FEditMode = emDelete)  then row.Properties.Value := FTable.TableData.FieldByName(aFieldName).AsString;
       end;
+
+      //RecordIDÎÞ·¨±à¼­¡£
+      if  aFieldName = 'RecordID_1' then
+        row.Properties.Options.Editing := False;
+
       if ((FEditMode = emUpdate) or (FEditMode = emDelete)) and  FTable.IsKeyNameAccordValue(aFieldName) then
       begin
         row.Properties.EditProperties.ReadOnly := True;
