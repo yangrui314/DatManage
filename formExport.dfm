@@ -2,7 +2,7 @@ object fmExport: TfmExport
   Left = 454
   Top = 227
   Width = 612
-  Height = 268
+  Height = 271
   Caption = #23548#20986
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -147,7 +147,7 @@ object fmExport: TfmExport
     Left = 0
     Top = 185
     Width = 596
-    Height = 45
+    Height = 48
     Align = alClient
     Caption = 'pnlCommand'
     TabOrder = 1
@@ -155,12 +155,13 @@ object fmExport: TfmExport
       Left = 1
       Top = 1
       Width = 594
-      Height = 43
+      Height = 46
       Align = alClient
       TabOrder = 0
       TabStop = False
+      AutoContentSizes = [acsWidth, acsHeight]
       object btnFinish: TcxButton
-        Left = 172
+        Left = 509
         Top = 10
         Width = 75
         Height = 25
@@ -169,7 +170,7 @@ object fmExport: TfmExport
         OnClick = btnFinishClick
       end
       object btnNext: TcxButton
-        Left = 91
+        Left = 428
         Top = 10
         Width = 75
         Height = 25
