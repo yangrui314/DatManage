@@ -16,9 +16,9 @@ object fmMain: TfmMain
   TextHeight = 13
   object pnlResult: TPanel
     Left = 0
-    Top = 201
+    Top = 297
     Width = 860
-    Height = 370
+    Height = 274
     Align = alClient
     Caption = 'pnlResult'
     ParentBackground = True
@@ -28,7 +28,7 @@ object fmMain: TfmMain
     Left = 0
     Top = 0
     Width = 860
-    Height = 201
+    Height = 297
     Align = alTop
     Caption = 'pnlCondition'
     ParentBackground = True
@@ -37,7 +37,7 @@ object fmMain: TfmMain
       Left = 1
       Top = 1
       Width = 858
-      Height = 199
+      Height = 295
       Align = alClient
       ParentBackground = True
       TabOrder = 0
@@ -45,7 +45,7 @@ object fmMain: TfmMain
       AutoContentSizes = [acsWidth, acsHeight]
       object cbTable: TcxRadioButton
         Left = 10
-        Top = 41
+        Top = 72
         Width = 113
         Height = 17
         Caption = #34920#26684
@@ -57,7 +57,7 @@ object fmMain: TfmMain
       end
       object cbSQL: TcxRadioButton
         Left = 129
-        Top = 41
+        Top = 72
         Width = 113
         Height = 17
         Caption = 'SQL'#26597#35810
@@ -66,21 +66,21 @@ object fmMain: TfmMain
         Transparent = True
       end
       object btnSelectPath: TcxButton
-        Left = 692
-        Top = 10
+        Left = 773
+        Top = 41
         Width = 75
         Height = 25
         Caption = #36873#25321
-        TabOrder = 2
+        TabOrder = 3
         OnClick = btnSelectPathClick
         LookAndFeel.Kind = lfOffice11
       end
       object edtCreatePath: TcxComboBox
-        Left = 238
-        Top = 10
+        Left = 75
+        Top = 41
         Properties.ImmediatePost = True
         Properties.OnValidate = edtCreatePathPropertiesValidate
-        TabOrder = 1
+        TabOrder = 2
         Width = 121
       end
       object edtPathName: TcxComboBox
@@ -89,7 +89,7 @@ object fmMain: TfmMain
         Properties.ImmediatePost = True
         Properties.OnValidate = edtPathNamePropertiesValidate
         TabOrder = 0
-        Width = 125
+        Width = 489
       end
       object btnSavePath: TcxButton
         Left = 773
@@ -97,22 +97,22 @@ object fmMain: TfmMain
         Width = 75
         Height = 25
         Caption = #20445#23384#36335#24452
-        TabOrder = 3
+        TabOrder = 1
         OnClick = btnSavePathClick
         LookAndFeel.Kind = lfOffice11
       end
       object PageSelect: TcxPageControl
         Left = 10
-        Top = 64
-        Width = 838
-        Height = 81
+        Top = 95
+        Width = 887
+        Height = 120
         ActivePage = SheetTable
         HideTabs = True
         ParentShowHint = False
         ShowHint = False
         TabOrder = 6
-        ClientRectBottom = 81
-        ClientRectRight = 838
+        ClientRectBottom = 120
+        ClientRectRight = 887
         ClientRectTop = 0
         object SheetTable: TcxTabSheet
           Caption = 'SheetTable'
@@ -120,41 +120,42 @@ object fmMain: TfmMain
           object lcTable: TdxLayoutControl
             Left = 0
             Top = 0
-            Width = 838
-            Height = 81
+            Width = 887
+            Height = 120
             Align = alClient
             ParentBackground = True
             TabOrder = 0
             TabStop = False
             AutoContentSizes = [acsWidth, acsHeight]
             object edtTable: TcxComboBox
-              Left = 75
+              Left = 63
               Top = 10
               Properties.ImmediatePost = True
-              Properties.OnChange = edtTablePropertiesChange
               Properties.OnValidate = edtTablePropertiesValidate
               TabOrder = 0
-              Width = 200
+              Width = 121
+            end
+            object edtCondition: TcxMemo
+              Left = 63
+              Top = 37
+              Align = alClient
+              TabOrder = 3
+              Height = 31
+              Width = 549
             end
             object edtFieldName: TcxComboBox
-              Left = 334
+              Left = 243
               Top = 10
               Properties.ImmediatePost = True
               TabOrder = 1
               Width = 121
             end
             object edtKeyword: TcxComboBox
-              Left = 75
-              Top = 37
+              Left = 435
+              Top = 10
               Properties.ImmediatePost = True
               TabOrder = 2
-              Width = 200
-            end
-            object edtCondition: TcxTextEdit
-              Left = 334
-              Top = 37
-              TabOrder = 3
-              Width = 121
+              Width = 814
             end
             object dxLayoutGroup1: TdxLayoutGroup
               AutoAligns = [aaVertical]
@@ -173,31 +174,24 @@ object fmMain: TfmMain
                   ControlOptions.ShowBorder = False
                 end
                 object lcTableItem1: TdxLayoutItem
-                  AutoAligns = [aaVertical]
-                  AlignHorz = ahClient
                   Caption = #36807#28388#23383#27573
                   Control = edtFieldName
                   ControlOptions.ShowBorder = False
                 end
-              end
-              object lcTableGroup2: TdxLayoutGroup
-                ShowCaption = False
-                Hidden = True
-                LayoutDirection = ldHorizontal
-                ShowBorder = False
                 object lcTableItem3: TdxLayoutItem
                   AutoAligns = [aaVertical]
+                  AlignHorz = ahClient
                   Caption = #20851#38190#23383#27573#65306
                   Control = edtKeyword
                   ControlOptions.ShowBorder = False
                 end
-                object lcTableItem4: TdxLayoutItem
-                  AutoAligns = [aaVertical]
-                  AlignHorz = ahClient
-                  Caption = #20540#65306
-                  Control = edtCondition
-                  ControlOptions.ShowBorder = False
-                end
+              end
+              object lcTableItem2: TdxLayoutItem
+                AutoAligns = [aaVertical]
+                AlignHorz = ahClient
+                Caption = #20540#65306
+                Control = edtCondition
+                ControlOptions.ShowBorder = False
               end
             end
           end
@@ -210,14 +204,14 @@ object fmMain: TfmMain
             Top = 0
             Align = alClient
             TabOrder = 0
-            Height = 81
-            Width = 838
+            Height = 120
+            Width = 887
           end
         end
       end
       object dockChange: TdxBarDockControl
         Left = 10
-        Top = 151
+        Top = 221
         Width = 887
         Height = 27
         Align = dalNone
@@ -230,35 +224,43 @@ object fmMain: TfmMain
         object dMainGroup3: TdxLayoutGroup
           ShowCaption = False
           Hidden = True
-          LayoutDirection = ldHorizontal
           ShowBorder = False
-          object dMainItem4: TdxLayoutItem
-            AutoAligns = [aaVertical]
-            Caption = #36335#24452#21517#31216#65306
-            Control = edtPathName
-            ControlOptions.ShowBorder = False
-          end
-          object dMainItem14: TdxLayoutItem
-            AutoAligns = [aaVertical]
-            AlignHorz = ahClient
-            Caption = #36335#24452':'
-            Control = edtCreatePath
-            ControlOptions.ShowBorder = False
-          end
-          object dMainItem10: TdxLayoutItem
-            AutoAligns = [aaVertical]
-            AlignHorz = ahRight
-            Caption = 'cxButton1'
+          object dMainGroup4: TdxLayoutGroup
             ShowCaption = False
-            Control = btnSelectPath
-            ControlOptions.ShowBorder = False
+            Hidden = True
+            LayoutDirection = ldHorizontal
+            ShowBorder = False
+            object dMainItem4: TdxLayoutItem
+              AutoAligns = [aaVertical]
+              AlignHorz = ahClient
+              Caption = #36335#24452#21517#31216#65306
+              Control = edtPathName
+              ControlOptions.ShowBorder = False
+            end
+            object dMainItem15: TdxLayoutItem
+              ShowCaption = False
+              Control = btnSavePath
+              ControlOptions.ShowBorder = False
+            end
           end
-          object dMainItem15: TdxLayoutItem
-            AutoAligns = [aaVertical]
-            AlignHorz = ahRight
+          object dMainGroup1: TdxLayoutGroup
             ShowCaption = False
-            Control = btnSavePath
-            ControlOptions.ShowBorder = False
+            Hidden = True
+            LayoutDirection = ldHorizontal
+            ShowBorder = False
+            object dMainItem14: TdxLayoutItem
+              AutoAligns = [aaVertical]
+              AlignHorz = ahClient
+              Caption = #36335#24452':'
+              Control = edtCreatePath
+              ControlOptions.ShowBorder = False
+            end
+            object dMainItem10: TdxLayoutItem
+              Caption = 'cxButton1'
+              ShowCaption = False
+              Control = btnSelectPath
+              ControlOptions.ShowBorder = False
+            end
           end
         end
         object dMainGroup2: TdxLayoutGroup
@@ -308,6 +310,14 @@ object fmMain: TfmMain
   object MainMenu: TMainMenu
     Left = 520
     Top = 40
+    object MenuSet: TMenuItem
+      Caption = #35774#32622
+      OnClick = MenuSetClick
+    end
+    object MenuAbout: TMenuItem
+      Caption = #20851#20110
+      OnClick = MenuAboutClick
+    end
     object MenuSupply: TMenuItem
       Caption = #36741#21161#39033
       object N4: TMenuItem
@@ -331,9 +341,20 @@ object fmMain: TfmMain
         OnClick = N6Click
       end
     end
+    object MenuSVN: TMenuItem
+      Caption = 'SVN'#20351#29992
+      OnClick = MenuSVNClick
+    end
+    object MenuDiff: TMenuItem
+      Caption = #23545#27604
+      OnClick = MenuDiffClick
+    end
+    object MenuSelectAll: TMenuItem
+      Caption = #26597#35810#25152#26377#34920
+      OnClick = MenuSelectAllClick
+    end
     object MenuUpadate: TMenuItem
       Caption = #26356#26032
-      Visible = False
       OnClick = MenuUpadateClick
     end
   end
@@ -351,7 +372,7 @@ object fmMain: TfmMain
       True)
     PopupMenuLinks = <>
     UseSystemFont = True
-    Left = 608
+    Left = 584
     Top = 40
     DockControlHeights = (
       0
@@ -386,10 +407,6 @@ object fmMain: TfmMain
         item
           Visible = True
           ItemName = 'btnAdd'
-        end
-        item
-          Visible = True
-          ItemName = 'btnDelete'
         end
         item
           Visible = True
@@ -441,19 +458,6 @@ object fmMain: TfmMain
       Category = 0
       Hint = 'New Button'
       Visible = ivAlways
-    end
-    object dxBarSubItem1: TdxBarSubItem
-      Caption = 'New SubItem'
-      Category = 0
-      Visible = ivAlways
-      ItemLinks = <>
-    end
-    object btnDelete: TdxBarButton
-      Caption = #21024#38500#25968#25454
-      Category = 0
-      Hint = #21024#38500#25968#25454
-      Visible = ivAlways
-      OnClick = btnDeleteClick
     end
   end
   object RzVersionInfo: TRzVersionInfo

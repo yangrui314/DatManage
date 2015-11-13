@@ -11,7 +11,7 @@ uses
 
 type
 
-  TEditMode = (emNone, emInsert, emUpdate,emDelete);
+  TEditMode = (emNone, emInsert, emUpdate);
 
 
   TfmInsert = class(TParentForm)
@@ -45,7 +45,6 @@ type
 
   public
     constructor Create(AOwner: TComponent;aTable : TTable; aEditMode: TEditMode = emInsert;aRow : Integer = 0 );
-    procedure DeleteRow;
   end;
 
 var
@@ -131,21 +130,21 @@ begin
         row.Properties.EditPropertiesClass := TcxTextEditProperties;
         TcxTextEditProperties(row.Properties.EditProperties).ImmediatePost := True;
         TcxTextEditProperties(row.Properties.EditProperties).OnValidate := SaveUpdateValidate;
-        if (FEditMode = emUpdate) or  (FEditMode = emDelete) then row.Properties.Value := FTable.TableData.FieldByName(aFieldName).AsString;;
+        if FEditMode = emUpdate  then row.Properties.Value := FTable.TableData.FieldByName(aFieldName).AsString;;
       end
       else if FTable.TableFieldDataTypeArray[I] =  ftAutoInc then
       begin
         row.Properties.EditPropertiesClass := TcxSpinEditProperties;
         TcxSpinEditProperties(row.Properties.EditProperties).ImmediatePost := True;
         TcxSpinEditProperties(row.Properties.EditProperties).OnValidate := SaveUpdateValidate;
-        if (FEditMode = emUpdate) or  (FEditMode = emDelete) then row.Properties.Value := FTable.TableData.FieldByName(aFieldName).AsInteger;
+        if FEditMode = emUpdate  then row.Properties.Value := FTable.TableData.FieldByName(aFieldName).AsInteger;
       end
       else if FTable.TableFieldDataTypeArray[I] =  ftBoolean then
       begin
         row.Properties.EditPropertiesClass := TcxCheckBoxProperties;
         TcxCheckBoxProperties(row.Properties.EditProperties).ImmediatePost := True;
         TcxCheckBoxProperties(row.Properties.EditProperties).OnValidate := SaveUpdateValidate;
-       if (FEditMode = emUpdate) or  (FEditMode = emDelete) then row.Properties.Value := FTable.TableData.FieldByName(aFieldName).AsBoolean;
+       if FEditMode = emUpdate  then row.Properties.Value := FTable.TableData.FieldByName(aFieldName).AsBoolean;
       end
       else if FTable.TableFieldDataTypeArray[I] =  ftDateTime then
       begin
@@ -153,7 +152,7 @@ begin
         TcxDateEditProperties(row.Properties.EditProperties).ImmediatePost := True;
         TcxDateEditProperties(row.Properties.EditProperties).OnValidate := SaveUpdateValidate;
 
-        if (FEditMode = emUpdate) or  (FEditMode = emDelete) then row.Properties.Value := FTable.TableData.FieldByName(aFieldName).AsDateTime;
+        if FEditMode = emUpdate  then row.Properties.Value := FTable.TableData.FieldByName(aFieldName).AsDateTime;
       end
       else if FTable.TableFieldDataTypeArray[I] =  ftInteger then
       begin
@@ -161,7 +160,7 @@ begin
         TcxSpinEditProperties(row.Properties.EditProperties).ImmediatePost := True;
         TcxSpinEditProperties(row.Properties.EditProperties).OnValidate := SaveUpdateValidate;
 
-        if (FEditMode = emUpdate) or  (FEditMode = emDelete)  then row.Properties.Value := FTable.TableData.FieldByName(aFieldName).AsInteger;
+        if FEditMode = emUpdate  then row.Properties.Value := FTable.TableData.FieldByName(aFieldName).AsInteger;
       end
       else if FTable.TableFieldDataTypeArray[I] =  ftFloat then
       begin
@@ -169,7 +168,7 @@ begin
         TcxCalcEditProperties(row.Properties.EditProperties).ImmediatePost := True;
         TcxCalcEditProperties(row.Properties.EditProperties).OnValidate := SaveUpdateValidate;
 
-        if (FEditMode = emUpdate) or  (FEditMode = emDelete) then row.Properties.Value := FTable.TableData.FieldByName(aFieldName).AsFloat;
+        if FEditMode = emUpdate  then row.Properties.Value := FTable.TableData.FieldByName(aFieldName).AsFloat;
 
       end
       else
@@ -178,39 +177,19 @@ begin
         TcxTextEditProperties(row.Properties.EditProperties).ImmediatePost := True;
         TcxTextEditProperties(row.Properties.EditProperties).OnValidate := SaveUpdateValidate;
 
-        if (FEditMode = emUpdate) or  (FEditMode = emDelete)  then row.Properties.Value := FTable.TableData.FieldByName(aFieldName).AsString;
+        if FEditMode = emUpdate  then row.Properties.Value := FTable.TableData.FieldByName(aFieldName).AsString;
       end;
-
-      //RecordID无法编辑。
-      if  aFieldName = 'RecordID_1' then
-        row.Properties.Options.Editing := False;
-
-      if ((FEditMode = emUpdate) or (FEditMode = emDelete)) and  FTable.IsKeyNameAccordValue(aFieldName) then
+      if (FEditMode = emUpdate) and  FTable.IsKeyNameAccordValue(aFieldName) then
       begin
         row.Properties.EditProperties.ReadOnly := True;
         FKeyValue :=  GetValue(row.Properties.Value,FTable.TableFieldDataTypeArray[I]);
         if FKeyConditon = '' then
         begin
-          if aFieldName = 'RecordID_1' then
-          begin
-            FKeyConditon :=  FTable.HandleSpecialStr('RecordID') + ' = ' + FKeyValue;
-          end
-          else
-          begin
-            FKeyConditon :=  FTable.HandleSpecialStr(aFieldName) + ' = ' + FKeyValue;          
-          end;
+          FKeyConditon :=  FTable.HandleSpecialStr(aFieldName) + ' = ' + FKeyValue;
         end
         else
         begin
-          if aFieldName = 'RecordID_1' then
-          begin
-            FKeyConditon := FKeyConditon + ' and ' + FTable.HandleSpecialStr('RecordID') + ' = ' + FKeyValue;
-          end
-          else
-          begin
-            FKeyConditon := FKeyConditon + ' and ' + FTable.HandleSpecialStr(aFieldName) + ' = ' + FKeyValue;
-          end;
-
+          FKeyConditon := FKeyConditon + ' and ' + FTable.HandleSpecialStr(aFieldName) + ' = ' + FKeyValue;
         end;
 
       end;
@@ -249,7 +228,7 @@ begin
   aSQL := aPrefixSQL + aPostfixSQL;
 
   FTable.Environment.ExecSQL(aSQL);
-  ShowMessage('执行成功！SQL执行脚本:'+ aSQL);    
+  ShowMessage('执行成功！SQL执行脚本:'+ aSQL)    
 end;
 
 
@@ -267,22 +246,7 @@ begin
     aName := gridInsert.FocusedRow.Name;
     aOrder := FTable.GetOrderID(aName);
     aField := FTable.TableFieldDataTypeArray[aOrder];
-    if aField = ftBoolean then
-    begin
-      if (Sender as TcxCheckBox).Checked then
-      begin
-        aValue := '1';
-      end
-      else
-      begin
-        aValue := '0';
-      end;
-    end
-    else
-    begin
-      aValue := GetValue(DisplayValue,aField);
-    end;
-
+    aValue := GetValue(DisplayValue,aField);
 
     for I := 0 to FUpdateField.Count - 1 do
     begin
@@ -330,22 +294,7 @@ begin
   aSQL := aPrefixSQL + aPostfixSQL;
 
   FTable.Environment.ExecSQL(aSQL);
-  ShowMessage('执行成功！SQL执行脚本:'+ aSQL);
-  Close;
-end;
-
-procedure TfmInsert.DeleteRow;
-var
-  aSQL : String;
-  aPrefixSQL : String;
-  aPostfixSQL : String;
-begin
-  aPrefixSQL := 'Delete from  ' + FTable.TableName ;
-  aPostfixSQL := ' where  ' + FKeyConditon + ';';
-
-  aSQL := aPrefixSQL + aPostfixSQL;
-  FTable.Environment.ExecSQL(aSQL);
-  ShowMessage('执行成功！SQL执行脚本:'+ aSQL)  
+  ShowMessage('执行成功！SQL执行脚本:'+ aSQL)    
 end;
 
 
