@@ -15,7 +15,7 @@ type
     FValue : TStringList;
     FSQL : String;
     FEnvironment : TEnvironment;
-    FData: TDBISAMQuery;
+    FData: TDataSet;
     FTableName : String;
     FKeyField : String;
     FKeyValue : String;
@@ -68,7 +68,7 @@ type
     property TableField: TStringList read FField write FField;
     property TableValue: TStringList read FValue write FValue;
     property TableName: String read FTableName write FTableName;    
-    property TableData : TDBISAMQuery read FData write FData;
+    property TableData : TDataSet read FData write FData;
     property TableFieldCount : Integer read  FFieldCount write FFieldCount;
     property TableFieldNameArray[Index:Integer]: String read GetFieldNameArray write SetFieldNameArray;
     property TableFieldSizeArray[Index:Integer]: Integer read GetFieldSizeArray write SetFieldSizeArray;
@@ -95,7 +95,7 @@ begin
   FEnvironment := aEnvironment;
   FSQL := aSQL;
   FTableName := aTableName;
-  FData := TDBISAMQuery.Create(nil);
+  FData := TDataSet.Create(nil);
   FContainData := FEnvironment.IsContainData;
   if  FTableName <> '' then 
   FKeyField := FEnvironment.GetPrimary(FTableName);
@@ -495,8 +495,6 @@ begin
   TableData.First;
   while not TableData.Eof do
   begin
-
-
     aPostfixSQL := ' VALUES ( ';
     aFirst := True;
     for i:=0 to  TableData.Fields.Count - 1 do

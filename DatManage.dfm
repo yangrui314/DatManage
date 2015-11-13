@@ -307,14 +307,6 @@ object fmMain: TfmMain
   object MainMenu: TMainMenu
     Left = 520
     Top = 40
-    object MenuSet: TMenuItem
-      Caption = #35774#32622
-      OnClick = MenuSetClick
-    end
-    object MenuAbout: TMenuItem
-      Caption = #20851#20110
-      OnClick = MenuAboutClick
-    end
     object MenuSupply: TMenuItem
       Caption = #36741#21161#39033
       object N4: TMenuItem
@@ -338,20 +330,9 @@ object fmMain: TfmMain
         OnClick = N6Click
       end
     end
-    object MenuSVN: TMenuItem
-      Caption = 'SVN'#20351#29992
-      OnClick = MenuSVNClick
-    end
-    object MenuDiff: TMenuItem
-      Caption = #23545#27604
-      OnClick = MenuDiffClick
-    end
-    object MenuSelectAll: TMenuItem
-      Caption = #26597#35810#25152#26377#34920
-      OnClick = MenuSelectAllClick
-    end
     object MenuUpadate: TMenuItem
       Caption = #26356#26032
+      Visible = False
       OnClick = MenuUpadateClick
     end
   end

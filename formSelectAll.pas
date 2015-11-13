@@ -181,4 +181,11 @@ begin
   edtMessage.Text := aMessage;
 end;
 
+
+initialization
+  RegisterClass(TfmSelectAll);
+
+finalization
+  UnregisterClass(TfmSelectAll);
+
 end.

@@ -50,4 +50,10 @@ begin
 end;
 
 
+initialization
+  RegisterClass(TfmAbout);
+
+finalization
+  UnregisterClass(TfmAbout);
+
 end.

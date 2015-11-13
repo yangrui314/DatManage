@@ -8,10 +8,10 @@ uses
   Menus, cxLookAndFeelPainters, cxButtons, cxStyles, cxCustomData,
   cxGraphics, cxFilter, cxData, cxDataStorage, cxGridCustomView,
   cxGridCustomTableView, cxGridTableView, cxGridBandedTableView, cxClasses,
-  cxGridLevel, cxGrid, cxProgressBar, cxButtonEdit;
+  cxGridLevel, cxGrid, cxProgressBar, cxButtonEdit,formParent;
 
 type
-  TMainForm = class(TForm)
+  TMainForm = class(TParentForm)
     pnlDIC: TPanel;
     lblDataA: TLabel;
     lblDataB: TLabel;
@@ -276,5 +276,11 @@ begin
     frmShowDiff.Show;
   end;
 end;
+
+initialization
+  RegisterClass(TMainForm);
+
+finalization
+  UnregisterClass(TMainForm);
 
 end.

@@ -35,7 +35,8 @@ uses
   UnitContrast in 'Diff\UnitContrast.pas',
   UnitShowDiff in 'Diff\UnitShowDiff.pas' {frmShowDiff},
   formUpgradeProgress in 'formUpgradeProgress.pas' {fmUpgradeProgress},
-  unitDownLoadFile in 'unitDownLoadFile.pas';
+  unitDownLoadFile in 'unitDownLoadFile.pas',
+  unitMenu in 'unitMenu.pas';
 
 {$R *.res}
 

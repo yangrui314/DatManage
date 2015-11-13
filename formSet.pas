@@ -102,4 +102,10 @@ begin
   Config.SelectShowWay := '2';
 end;
 
+initialization
+  RegisterClass(TfmSet);
+
+finalization
+  UnregisterClass(TfmSet);
+
 end.

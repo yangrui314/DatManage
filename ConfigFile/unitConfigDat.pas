@@ -12,10 +12,13 @@ type
   private
     FSystemConfig : TDBISAMTable;
     FHistory: TDBISAMTable;
+    FMenu : TDBISAMTable;
     procedure InitTable;
     procedure InitSystemConfig;
     procedure InitHistory;
+    procedure InitMenu;
   protected
+    procedure LoadMenu;
     procedure InitData; override;
     function GetSystemConfigValue(aName : String) : String; override;
     procedure SaveSystemConfig(aName : String;aValue : String); override;
@@ -30,16 +33,19 @@ type
 const
   SYSTEMCONFIG_NAME = 'SystemConfig';
   HISTORY_NAME = 'History';
+  MENU_NAME = 'Menu';
+  
 
 implementation
 
   uses
-    unitHistory;
+    unitHistory,unitMenu;
 
 constructor TConfigDat.Create;
 begin
   FSystemConfig := TDBISAMTable.Create(nil);;
   FHistory := TDBISAMTable.Create(nil);
+  FMenu  := TDBISAMTable.Create(nil);
   inherited;
 end;
 
@@ -47,6 +53,7 @@ procedure TConfigDat.InitTable;
 begin
   InitSystemConfig;
   InitHistory;
+  InitMenu;
 end;
 
 
@@ -99,12 +106,78 @@ begin
   end;      
 end;
 
+procedure TConfigDat.InitMenu;
+begin
+  with FMenu do
+  begin
+    DatabaseName:= FConfigPath;
+    TableName:= MENU_NAME;
+    with FieldDefs do
+    begin 
+      Clear; 
+      Add('ID',ftAutoInc,0,False);
+      Add('Name',ftString,255,False);
+      Add('Caption',ftString,255,False);
+      Add('OrderID',ftInteger,0,False);
+      Add('Visible',ftBoolean,0,False);
+      Add('ClassName',ftString,255,False);
+      Add('NotShowFormHint',ftString,255,False);
+    end;
+    with IndexDefs do
+    begin
+      Clear;
+      Add('','ID',[ixPrimary]);
+      Add('ByName','Name',[ixUnique]);
+    end;
+    if not Exists then
+      CreateTable(0,1,0,True,'YouAreNotPreparedForIT')
+  end;
+end;
+
 procedure TConfigDat.InitData;
 begin
   inherited;
   InitTable;
+  LoadMenu;
 end;
 
+procedure TConfigDat.LoadMenu;
+var
+  aMenu : TMenu;
+  I : Integer;
+begin
+  try
+    with FMenu do
+    begin
+      DatabaseName:= FConfigPath;
+      TableName:= MENU_NAME;
+      DBSession.AddPassword('YouAreNotPreparedForIT');
+
+      if Active then Close;
+      Open;
+
+      SetLength(FConfig.FMenuList,FMenu.RecordCount);
+      I := 0;
+      First;
+      while not Eof do
+      begin
+        aMenu := TMenu.Create;
+        aMenu.Name := FieldByName('Name').AsString;
+        aMenu.Caption := FieldByName('Caption').AsString;
+        aMenu.OrderID := FieldByName('OrderID').AsInteger;
+        aMenu.Visible := FieldByName('Visible').AsBoolean;
+        aMenu.ClassName := FieldByName('ClassName').AsString;
+        aMenu.NotShowFormHint := FieldByName('NotShowFormHint').AsString;
+        FConfig.FMenuList[I] := (aMenu);
+        Inc(I);
+        Next;
+      end;
+      Close;
+    end;   
+  finally
+  
+  end;
+end;
 
 
 function TConfigDat.GetSystemConfigValue(aName : String) : String;
@@ -244,6 +317,7 @@ destructor TConfigDat.Destroy;
 begin
   inherited;
   FHistory.Free;
+  FMenu.Free;
   FSystemConfig.Free;      
 end;
 

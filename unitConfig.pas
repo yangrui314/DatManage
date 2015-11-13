@@ -3,7 +3,7 @@ unit unitConfig;
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls,unitHistory,
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls,unitHistory,unitMenu,
   Dialogs;
 
 type
@@ -20,9 +20,11 @@ type
     procedure InitData;
     procedure SetHistorys(aHistorys : TList);
     procedure FreeHistorys;
+    procedure FreeMenuList;
     destructor Destroy;
   protected
   public
+    FMenuList :  array of TMenu;
     property InitFolderPath: string read FInitFolderPath;
     property LastFolderPath: string read FLastFolderPath write FLastFolderPath;
     property ShowName: Boolean read FShowName write FShowName;
@@ -68,6 +70,18 @@ begin
     FreeAndNil(aHistory);
   end;
   FHistorys.Clear;
+end;
+
+procedure TConfig.FreeMenuList;
+var
+  I: Integer;
+  aMenu: TMenu;
+begin
+  for I := 0 to Length(FMenuList) - 1 do
+  begin
+    aMenu := FMenuList[I];
+    FreeAndNil(aMenu);
+  end;
 end;
 
 procedure TConfig.SetHistorys(aHistorys : TList);
@@ -127,6 +141,8 @@ destructor TConfig.Destroy;
 begin
   FreeHistorys;
   FreeAndNil(FHistorys);
+  FreeMenuList;
+  SetLength(FMenuList,0);  
 end;
 
 

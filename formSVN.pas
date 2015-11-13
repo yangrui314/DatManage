@@ -39,6 +39,7 @@ type
   public
     procedure WorkRun(aSvnPath : String;aCmd : String = 'update');
     function CheckSvnIsExist : Boolean;
+    function CheckIsShow : Boolean; override;
   end;
 
 var
@@ -83,6 +84,11 @@ begin
   finally
     aFile.Free;
   end;
+end;
+
+function TfmSVN.CheckIsShow : Boolean; 
+begin
+  Result := CheckSvnIsExist;
 end;
 
 function TfmSVN.CheckSvnIsExist : Boolean;
@@ -139,5 +145,11 @@ begin
   inherited;
   Load('diff');
 end;
+
+initialization
+  RegisterClass(TfmSVN);
+
+finalization
+  UnregisterClass(TfmSVN);
 
 end.
