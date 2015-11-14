@@ -36,12 +36,10 @@ type
     btnProperty: TdxBarButton;
     pnlCondition: TPanel;
     dMain: TdxLayoutControl;
-    cbTable: TcxRadioButton;
-    cbSQL: TcxRadioButton;
-    btnSelectPath: TcxButton;
-    edtCreatePath: TcxComboBox;
+    btnSelectParameter: TcxButton;
+    edtParameter: TcxComboBox;
     edtPathName: TcxComboBox;
-    btnSavePath: TcxButton;
+    btnSaveParameter: TcxButton;
     PageSelect: TcxPageControl;
     SheetTable: TcxTabSheet;
     lcTable: TdxLayoutControl;
@@ -54,12 +52,8 @@ type
     dxLayoutGroup2: TdxLayoutGroup;
     dMainItem4: TdxLayoutItem;
     dMainItem15: TdxLayoutItem;
-    dMainGroup3: TdxLayoutGroup;
     dMainItem14: TdxLayoutItem;
     dMainItem10: TdxLayoutItem;
-    dMainGroup2: TdxLayoutGroup;
-    dMainItem3: TdxLayoutItem;
-    dMainItem6: TdxLayoutItem;
     dMainItem8: TdxLayoutItem;
     dMainItem5: TdxLayoutItem;
     btnImport: TdxBarButton;
@@ -77,14 +71,13 @@ type
     btnDelete: TdxBarButton;
     dxBarButton1: TdxBarButton;
     dxBarButton2: TdxBarButton;
+    GroupConnect: TdxLayoutGroup;
     procedure FormShow(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
-    procedure cbTableClick(Sender: TObject);
-    procedure cbSQLClick(Sender: TObject);
-    procedure btnSelectPathClick(Sender: TObject);
+    procedure btnSelectParameterClick(Sender: TObject);
     procedure edtCreatePathPropertiesValidate(Sender: TObject; var DisplayValue: Variant; var ErrorText: TCaption; var Error: Boolean);
     procedure edtPathNamePropertiesValidate(Sender: TObject; var DisplayValue: Variant; var ErrorText: TCaption; var Error: Boolean);
-    procedure btnSavePathClick(Sender: TObject);
+    procedure btnSaveParameterClick(Sender: TObject);
     procedure btnResultClick(Sender: TObject);
     procedure btnConditionClick(Sender: TObject);
     procedure N1Click(Sender: TObject);
@@ -104,10 +97,8 @@ type
     procedure MenuUpadateClick(Sender: TObject);
     procedure edtTablePropertiesChange(Sender: TObject);
     procedure btnDeleteClick(Sender: TObject);
-    procedure dxBarButton1Click(Sender: TObject);
   private
-
-    FRootPath: string;
+    FParameter: string;
     FTableName: string;
     FEnvironment: TEnvironment;
     FResult: TShowResultFrame;
@@ -117,10 +108,10 @@ type
     FSVN : TfmSVN;
     FPatchVersion : String;
     FNowVersion : string;
+    FInitConnectWay : String;
 
     procedure MenuClick(Sender: TObject);
-    procedure LoadTableName(const sPath: string);
-    procedure FilteTableName(const sPath: string;aKey : String);
+    procedure LoadTableName(aFilter : String = '');
     procedure AddTable(const aTableName: string);
     procedure LoadField(aSQL: string);
     procedure WorkRun;
@@ -143,6 +134,7 @@ type
     procedure UpdateSelf;
     procedure LoadMenu(aMenuName : String;aHint : String = '');
     procedure InitMenu;
+    procedure ChangeConnect;
   public
     class function CreateInstance(var AForm: TParentForm; AFormClassName: String = ''): TParentForm;
   end;
@@ -167,15 +159,16 @@ const
 
 function TfmMain.GetSQL: string;
 begin
-  if cbTable.Checked then
+  if PageSelect.ActivePageIndex = 0 then
   begin
+    if FTableName = '' then FTableName := edtTable.EditValue;
     if FTableName = '' then
     begin
       Result := '';
     end
     else
     begin
-      Result := 'select RecordID,* from ' + FTableName;
+      Result := FEnvironment.GetBaseTableSQL(FTableName);
       if  (edtFieldName.Text <> '') and  (edtKeyword.Text <> '') and (edtCondition.Text <> '') then
       begin
         if edtKeyword.Text = '包含' then
@@ -262,60 +255,27 @@ begin
   FResult.Update(FTable, Config.SelectShowWay);
 end;
 
-procedure TfmMain.LoadTableName(const sPath: string);
+procedure TfmMain.LoadTableName(aFilter : String = '');
 var
-  SearchRec: TSearchRec;
-  Found: Integer;
-  NewName: string;
-  TablePath: string;
+  aTables : TStringList;
+  I : Integer;
 begin
-
+  if (FEnvironment = nil) or (FParameter = '') then Exit;
   edtTable.Properties.Items.Clear;
-
-  if RightStr(sPath, 1) = '\' then
-    TablePath := sPath
-  else
-    TablePath := sPath + '\';
-
-  Found := FindFirst(TablePath + '*.*', faAnyFile, SearchRec);
-  while Found = 0 do
-  begin
-    if (SearchRec.Name <> '.') and (SearchRec.Name <> '..') and (SearchRec.Attr <> faDirectory) and ((ExtractFileExt(SearchRec.Name) = '.dat')) then
+  aTables := TStringList.Create;
+  aTables := FEnvironment.LoadTableName(aFilter);
+  try
+    for I := 0 to aTables.Count - 1 do
     begin
-      AddTable(ChangeFileExt(SearchRec.Name, ''));
+      AddTable(aTables[I]);
     end;
-    found := FindNext(SearchRec);
+  finally
+    aTables.Free;
   end;
-  FindClose(SearchRec);
 end;
 
 
-procedure TfmMain.FilteTableName(const sPath: string;aKey : String);
-var
-  SearchRec: TSearchRec;
-  Found: Integer;
-  NewName: string;
-  TablePath: string;
-begin
 
-  edtTable.Properties.Items.Clear;
-
-  if RightStr(sPath, 1) = '\' then
-    TablePath := sPath
-  else
-    TablePath := sPath + '\';
-
-  Found := FindFirst(TablePath + '*.*', faAnyFile, SearchRec);
-  while Found = 0 do
-  begin
-    if (Pos(UpperCase(aKey),UpperCase(SearchRec.Name)) <> 0) and (SearchRec.Name <> '.') and (SearchRec.Name <> '..') and (SearchRec.Attr <> faDirectory) and ((ExtractFileExt(SearchRec.Name) = '.dat')) then
-    begin
-      AddTable(ChangeFileExt(SearchRec.Name, ''));
-    end;
-    found := FindNext(SearchRec);
-  end;
-  FindClose(SearchRec);
-end;
 
 procedure TfmMain.AddTable(const aTableName: string);
 begin
@@ -327,11 +287,18 @@ procedure TfmMain.FormShow(Sender: TObject);
 begin
   inherited;
   LoadConfig;
-  edtCreatePath.Text := FRootPath;
-  LoadTableName(FRootPath);
-//  FEnvironment := TDbisamEnvironment.Create(Self, FRootPath);
-  FEnvironment := TSQLEnvironment.Create(Self, '');
+  edtParameter.Text := FParameter;
+  if Config.ConnectWay = '1' then
+  begin
+    FEnvironment := TDbisamEnvironment.Create(Self, FParameter);
+  end
+  else
+  begin
+    FEnvironment := TSQLEnvironment.Create(Self, FParameter);  
+  end;
+  ChangeConnect;
   FTable := TTable.Create(FEnvironment, '', '');
+  LoadTableName;  
   FResult := TShowResultFrame.Create(Self);
   FResult.Parent := pnlResult;
   FResult.Align := alClient;
@@ -373,7 +340,7 @@ begin
     MenuItem.Caption:= Config.FMenuList[I].Caption;
     MenuItem.Hint := Config.FMenuList[I].NotShowFormHint;
     MenuItem.Visible := Config.FMenuList[I].Visible;
-    MenuItem.OnClick := MenuClick;  
+    MenuItem.OnClick := MenuClick;
     MainMenu.Items.Add(MenuItem);
   end;
 end;
@@ -387,17 +354,19 @@ begin
 //  edtPathName.Properties.Items.Add('最后一条记录');
 //  edtCreatePath.Properties.Items.Add(Config.LastFolderPath);
 //  edtPathName.EditValue := '最后一条记录';
-  FRootPath := Config.LastFolderPath;
-  if FRootPath = '' then
-    FRootPath := Config.InitFolderPath;
+  FParameter := Config.LastFolderPath;
+  FInitConnectWay := Config.ConnectWay;
 
   for I := 0 to Config.Historys.Count - 1 do
   begin
-    edtPathName.Properties.Items.Add(THistory(Config.Historys[I]).Name);
-    edtCreatePath.Properties.Items.Add(THistory(Config.Historys[I]).Path);
+    if THistory(Config.Historys[I]).ConnectWay = Config.ConnectWay then
+    begin
+      edtPathName.Properties.Items.Add(THistory(Config.Historys[I]).Name);
+      edtParameter.Properties.Items.Add(THistory(Config.Historys[I]).Path);
+    end;
   end;
 
-  edtPathName.EditValue := Config.GetHistoryName(FRootPath);
+  edtPathName.EditValue := Config.GetHistoryName(FParameter);
 
   dMainItem4.Visible := Config.ShowName;
   dMainItem15.Visible := Config.ShowName;
@@ -438,7 +407,14 @@ end;
 procedure TfmMain.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   FSVN.Free;
-  Config.LastFolderPath := FRootPath;
+  if (FInitConnectWay <> Config.ConnectWay) then
+  begin
+    Config.LastFolderPath := '';
+  end
+  else
+  begin
+    Config.LastFolderPath := FParameter;
+  end; 
   FConfigFile.Destroy;
   FTable.Destroy;
   FEnvironment.Destroy;
@@ -447,30 +423,7 @@ end;
 
 procedure TfmMain.CheckState;
 begin
-  if cbTable.Checked then
-  begin
-    PageSelect.ActivePageIndex := 0;
-//    edtTable.Enabled := True;
-//    edtSQL.Enabled := False;
-//    btnResult.Enabled := False;
-  end
-  else
-  begin
-    PageSelect.ActivePageIndex := 1;
-//    edtTable.Enabled := False;
-//    edtSQL.Enabled := True;
-//    btnResult.Enabled := True;
-  end;
-end;
 
-procedure TfmMain.cbTableClick(Sender: TObject);
-begin
-  CheckState;
-end;
-
-procedure TfmMain.cbSQLClick(Sender: TObject);
-begin
-  CheckState;
 end;
 
 procedure TfmMain.ShowResult;
@@ -487,7 +440,7 @@ begin
   if pnlResult.Visible = bShow then
     Exit;
   pnlResult.Visible := bShow;
-  aDefaultHeight := 256;
+  aDefaultHeight := 236;
   if bShow then
   begin
     fmMain.Height := fmMain.Height + aDefaultHeight;
@@ -499,55 +452,49 @@ begin
   pnlResult.Height := aDefaultHeight;
 end;
 
-procedure TfmMain.btnSelectPathClick(Sender: TObject);
-var
-  DirectoryPath: string;
+procedure TfmMain.btnSelectParameterClick(Sender: TObject);
 begin
-  if SelectDirectory('请指定文件夹', '', DirectoryPath) then
+  FParameter := FEnvironment.CreateParameter;
+  edtPathName.EditValue := '';
+  if FParameter = '' then
   begin
-    if RightStr(DirectoryPath, 1) = '\' then
-      edtCreatePath.Text := DirectoryPath
-    else
-      edtCreatePath.Text := DirectoryPath + '\';
-
-    edtPathName.EditValue := '';
-
-    FRootPath := edtCreatePath.Text;
-    LoadTableName(FRootPath);
-    FEnvironment.SetEnvironment(FRootPath);
+    Exit;
   end;
+  edtParameter.Text := FParameter;
+  FEnvironment.SetEnvironment(FParameter);
+  LoadTableName;
 end;
 
 procedure TfmMain.edtCreatePathPropertiesValidate(Sender: TObject; var DisplayValue: Variant; var ErrorText: TCaption; var Error: Boolean);
 begin
   inherited;
   edtPathName.EditValue := Config.GetHistoryName(DisplayValue);
-  FRootPath := DisplayValue;
-  LoadTableName(FRootPath);
-  FEnvironment.SetEnvironment(FRootPath);
+  FParameter := DisplayValue;
+  FEnvironment.SetEnvironment(FParameter);
+  LoadTableName;
 end;
 
 procedure TfmMain.edtPathNamePropertiesValidate(Sender: TObject; var DisplayValue: Variant; var ErrorText: TCaption; var Error: Boolean);
 begin
   inherited;
-  edtCreatePath.EditValue := Config.GetHistoryPath(DisplayValue);
-  FRootPath := edtCreatePath.EditValue;
-  LoadTableName(FRootPath);
-  FEnvironment.SetEnvironment(FRootPath);
+  edtParameter.EditValue := Config.GetHistoryPath(DisplayValue);
+  FParameter := edtParameter.EditValue;
+  FEnvironment.SetEnvironment(FParameter);
+  LoadTableName;
 end;
 
-procedure TfmMain.btnSavePathClick(Sender: TObject);
+procedure TfmMain.btnSaveParameterClick(Sender: TObject);
 var
   fmSavePath: TfmSavePath;
   aName: string;
   aPath: string;
 begin
   aName := edtPathName.EditValue;
-  aPath := edtCreatePath.EditValue;
+  aPath := edtParameter.EditValue;
   fmSavePath := TfmSavePath.Create(Self, aName, aPath);
   try
     if fmSavePath.ShowModal = mrOk then
-      FConfigFile.SaveHistory(fmSavePath.PathName, fmSavePath.Path);
+      FConfigFile.SaveHistory(Config.ConnectWay,fmSavePath.PathName, fmSavePath.Path);
   finally
     fmSavePath.Free;
   end;
@@ -570,18 +517,18 @@ var
   aDatPath: string;
 begin
   inherited;
-  if (cbSQL.Checked) or (edtTable.Text = '') then
+  if (PageSelect.ActivePageIndex = 1) or (edtTable.Text = '') then
   begin
     //打开目录
-    ShellExecute(Handle, 'open', 'Explorer.exe', PChar(FRootPath), nil, 1);
+    ShellExecute(Handle, 'open', 'Explorer.exe', PChar(FParameter), nil, 1);
   end
   else
   begin
     //打开目录并定位。
-    if RightStr(FRootPath, 1) = '\' then
-      aDatPath := FRootPath
+    if RightStr(FParameter, 1) = '\' then
+      aDatPath := FParameter
     else
-      aDatPath := FRootPath + '\';
+      aDatPath := FParameter + '\';
     aDatPath := aDatPath + edtTable.EditValue + '.dat';
     ShellExecute(0, nil, PChar('explorer.exe'), PChar('/e, ' + '/select,' + aDatPath), nil, SW_NORMAL);
   end;
@@ -593,15 +540,15 @@ var
 begin
   inherited;
   //打开表
-  if (cbSQL.Checked) or (edtTable.Text = '') then
+  if (PageSelect.ActivePageIndex = 1) or (edtTable.Text = '') then
   begin
     ShowMessage('未选择表或SQL查询模式。');
     Exit;
   end;
-  if RightStr(FRootPath, 1) = '\' then
-    aDatPath := FRootPath
+  if RightStr(FParameter, 1) = '\' then
+    aDatPath := FParameter
   else
-    aDatPath := FRootPath + '\';
+    aDatPath := FParameter + '\';
   aDatPath := aDatPath + edtTable.EditValue + '.dat';
   ShellExecute(Handle, 'open', 'Explorer.exe', PChar(aDatPath), nil, 1);
 end;
@@ -629,10 +576,10 @@ var
   aDatPath : string;
 begin
   inherited;
-  if RightStr(FRootPath, 1) = '\' then
-    aDatPath := FRootPath
+  if RightStr(FParameter, 1) = '\' then
+    aDatPath := FParameter
   else
-    aDatPath := FRootPath + '\';  
+    aDatPath := FParameter + '\';  
   FSVN.WorkRun(aDatPath,'update');
 end;
 
@@ -641,10 +588,10 @@ var
   aDatPath : string;
 begin
   inherited;
-  if RightStr(FRootPath, 1) = '\' then
-    aDatPath := FRootPath
+  if RightStr(FParameter, 1) = '\' then
+    aDatPath := FParameter
   else
-    aDatPath := FRootPath + '\';    
+    aDatPath := FParameter + '\';
   FSVN.WorkRun(aDatPath,'commit');
 end;
 
@@ -972,22 +919,14 @@ procedure TfmMain.edtTablePropertiesChange(Sender: TObject);
 begin
   inherited;
   edtTable.Properties.Items.Clear;
-  if edtTable.Text = '' then
-  begin
-    LoadTableName(FRootPath);
-  end
-  else
-  begin
-    FilteTableName(FRootPath,edtTable.Text);  
-  end;
-
+  LoadTableName(edtTable.Text);
 end;
 
 procedure TfmMain.btnDeleteClick(Sender: TObject);
 begin
   inherited;
   FResult.DeleteRow;
-  WorkRun;  
+  WorkRun;
 end;
 
 procedure TfmMain.LoadMenu(aMenuName : String;aHint : String = '');
@@ -1000,7 +939,7 @@ begin
     begin
       if aHint <> '' then
       begin
-        ShowMessage(aHint);      
+        ShowMessage(aHint);
       end
       else
       begin
@@ -1014,24 +953,15 @@ begin
   end;
 end;
 
-
-procedure TfmMain.dxBarButton1Click(Sender: TObject);
-var
-  SQL : TSQLEnvironment;
-  I : Integer;
+procedure TfmMain.ChangeConnect;
 begin
-  inherited;
-  SQL := TSQLEnvironment.Create(Self,'');
-  try
-    SQL.ExecSQL('select * from BAS_Customer;');
-    I := 0;
-    while not SQL.MainData.Eof do
-    begin
-      ShowMessage(SQL.MainData.Fields.Fields[I].FieldName);
-      Inc(I);
-    end;
-  finally
-    SQL.Free;
+  if Config.ConnectWay = '1' then
+  begin
+    GroupConnect.Caption := 'DBISAM数据库';
+  end
+  else
+  begin
+    GroupConnect.Caption := 'SQLSERVER数据库';
   end;
 end;
 

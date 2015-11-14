@@ -10,7 +10,6 @@ type
   TSQLEnvironment = class(TEnvironment)
   private
     aMainConn: TADOConnection;
-    FConnectionStr : String;
     procedure aMainConnection;
   protected
     procedure InitData;
@@ -23,6 +22,8 @@ type
     constructor Create(AOwner: TComponent;aParameter : String);override;
     function IsContainData : Boolean; override;
     function GetPrimary(aTableName : String) : String; override;
+    function LoadTableName(aFilter : String = '') : TStringList;override;
+    function CreateParameter : string;override;   
   end;
 
 implementation
@@ -32,27 +33,24 @@ constructor TSQLEnvironment.Create(AOwner: TComponent;aParameter : String);
 begin
   aMain := TADOQuery.Create(AOwner);
   aMainConn := TADOConnection.Create(AOwner);
-  FConnectionStr := aParameter;
-  FConnectionStr := 'Provider=SQLOLEDB.1;Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=QFWineERP;Data Source=YR\SQL2008';;
   inherited Create(AOwner,aParameter);
 end;
 
 procedure TSQLEnvironment.SetEnvironment(aParameter : String);
 begin
-  FConnectionStr := aParameter;
-
+  inherited;
 end;
 
 
 procedure TSQLEnvironment.InitData;
 begin
-
+  inherited;
 end;
 
 procedure TSQLEnvironment.aMainConnection;
 begin
   aMainConn.Close;
-  aMainConn.ConnectionString:=FConnectionStr;
+  aMainConn.ConnectionString:=FParameter;
   //取消用户名等验证
   aMainConn.LoginPrompt:= False;
   aMainConn.Open; 
@@ -60,7 +58,7 @@ begin
   begin
     ShowMessage('连接数据库失败');  
   end;
-  TADOQuery(aMain).Connection := aMainConn;      
+  TADOQuery(aMain).Connection := aMainConn;
 end;
 
 procedure TSQLEnvironment.SetSQL(const aSQL : String);
@@ -83,8 +81,57 @@ end;
 
 
 function TSQLEnvironment.GetPrimary(aTableName : String) : String;
+var
+  adsTable: TADOQuery;
+  TableSQL : string;
+  adsConn : TADOConnection;
 begin
-  Result := 'RecordID';
+  Result := '';
+  TableSQL := 'SELECT   name FROM SysColumns ' +
+  ' WHERE id = Object_Id(''' +aTableName+ ''') and ' +
+  ' colid in(select keyno from sysindexkeys where id =Object_Id((''' +aTableName+ ''')))';
+  adsTable := TADOQuery.Create(FOwner);
+  adsConn := TADOConnection.Create(FOwner);
+  try
+    adsTable.Close;
+    adsConn.Close;
+    adsConn.ConnectionString:=FParameter;
+    adsConn.LoginPrompt:= False;
+    adsConn.Open;
+    if  not adsConn.Connected then
+    begin
+      ShowMessage('连接数据库失败');
+      Exit;
+    end;
+    adsTable.Connection := adsConn;
+    adsTable.SQL.Clear;
+    adsTable.SQL.Add(TableSQL);
+    adsTable.ExecSQL;
+    adsTable.Open;
+    
+    adsTable.First;
+    while not adsTable.Eof do
+    begin
+      if adsTable.FieldByName('name').AsString <> '' then
+      begin
+        if Result = '' then
+        begin
+          Result := adsTable.FieldByName('name').AsString;
+        end
+        else
+        begin
+          Result := Result + ';' + adsTable.FieldByName('name').AsString;
+        end;      
+      end;
+      adsTable.Next;
+    end;
+  finally
+    adsTable.Close;
+    adsTable.Free;
+    adsConn.Close;
+    adsConn.Free;
+  end;
+
 end;
 
 function TSQLEnvironment.IsContainData : Boolean;
@@ -144,6 +191,53 @@ begin
   end;    
 end;
 
+function TSQLEnvironment.LoadTableName(aFilter : String = '') : TStringList;
+var
+  adsTable: TADOQuery;
+  TableSQL : string;
+  adsConn : TADOConnection;
+begin
+  TableSQL := 'SELECT Name FROM SysObjects Where XType=''U'' ORDER BY Name';
+  adsTable := TADOQuery.Create(FOwner);
+  adsConn := TADOConnection.Create(FOwner);
+  Result := TStringList.Create;
+  try
+    adsTable.Close;
+    adsConn.Close;
+    adsConn.ConnectionString:=FParameter;
+    adsConn.LoginPrompt:= False;
+    adsConn.Open;
+    if  not adsConn.Connected then
+    begin
+      ShowMessage('连接数据库失败');
+      Exit;
+    end;
+    adsTable.Connection := adsConn;
+    adsTable.SQL.Clear;
+    adsTable.SQL.Add(TableSQL);
+    adsTable.ExecSQL;
+    adsTable.Open;
+    
+    adsTable.First;
+    while not adsTable.Eof do
+    begin
+      Result.Add(adsTable.FieldByName('Name').AsString);
+      adsTable.Next;
+    end;
+  finally
+    adsTable.Close;
+    adsTable.Free;
+    adsConn.Close;
+    adsConn.Free;
+  end;
 
+end;
+
+
+function TSQLEnvironment.CreateParameter : string;
+begin
+  Result := '';
+  Result := PromptDataSource(GetActiveWindow, '');
+end;
 
 end.

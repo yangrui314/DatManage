@@ -33,12 +33,21 @@ type
     dxLayoutItem5: TdxLayoutItem;
     lcSelectGroup1: TdxLayoutGroup;
     lcMainGroup1: TdxLayoutGroup;
+    SheetConnect: TcxTabSheet;
+    lcConnect: TdxLayoutControl;
+    rbDBISAM: TcxRadioButton;
+    rbSQLSERVER: TcxRadioButton;
+    dxLayoutGroup2: TdxLayoutGroup;
+    dxLayoutItem2: TdxLayoutItem;
+    dxLayoutItem3: TdxLayoutItem;
     procedure btnOKClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure cbShowPathClick(Sender: TObject);
     procedure cbShowNameClick(Sender: TObject);
     procedure rbSelectFieldClick(Sender: TObject);
     procedure rbSelectCaptionClick(Sender: TObject);
+    procedure rbDBISAMClick(Sender: TObject);
+    procedure rbSQLSERVERClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -76,6 +85,16 @@ begin
     rbSelectField.Checked := False;
     rbSelectCaption.Checked := True;    
   end;
+  if Config.ConnectWay = '1' then
+  begin
+    rbDBISAM.Checked := True;
+    rbSQLSERVER.Checked := False;
+  end
+  else
+  begin
+    rbDBISAM.Checked := False;
+    rbSQLSERVER.Checked := True;    
+  end;  
 end;
 
 procedure TfmSet.cbShowPathClick(Sender: TObject);
@@ -100,6 +119,18 @@ procedure TfmSet.rbSelectCaptionClick(Sender: TObject);
 begin
   inherited;
   Config.SelectShowWay := '2';
+end;
+
+procedure TfmSet.rbDBISAMClick(Sender: TObject);
+begin
+  inherited;
+  Config.ConnectWay := '1';
+end;
+
+procedure TfmSet.rbSQLSERVERClick(Sender: TObject);
+begin
+  inherited;
+  Config.ConnectWay := '2';
 end;
 
 initialization

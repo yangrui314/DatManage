@@ -5,7 +5,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls,
-  Dialogs,StdCtrls,DB, dbisamtb,unitEnvironment;
+  Dialogs,StdCtrls,DB, dbisamtb,unitEnvironment,StrUtils,FileCtrl;
 
 type
   TDbisamEnvironment = class(TEnvironment)
@@ -13,9 +13,8 @@ type
     dMain: TDBISAMDatabase;
     aExecSQL : TDBISAMQuery;
     dExecSQL: TDBISAMDatabase;
-    FRootPath : String;
   protected
-    procedure InitData;
+    procedure InitData;override;
   public
     procedure SetEnvironment(aParameter : String);override;
     procedure SetSQL(const aSQL : String);override;
@@ -25,9 +24,13 @@ type
     constructor Create(AOwner: TComponent;aParameter : String);override;
     function IsContainData : Boolean; override;
     function GetPrimary(aTableName : String) : String; override;
+    function LoadTableName(aFilter : String = '') : TStringList;override;
+    function CreateParameter : string;override;
+    function GetBaseTableSQL(aTableName : String) : string;override;    
   end;
 
 implementation
+
 
 
 constructor TDbisamEnvironment.Create(AOwner: TComponent;aParameter : String);
@@ -35,20 +38,19 @@ begin
   aMain := TDBISAMQuery.Create(AOwner);
   dMain := TDBISAMDatabase.Create(AOwner);
   aExecSQL := TDBISAMQuery.Create(AOwner);
-  dExecSQL := TDBISAMDatabase.Create(AOwner);  
-  FRootPath := aParameter;
+  dExecSQL := TDBISAMDatabase.Create(AOwner);
   inherited Create(AOwner,aParameter);
 end;
 
 procedure TDbisamEnvironment.SetEnvironment(aParameter : String);
 begin
-  FRootPath := aParameter;
+  inherited;
   dMain.Close;
-  dMain.Directory := FRootPath;
+  dMain.Directory := FParameter;
   dMain.Open;
 
   dExecSQL.Close;
-  dExecSQL.Directory := FRootPath;
+  dExecSQL.Directory := FParameter;
   dExecSQL.Open;
 end;
 
@@ -57,7 +59,7 @@ var
   Test : String;
 begin
   inherited;
-  dMain.Directory := FRootPath;
+  dMain.Directory := FParameter;
   dMain.DatabaseName := 'OmniDatabase' + IntToStr(Random(100));
   dMain.Open;
   dMain.Session.AddPassword('YouAreNotPrepared');
@@ -68,7 +70,7 @@ begin
 
 
 
-  dExecSQL.Directory := FRootPath;
+  dExecSQL.Directory := FParameter;
   dExecSQL.DatabaseName := 'OmniExecSQL' + IntToStr(Random(100));
   dExecSQL.Open;
   dExecSQL.Session.AddPassword('YouAreNotPrepared');
@@ -82,6 +84,7 @@ begin
   try
     if aSQL = '' then Exit;
     TDBISAMQuery(aMain).Close;
+    TDBISAMQuery(aMain).DatabaseName := dMain.DatabaseName;    
     TDBISAMQuery(aMain).SQL.Clear;
     TDBISAMQuery(aMain).SQL.Add(aSQL);
     TDBISAMQuery(aMain).Prepare;
@@ -193,5 +196,54 @@ begin
   end;    
 end;
 
+
+function TDbisamEnvironment.LoadTableName(aFilter : String = '') : TStringList;
+var
+  SearchRec: TSearchRec;
+  Found: Integer;
+  TablePath : string;
+begin
+  Result := TStringList.Create;
+
+  if RightStr(FParameter, 1) = '\' then
+    TablePath := FParameter
+  else
+    TablePath := FParameter + '\';
+
+  Found := FindFirst(TablePath + '*.*', faAnyFile, SearchRec);
+  try
+    while Found = 0 do
+    begin
+      if ((Pos(UpperCase(aFilter),UpperCase(SearchRec.Name)) <> 0) or (aFilter = '')) and
+        (SearchRec.Name <> '.') and (SearchRec.Name <> '..') and (SearchRec.Attr <> faDirectory) and ((ExtractFileExt(SearchRec.Name) = '.dat')) then
+      begin
+        Result.Add(ChangeFileExt(SearchRec.Name, ''));
+      end;
+      found := FindNext(SearchRec);
+    end;  
+  finally
+    FindClose(SearchRec);  
+  end;
+end;
+
+
+function TDbisamEnvironment.CreateParameter : string;
+var
+  DirectoryPath: string;
+begin
+  Result := '';
+  if SelectDirectory('请指定文件夹', '', DirectoryPath) then
+  begin
+    if RightStr(DirectoryPath, 1) = '\' then
+      Result := DirectoryPath
+    else
+      Result := DirectoryPath + '\';
+  end;
+end;
+
+function TDbisamEnvironment.GetBaseTableSQL(aTableName : String) : string;
+begin
+  Result := 'select RecordID,* from '  + aTableName;
+end;
 
 end.

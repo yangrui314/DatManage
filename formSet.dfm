@@ -30,7 +30,7 @@ object fmSet: TfmSet
       Top = 1
       Width = 272
       Height = 137
-      ActivePage = SheetShow
+      ActivePage = SheetConnect
       Align = alClient
       TabOrder = 0
       ClientRectBottom = 137
@@ -61,7 +61,7 @@ object fmSet: TfmSet
           object cbShowPath: TcxCheckBox
             Left = 22
             Top = 55
-            Caption = #36335#24452
+            Caption = #29615#22659
             Properties.ImmediatePost = True
             TabOrder = 1
             Transparent = True
@@ -144,6 +144,61 @@ object fmSet: TfmSet
                 ControlOptions.AutoColor = True
                 ControlOptions.ShowBorder = False
               end
+            end
+          end
+        end
+      end
+      object SheetConnect: TcxTabSheet
+        Caption = #25968#25454#24211
+        ImageIndex = 2
+        object lcConnect: TdxLayoutControl
+          Left = 0
+          Top = 0
+          Width = 272
+          Height = 113
+          Align = alClient
+          TabOrder = 0
+          TabStop = False
+          AutoContentSizes = [acsWidth, acsHeight]
+          object rbDBISAM: TcxRadioButton
+            Left = 10
+            Top = 10
+            Width = 80
+            Height = 17
+            Caption = 'DBISAM'#25968#25454#24211
+            TabOrder = 0
+            OnClick = rbDBISAMClick
+            Transparent = True
+          end
+          object rbSQLSERVER: TcxRadioButton
+            Left = 10
+            Top = 33
+            Width = 113
+            Height = 17
+            Caption = 'SQLSERVER'#25968#25454#24211
+            TabOrder = 1
+            OnClick = rbSQLSERVERClick
+            Transparent = True
+          end
+          object dxLayoutGroup2: TdxLayoutGroup
+            AutoAligns = [aaVertical]
+            ShowCaption = False
+            Hidden = True
+            ShowBorder = False
+            object dxLayoutItem3: TdxLayoutItem
+              AutoAligns = [aaVertical]
+              AlignHorz = ahClient
+              Caption = 'cxRadioButton1'
+              ShowCaption = False
+              Control = rbDBISAM
+              ControlOptions.AutoColor = True
+              ControlOptions.ShowBorder = False
+            end
+            object dxLayoutItem2: TdxLayoutItem
+              ShowCaption = False
+              Control = rbSQLSERVER
+              ControlOptions.AutoColor = True
+              ControlOptions.ShowBorder = False
             end
           end
         end

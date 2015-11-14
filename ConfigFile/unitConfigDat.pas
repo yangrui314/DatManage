@@ -22,11 +22,10 @@ type
     procedure InitData; override;
     function GetSystemConfigValue(aName : String) : String; override;
     procedure SaveSystemConfig(aName : String;aValue : String); override;
-
     function LoadHistorys : TList; override;
   public
     constructor Create; override;
-    procedure SaveHistory(aName : String;aPath : String);override;    
+    procedure SaveHistory(aConnectWay : string;aName : String;aPath : String);override;    
     destructor Destroy; override;
   end;
 
@@ -92,6 +91,7 @@ begin
     begin 
       Clear; 
       Add('ID',ftAutoInc,0,False);
+      Add('ConnectWay',ftString,255,False);      
       Add('Name',ftString,255,False);
       Add('Path',ftString,255,False);
     end;
@@ -263,7 +263,7 @@ begin
       First;
       while not Eof do
       begin
-        aHistory := THistory.Create(FieldByName('Name').AsString,FieldByName('Path').AsString);
+        aHistory := THistory.Create(FieldByName('ConnectWay').AsString,FieldByName('Name').AsString,FieldByName('Path').AsString);
         Result.Add(aHistory);
         Next;
       end;
@@ -275,7 +275,7 @@ begin
   end;
 end;
     
-procedure TConfigDat.SaveHistory(aName : String;aPath : String);
+procedure TConfigDat.SaveHistory(aConnectWay : string;aName : String;aPath : String);
 begin
   inherited;
   with FSystemConfig do
@@ -302,6 +302,7 @@ begin
 
     First;
     Append;
+    FieldByName('ConnectWay').AsString := aConnectWay;
     FieldByName('Name').AsString := aName;
     FieldByName('Path').AsString := aPath;
     Post;

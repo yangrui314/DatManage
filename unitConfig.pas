@@ -15,6 +15,7 @@ type
     FShowName : Boolean;
     FShowPath : Boolean;
     FSelectShowWay : String;
+    FConnectWay : String;
 
     constructor Create;
     procedure InitData;
@@ -30,6 +31,7 @@ type
     property ShowName: Boolean read FShowName write FShowName;
     property ShowPath: Boolean read FShowPath write FShowPath;
     property SelectShowWay: string read FSelectShowWay write FSelectShowWay;
+    property ConnectWay : string read  FConnectWay write  FConnectWay;
     property Historys : TList read FHistorys write FHistorys;
     function GetHistoryName(aPath : String) : String;
     function GetHistoryPath(aName : String) : String;
@@ -57,6 +59,8 @@ begin
   FShowPath := True;
   //查询时，1代表查询字段，2代表查询中文名。默认是直接查询字段。
   FSelectShowWay := '1';
+  //连接方式,1代表DBISAM,2代表SQL
+  FConnectWay := '1';
 end;
 
 procedure TConfig.FreeHistorys;

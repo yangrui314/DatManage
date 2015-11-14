@@ -25,7 +25,7 @@ type
   public
     constructor Create; virtual;
     destructor Destroy; virtual;
-    procedure SaveHistory(aName : String;aPath : String);virtual;abstract;
+    procedure SaveHistory(aConnectWay : string;aName : String;aPath : String);virtual;abstract;
   end;
 
 
@@ -62,6 +62,7 @@ begin
   Config.ShowName := (GetSystemConfigValue('ShowName') = '1');
   Config.ShowPath := (GetSystemConfigValue('ShowPath') = '1');
   Config.SelectShowWay := GetSystemConfigValue('SelectShowWay');
+  Config.ConnectWay := GetSystemConfigValue('ConnectWay');
   aHistorys := LoadHistorys;
   Config.Historys := aHistorys;
 end;
@@ -72,6 +73,7 @@ begin
   SaveSystemConfigToBoolean('ShowName',Config.ShowName);
   SaveSystemConfigToBoolean('ShowPath',Config.ShowPath);
   SaveSystemConfig('SelectShowWay',Config.SelectShowWay);
+  SaveSystemConfig('ConnectWay',Config.ConnectWay);  
 end;
 
 procedure TConfigFile.SaveSystemConfigToBoolean(aName : String;aValue : Boolean);

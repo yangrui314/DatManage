@@ -93,6 +93,7 @@ object frmTableProperty: TfrmTableProperty
       object dgPropertyIsIndex: TcxGridColumn
         Caption = #20027#38190
         PropertiesClassName = 'TcxCheckBoxProperties'
+        Properties.ReadOnly = True
         FooterAlignmentHorz = taCenter
         HeaderAlignmentHorz = taCenter
         HeaderGlyphAlignmentHorz = taCenter
