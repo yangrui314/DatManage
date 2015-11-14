@@ -394,6 +394,10 @@ object fmMain: TfmMain
         item
           Visible = True
           ItemName = 'btnProperty'
+        end
+        item
+          Visible = True
+          ItemName = 'dxBarButton1'
         end>
       OneOnRow = True
       Row = 0
@@ -454,6 +458,19 @@ object fmMain: TfmMain
       Hint = #21024#38500#25968#25454
       Visible = ivAlways
       OnClick = btnDeleteClick
+    end
+    object dxBarButton1: TdxBarButton
+      Caption = 'New Button'
+      Category = 0
+      Hint = 'New Button'
+      Visible = ivAlways
+      OnClick = dxBarButton1Click
+    end
+    object dxBarButton2: TdxBarButton
+      Caption = 'New Button'
+      Category = 0
+      Hint = 'New Button'
+      Visible = ivAlways
     end
   end
   object RzVersionInfo: TRzVersionInfo

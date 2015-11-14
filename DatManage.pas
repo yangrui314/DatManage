@@ -12,7 +12,8 @@ uses
   frameShowResult, dxLayoutControl, cxDropDownEdit, cxRadioGroup, unitTable,
   Menus, cxLookAndFeelPainters, cxButtons, cxGridExportLink, unitConfigFile,
   unitConfigDat, formParent, cxPC, ShellAPI, WinSkinData, dxBar,formSVN,
-  cxLookAndFeels, RzStatus,formUpgradeProgress,unitDownLoadFile, cxLabel;
+  cxLookAndFeels, RzStatus,formUpgradeProgress,unitDownLoadFile, cxLabel,
+  unitSQLEnvironment,unitDbisamEnvironment;
 
 type
   TfmMain = class(TParentForm)
@@ -74,6 +75,8 @@ type
     lcTableGroup2: TdxLayoutGroup;
     dxBarSubItem1: TdxBarSubItem;
     btnDelete: TdxBarButton;
+    dxBarButton1: TdxBarButton;
+    dxBarButton2: TdxBarButton;
     procedure FormShow(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure cbTableClick(Sender: TObject);
@@ -101,6 +104,7 @@ type
     procedure MenuUpadateClick(Sender: TObject);
     procedure edtTablePropertiesChange(Sender: TObject);
     procedure btnDeleteClick(Sender: TObject);
+    procedure dxBarButton1Click(Sender: TObject);
   private
 
     FRootPath: string;
@@ -325,7 +329,8 @@ begin
   LoadConfig;
   edtCreatePath.Text := FRootPath;
   LoadTableName(FRootPath);
-  FEnvironment := TEnvironment.Create(Self, FRootPath);
+//  FEnvironment := TDbisamEnvironment.Create(Self, FRootPath);
+  FEnvironment := TSQLEnvironment.Create(Self, '');
   FTable := TTable.Create(FEnvironment, '', '');
   FResult := TShowResultFrame.Create(Self);
   FResult.Parent := pnlResult;
@@ -509,7 +514,7 @@ begin
 
     FRootPath := edtCreatePath.Text;
     LoadTableName(FRootPath);
-    FEnvironment.SetRootPath(FRootPath);
+    FEnvironment.SetEnvironment(FRootPath);
   end;
 end;
 
@@ -519,7 +524,7 @@ begin
   edtPathName.EditValue := Config.GetHistoryName(DisplayValue);
   FRootPath := DisplayValue;
   LoadTableName(FRootPath);
-  FEnvironment.SetRootPath(FRootPath);
+  FEnvironment.SetEnvironment(FRootPath);
 end;
 
 procedure TfmMain.edtPathNamePropertiesValidate(Sender: TObject; var DisplayValue: Variant; var ErrorText: TCaption; var Error: Boolean);
@@ -528,7 +533,7 @@ begin
   edtCreatePath.EditValue := Config.GetHistoryPath(DisplayValue);
   FRootPath := edtCreatePath.EditValue;
   LoadTableName(FRootPath);
-  FEnvironment.SetRootPath(FRootPath);
+  FEnvironment.SetEnvironment(FRootPath);
 end;
 
 procedure TfmMain.btnSavePathClick(Sender: TObject);
@@ -1009,6 +1014,26 @@ begin
   end;
 end;
 
+
+procedure TfmMain.dxBarButton1Click(Sender: TObject);
+var
+  SQL : TSQLEnvironment;
+  I : Integer;
+begin
+  inherited;
+  SQL := TSQLEnvironment.Create(Self,'');
+  try
+    SQL.ExecSQL('select * from BAS_Customer;');
+    I := 0;
+    while not SQL.MainData.Eof do
+    begin
+      ShowMessage(SQL.MainData.Fields.Fields[I].FieldName);
+      Inc(I);
+    end;
+  finally
+    SQL.Free;
+  end;
+end;
 
 end.
 

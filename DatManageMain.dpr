@@ -36,7 +36,9 @@ uses
   UnitShowDiff in 'Diff\UnitShowDiff.pas' {frmShowDiff},
   formUpgradeProgress in 'formUpgradeProgress.pas' {fmUpgradeProgress},
   unitDownLoadFile in 'unitDownLoadFile.pas',
-  unitMenu in 'unitMenu.pas';
+  unitMenu in 'unitMenu.pas',
+  unitSQLEnvironment in 'unitSQLEnvironment.pas',
+  unitDbisamEnvironment in 'unitDbisamEnvironment.pas';
 
 {$R *.res}
 
