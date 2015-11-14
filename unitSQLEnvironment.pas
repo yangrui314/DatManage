@@ -155,7 +155,6 @@ begin
     TADOQuery(aMain).SQL.Clear;
     TADOQuery(aMain).SQL.Add(aSQL);
     TADOQuery(aMain).ExecSQL;
-    TADOQuery(aMain).Open;
     ShowMessage('执行成功:'+aSQL)
   except
     on E: Exception do
@@ -180,7 +179,6 @@ begin
       TADOQuery(aMain).SQL.Add(aSQLs[I]+';');
     end;
     TADOQuery(aMain).ExecSQL;
-    TADOQuery(aMain).Open;
     ShowMessage('执行语句共'+ IntToStr(Len) + '条,'+'执行SQL成功!')
   except
     on E: Exception do
