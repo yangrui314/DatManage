@@ -958,10 +958,12 @@ begin
   if Config.ConnectWay = '1' then
   begin
     GroupConnect.Caption := 'DBISAM数据库';
+    MenuSupply.Visible := True;
   end
   else
   begin
     GroupConnect.Caption := 'SQLSERVER数据库';
+    MenuSupply.Visible := False;
   end;
 end;
 
