@@ -16,6 +16,7 @@ type
     FShowPath : Boolean;
     FSelectShowWay : String;
     FConnectWay : String;
+    FSystemParameter : String;
 
     constructor Create;
     procedure InitData;
@@ -32,9 +33,13 @@ type
     property ShowPath: Boolean read FShowPath write FShowPath;
     property SelectShowWay: string read FSelectShowWay write FSelectShowWay;
     property ConnectWay : string read  FConnectWay write  FConnectWay;
+
+    //¡Ÿ ±
+    property SystemParameter : string read  FSystemParameter write  FSystemParameter;
+
     property Historys : TList read FHistorys write FHistorys;
-    function GetHistoryName(aPath : String) : String;
-    function GetHistoryPath(aName : String) : String;
+    function GetHistoryName(aPath : String ; aInclude : Boolean = False) : String;
+    function GetHistoryPath(aName : String ; aInclude : Boolean = False ) : String;
 
   end;
 
@@ -100,7 +105,7 @@ begin
 end;
 
 
-function TConfig.GetHistoryName(aPath : String) : String;
+function TConfig.GetHistoryName(aPath : String; aInclude : Boolean = False) : String;
 var
   I: Integer;
 begin
@@ -112,15 +117,26 @@ begin
 //  end;
   for I := 0 to FHistorys.Count - 1 do
   begin
-    if THistory(FHistorys.Items[I]).Path = aPath then
+    if aInclude then
     begin
-      Result :=  THistory(FHistorys.Items[I]).Name;
-      Exit;
+      if Pos(aPath,THistory(FHistorys.Items[I]).Path) <> 0 then
+      begin
+        Result :=  THistory(FHistorys.Items[I]).Name;
+        Exit;
+      end    
     end
+    else
+    begin
+      if THistory(FHistorys.Items[I]).Path = aPath then
+      begin
+        Result :=  THistory(FHistorys.Items[I]).Name;
+        Exit;
+      end    
+    end;
   end;
 end;
 
-function TConfig.GetHistoryPath(aName : String) : String;
+function TConfig.GetHistoryPath(aName : String; aInclude : Boolean = False) : String;
 var
   I: Integer;
 begin
@@ -132,11 +148,23 @@ begin
 //  end;
   for I := 0 to FHistorys.Count - 1 do
   begin
-    if THistory(FHistorys.Items[I]).Name = aName then
+    if aInclude then
     begin
-      Result :=  THistory(FHistorys.Items[I]).Path;
-      Exit;
+      if Pos(aName,THistory(FHistorys.Items[I]).Name) <> 0  then
+      begin
+        Result :=  THistory(FHistorys.Items[I]).Path;
+        Exit;
+      end    
     end
+    else
+    begin
+      if THistory(FHistorys.Items[I]).Name = aName then
+      begin
+        Result :=  THistory(FHistorys.Items[I]).Path;
+        Exit;
+      end    
+    end;
+
   end;
 end;
 

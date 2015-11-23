@@ -286,6 +286,14 @@ object fmMain: TfmMain
         Caption = 'SVN'#25552#20132#30446#24405
         OnClick = N6Click
       end
+      object N7: TMenuItem
+        Caption = #20462#25913#32534#35793#25351#20196
+        OnClick = N7Click
+      end
+      object N8: TMenuItem
+        Caption = #26597#30475#32534#35793#25351#20196
+        OnClick = N8Click
+      end
     end
     object MenuUpadate: TMenuItem
       Caption = #26356#26032

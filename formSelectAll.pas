@@ -6,7 +6,7 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, formParent, dxLayoutControl, cxContainer, cxEdit, cxTextEdit,
   cxControls, ExtCtrls, Menus, cxLookAndFeelPainters, StdCtrls, cxButtons,unitEnvironment,
-  unitTable,DB, cxLookAndFeels, cxMemo;
+  unitTable,DB, cxLookAndFeels, cxMemo,unitConfig,unitSQLEnvironment,unitDbisamEnvironment;
 
 type
   TfmSelectAll = class(TParentForm)
@@ -20,6 +20,7 @@ type
     edtMessage: TcxMemo;
     lcMainItem3: TdxLayoutItem;
     procedure cbSelectAllClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
   private
     FPath : string;
     FTableList : TStringList;
@@ -28,13 +29,12 @@ type
     FTableField: TTable;
     FTableSQL : TTable;
     procedure InitData;
-    procedure LoadTableName(const sPath: string);
+    procedure LoadTableName;
     procedure AddTable(const aTableName: string);
     function GetResult : String;
     function SingleTableSelect(const aTableName : String) : String;
   public
-    constructor Create(AOwner: TComponent;const aPath : String);
-    destructor Destroy;     
+    destructor Destroy;
   end;
 
 var
@@ -48,50 +48,32 @@ implementation
 
 {$R *.dfm}
 
-constructor TfmSelectAll.Create(AOwner: TComponent;const aPath : String);
-begin
-  inherited Create(AOwner);
-  FPath := aPath;
-  Height := 215;
-  Width := 300;
-  FTableList :=  TStringList.Create;
-  FEnvironment := TEnvironment.Create(AOwner, FPath);
-  FTableField := TTable.Create(FEnvironment, '', '');
-  FTableSQL := TTable.Create(FEnvironment, '', '');
-  InitData;
-end;
 
 
 procedure TfmSelectAll.InitData;
 begin
-  LoadTableName(FPath);
+  LoadTableName;
 end;
 
 
-procedure TfmSelectAll.LoadTableName(const sPath: string);
+procedure TfmSelectAll.LoadTableName;
 var
-  SearchRec: TSearchRec;
-  Found: Integer;
-  NewName: string;
-  TablePath: string;
+  aTables : TStringList;
+  I : Integer;
 begin
-
-  if RightStr(sPath, 1) = '\' then
-    TablePath := sPath
-  else
-    TablePath := sPath + '\';
-
-  Found := FindFirst(TablePath + '*.*', faAnyFile, SearchRec);
-  while Found = 0 do
-  begin
-    if (SearchRec.Name <> '.') and (SearchRec.Name <> '..') and (SearchRec.Attr <> faDirectory) and ((ExtractFileExt(SearchRec.Name) = '.dat')) then
+  if (FEnvironment = nil) or (FPath = '') then Exit;
+  aTables := TStringList.Create;
+  aTables := FEnvironment.LoadTableName('');
+  try
+    for I := 0 to aTables.Count - 1 do
     begin
-      AddTable(ChangeFileExt(SearchRec.Name, ''));
+      AddTable(aTables[I]);
     end;
-    found := FindNext(SearchRec);
+  finally
+    aTables.Free;
   end;
-  FindClose(SearchRec);
 end;
+
 
 
 procedure TfmSelectAll.AddTable(const aTableName: string);
@@ -181,6 +163,26 @@ begin
   edtMessage.Text := aMessage;
 end;
 
+
+procedure TfmSelectAll.FormCreate(Sender: TObject);
+begin
+  inherited;
+  FPath := Config.SystemParameter;
+  Height := 215;
+  Width := 300;
+  FTableList :=  TStringList.Create;
+  if Config.ConnectWay = '1' then
+  begin
+    FEnvironment := TDbisamEnvironment.Create(Self, FPath);
+  end
+  else
+  begin
+    FEnvironment := TSQLEnvironment.Create(Self, FPath);
+  end;
+  FTableField := TTable.Create(FEnvironment, '', '');
+  FTableSQL := TTable.Create(FEnvironment, '', '');
+  InitData;
+end;
 
 initialization
   RegisterClass(TfmSelectAll);

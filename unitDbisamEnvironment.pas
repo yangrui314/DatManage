@@ -161,10 +161,10 @@ begin
     aExecSQL.SQL.Add(aSQL);
     aExecSQL.Prepare;
     aExecSQL.ExecSQL;
-    ShowMessage('执行成功:'+aSQL)
+    ShowMessage('执行成功。' + #13#10 + 'SQL脚本为:' + #13#10 +aSQL)
   except
     on E: Exception do
-      showmessage('异常类名称:' + E.ClassName
+      showmessage('失败!' + #13#10 +'异常类名称:' + E.ClassName
         + #13#10 + '异常信息:' + E.Message);
   end;    
 end;

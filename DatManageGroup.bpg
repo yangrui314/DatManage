@@ -9,15 +9,15 @@ MAKE = $(ROOT)\bin\make.exe -$(MAKEFLAGS) -f$**
 DCC = $(ROOT)\bin\dcc32.exe $**
 BRCC = $(ROOT)\bin\brcc32.exe $**
 #------------------------------------------------------------------------------
-PROJECTS = DatManageMain.exe Upgrade.exe
+PROJECTS = Upgrade.exe DatManageMain.exe
 #------------------------------------------------------------------------------
 default: $(PROJECTS)
 #------------------------------------------------------------------------------
 
-DatManageMain.exe: DatManageMain.dpr
+Upgrade.exe: Upgrade.dpr
   $(DCC)
 
-Upgrade.exe: Upgrade.dpr
+DatManageMain.exe: DatManageMain.dpr
   $(DCC)
 
 

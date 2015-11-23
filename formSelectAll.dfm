@@ -5,6 +5,7 @@ inherited fmSelectAll: TfmSelectAll
   Height = 215
   Caption = 'fmSelectAll'
   Position = poDefault
+  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
   object pnlMain: TPanel [0]
