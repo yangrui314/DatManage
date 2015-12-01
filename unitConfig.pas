@@ -40,7 +40,6 @@ type
     property Historys : TList read FHistorys write FHistorys;
     function GetHistoryName(aPath : String ; aInclude : Boolean = False) : String;
     function GetHistoryPath(aName : String ; aInclude : Boolean = False ) : String;
-
   end;
 
 var
@@ -167,6 +166,8 @@ begin
 
   end;
 end;
+
+
 
 
 destructor TConfig.Destroy;

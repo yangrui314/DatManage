@@ -18,7 +18,7 @@ object fmMain: TfmMain
     Left = 0
     Top = 225
     Width = 860
-    Height = 346
+    Height = 366
     Align = alClient
     Caption = 'pnlResult'
     ParentBackground = True
@@ -264,37 +264,6 @@ object fmMain: TfmMain
   object MainMenu: TMainMenu
     Left = 520
     Top = 40
-    object MenuSupply: TMenuItem
-      Caption = #36741#21161#39033
-      object N4: TMenuItem
-        Caption = #25171#24320#37197#32622#30446#24405
-        OnClick = N4Click
-      end
-      object N1: TMenuItem
-        Caption = #25171#24320#30446#24405
-        OnClick = N1Click
-      end
-      object N2: TMenuItem
-        Caption = #25171#24320#34920
-        OnClick = N2Click
-      end
-      object N3: TMenuItem
-        Caption = 'SVN'#26356#26032#30446#24405
-        OnClick = N3Click
-      end
-      object N6: TMenuItem
-        Caption = 'SVN'#25552#20132#30446#24405
-        OnClick = N6Click
-      end
-      object N7: TMenuItem
-        Caption = #20462#25913#32534#35793#25351#20196
-        OnClick = N7Click
-      end
-      object N8: TMenuItem
-        Caption = #26597#30475#32534#35793#25351#20196
-        OnClick = N8Click
-      end
-    end
     object MenuUpadate: TMenuItem
       Caption = #26356#26032
       Visible = False

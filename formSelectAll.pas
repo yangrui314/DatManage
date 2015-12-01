@@ -6,10 +6,10 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, formParent, dxLayoutControl, cxContainer, cxEdit, cxTextEdit,
   cxControls, ExtCtrls, Menus, cxLookAndFeelPainters, StdCtrls, cxButtons,unitEnvironment,
-  unitTable,DB, cxLookAndFeels, cxMemo,unitConfig,unitSQLEnvironment,unitDbisamEnvironment;
+  unitTable,DB, cxLookAndFeels, cxMemo,unitConfig,unitSQLEnvironment,unitDbisamEnvironment,formParentMenu;
 
 type
-  TfmSelectAll = class(TParentForm)
+  TfmSelectAll = class(TfmParentMenu)
     pnlMain: TPanel;
     lcMainGroup_Root: TdxLayoutGroup;
     lcMain: TdxLayoutControl;

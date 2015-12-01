@@ -13,7 +13,7 @@ uses
   Menus, cxLookAndFeelPainters, cxButtons, cxGridExportLink, unitConfigFile,
   unitConfigDat, formParent, cxPC, ShellAPI, WinSkinData, dxBar,formSVN,
   cxLookAndFeels, RzStatus,formUpgradeProgress,unitDownLoadFile, cxLabel,
-  unitSQLEnvironment,unitDbisamEnvironment;
+  unitSQLEnvironment,unitDbisamEnvironment,formParentMenu;
 
 type
   TfmMain = class(TParentForm)
@@ -21,15 +21,9 @@ type
     pnlResult: TPanel;
     dlgSave: TSaveDialog;
     MainMenu: TMainMenu;
-    MenuSupply: TMenuItem;
-    N1: TMenuItem;
-    N2: TMenuItem;
     BarManager: TdxBarManager;
     BarManagerBar1: TdxBar;
     btnResult: TdxBarButton;
-    N3: TMenuItem;
-    N4: TMenuItem;
-    N6: TMenuItem;
     btnImportExcel: TdxBarButton;
     btnExport: TdxBarButton;
     btnAdd: TdxBarButton;
@@ -72,8 +66,6 @@ type
     dxBarButton1: TdxBarButton;
     dxBarButton2: TdxBarButton;
     GroupConnect: TdxLayoutGroup;
-    N7: TMenuItem;
-    N8: TMenuItem;
     procedure FormShow(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure btnSelectParameterClick(Sender: TObject);
@@ -82,13 +74,8 @@ type
     procedure btnSaveParameterClick(Sender: TObject);
     procedure btnResultClick(Sender: TObject);
     procedure btnConditionClick(Sender: TObject);
-    procedure N1Click(Sender: TObject);
-    procedure N2Click(Sender: TObject);
     procedure btnResult1Click(Sender: TObject);
-    procedure N4Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
-    procedure N3Click(Sender: TObject);
-    procedure N6Click(Sender: TObject);
     procedure btnImportExcelClick(Sender: TObject);
     procedure btnExportClick(Sender: TObject);
     procedure btnAddClick(Sender: TObject);
@@ -99,8 +86,6 @@ type
     procedure MenuUpadateClick(Sender: TObject);
     procedure edtTablePropertiesChange(Sender: TObject);
     procedure btnDeleteClick(Sender: TObject);
-    procedure N7Click(Sender: TObject);
-    procedure N8Click(Sender: TObject);
   private
     FParameter: string;
     FTableName: string;
@@ -136,17 +121,11 @@ type
     procedure MergeNew;
     procedure CreateBat;
     procedure UpdateSelf;
-    procedure LoadMenu(aMenuName : String;aHint : String = '');
+    procedure LoadMenu(aMenuName : String;aHint : String = '';aShow : Boolean = True);
     procedure InitMenu;
     procedure ChangeConnect;
-    function GetMidStr(aStr : String;aBeginStr : String; aEndStr : String) : String;
-    procedure FileReplace(FileName  : String;SrcWord : String; ModifyWord : String;CaseFlag : Boolean);
-    function GetOutputDirAndConditionalsAndPathName(aFilePath : String;
-        aOutputDirKeyStr : String; aConditionalsKeyStr : String;
-        var aOutputDir : string; var aConditionals : String;var aPathName : String;aSelectStr : String = '') : Boolean;
-    function GetPathName(aOutputDir : String) : String;
   public
-    class function CreateInstance(var AForm: TParentForm; AFormClassName: String = ''): TParentForm;
+    class function CreateInstance(var AForm: TfmParentMenu; AFormClassName: String = ''): TfmParentMenu;overload;
   end;
 
 var
@@ -210,7 +189,7 @@ begin
   end;
 end;
 
-class function TfmMain.CreateInstance(var AForm: TParentForm; AFormClassName: String = ''): TParentForm;
+class function TfmMain.CreateInstance(var AForm: TfmParentMenu; AFormClassName: String = ''): TfmParentMenu;
 var
   FormClassName: String;
   FormClass: TPersistentClass;
@@ -224,14 +203,16 @@ begin
     FormClass := FindClass(ClassName);
 
   if FormClass = nil then
-    FormClass := TParentForm;
+    FormClass := TfmParentMenu;
 
   if FormClass <> nil then begin
     Application.CreateForm(TComponentClass(FormClass), AForm);
-    Result := TParentForm(AForm);
+    Result := TfmParentMenu(AForm);
   end else
     Result := nil;
 end;
+
+
 
 procedure TfmMain.WorkRun;
 var
@@ -330,29 +311,83 @@ var
   aClassName : string;
   aMenuName : string;
   aNotShowFormHint : string;
+  aShow : Boolean;
 begin
   Config.SystemParameter := FParameter;
   aMenuName := (Sender as TMenuItem).Name;
   aNotShowFormHint := (Sender as TMenuItem).Hint;
   aClassName := Copy(aMenuName,5,Length(aMenuName)-4);
-  LoadMenu(aClassName,aNotShowFormHint);
+  aShow := (LeftStr(aMenuName,4)  <> 'Unit');
+  LoadMenu(aClassName,aNotShowFormHint,aShow);
 end;
+
+
 
 
 procedure TfmMain.InitMenu;
 var
-  MenuItem:TMenuItem;
-  I : Integer;  
+  MenuItem,MenuSubItem:TMenuItem;
+  I ,J: Integer;
+  MenuNum : Integer;  
 begin
+  MenuNum := 1;
   for I := 0 to Length(Config.FMenuList) - 1 do
   begin
+    if Config.FMenuList[I].ParentName <> '' then
+      Continue;
+      
     MenuItem:=TMenuItem.Create(MainMenu);
-    MenuItem.Name := 'Menu' + Config.FMenuList[I].ClassName;
+    if Config.FMenuList[I].ClassName = '' then
+    begin
+      MenuItem.Name := 'Unit' + IntToStr(Random(100));
+    end
+    else
+    begin
+      if Config.FMenuList[I].ClassType = 'Class' then
+      begin
+        MenuItem.Name := 'Unit' + Config.FMenuList[I].ClassName;
+      end
+      else
+      begin
+        MenuItem.Name := 'Form' + Config.FMenuList[I].ClassName;
+      end;    
+    end;
     MenuItem.Caption:= Config.FMenuList[I].Caption;
     MenuItem.Hint := Config.FMenuList[I].NotShowFormHint;
     MenuItem.Visible := Config.FMenuList[I].Visible;
-    MenuItem.OnClick := MenuClick;
+    if Config.FMenuList[I].ClassName <> '' then
+      MenuItem.OnClick := MenuClick;
     MainMenu.Items.Add(MenuItem);
+    for J := 0 to Length(Config.FMenuList) - 1 do
+    begin
+      if (Config.FMenuList[I].Name = Config.FMenuList[J].ParentName)   then
+      begin
+        MenuSubItem:=TMenuItem.Create(MainMenu);
+        if Config.FMenuList[J].ClassName = '' then
+        begin
+          MenuSubItem.Name := 'Unit' + IntToStr(Random(100));
+        end
+        else
+        begin
+          if Config.FMenuList[J].ClassType = 'Class' then
+          begin
+            MenuSubItem.Name := 'Unit' + Config.FMenuList[J].ClassName;
+          end
+          else
+          begin
+            MenuSubItem.Name := 'Form' + Config.FMenuList[J].ClassName;
+          end;
+        end;
+        MenuSubItem.Caption:= Config.FMenuList[J].Caption;
+        MenuSubItem.Hint := Config.FMenuList[J].NotShowFormHint;
+        MenuSubItem.Visible := Config.FMenuList[J].Visible;
+        if Config.FMenuList[J].ClassName <> '' then
+          MenuSubItem.OnClick := MenuClick;
+
+        MainMenu.Items[MenuNum].Add(MenuSubItem);
+      end;
+    end;    
+    Inc(MenuNum);
   end;
 end;
 
@@ -523,87 +558,16 @@ begin
   WorkRun;
 end;
 
-procedure TfmMain.N1Click(Sender: TObject);
-var
-  aDatPath: string;
-begin
-  inherited;
-  if (PageSelect.ActivePageIndex = 1) or (edtTable.Text = '') then
-  begin
-    //打开目录
-    ShellExecute(Handle, 'open', 'Explorer.exe', PChar(FParameter), nil, 1);
-  end
-  else
-  begin
-    //打开目录并定位。
-    if RightStr(FParameter, 1) = '\' then
-      aDatPath := FParameter
-    else
-      aDatPath := FParameter + '\';
-    aDatPath := aDatPath + edtTable.EditValue + '.dat';
-    ShellExecute(0, nil, PChar('explorer.exe'), PChar('/e, ' + '/select,' + aDatPath), nil, SW_NORMAL);
-  end;
-end;
-
-procedure TfmMain.N2Click(Sender: TObject);
-var
-  aDatPath: string;
-begin
-  inherited;
-  //打开表
-  if (PageSelect.ActivePageIndex = 1) or (edtTable.Text = '') then
-  begin
-    ShowMessage('未选择表或SQL查询模式。');
-    Exit;
-  end;
-  if RightStr(FParameter, 1) = '\' then
-    aDatPath := FParameter
-  else
-    aDatPath := FParameter + '\';
-  aDatPath := aDatPath + edtTable.EditValue + '.dat';
-  ShellExecute(Handle, 'open', 'Explorer.exe', PChar(aDatPath), nil, 1);
-end;
-
 procedure TfmMain.btnResult1Click(Sender: TObject);
 begin
   inherited;
   WorkRun;
 end;
 
-procedure TfmMain.N4Click(Sender: TObject);
-begin
-  inherited;
-  ShellExecute(Handle, 'open', 'Explorer.exe', PChar(ExtractFileDir(ParamStr(0)) + '\Config'), nil, 1);
-end;
-
 procedure TfmMain.FormCreate(Sender: TObject);
 begin
   inherited;
   FSVN := TfmSVN.Create(Self);
-end;
-
-procedure TfmMain.N3Click(Sender: TObject);
-var
-  aDatPath : string;
-begin
-  inherited;
-  if RightStr(FParameter, 1) = '\' then
-    aDatPath := FParameter
-  else
-    aDatPath := FParameter + '\';  
-  FSVN.WorkRun(aDatPath,'update');
-end;
-
-procedure TfmMain.N6Click(Sender: TObject);
-var
-  aDatPath : string;
-begin
-  inherited;
-  if RightStr(FParameter, 1) = '\' then
-    aDatPath := FParameter
-  else
-    aDatPath := FParameter + '\';
-  FSVN.WorkRun(aDatPath,'commit');
 end;
 
 procedure TfmMain.btnImportExcelClick(Sender: TObject);
@@ -940,9 +904,9 @@ begin
   WorkRun;
 end;
 
-procedure TfmMain.LoadMenu(aMenuName : String;aHint : String = '');
+procedure TfmMain.LoadMenu(aMenuName : String;aHint : String = '';aShow : Boolean = True);
 var
-  aMenu : TParentForm;
+  aMenu : TfmParentMenu;
 begin
   TfmMain.CreateInstance(aMenu,aMenuName);
   try
@@ -958,155 +922,30 @@ begin
       end;
       Exit;
     end;
-    aMenu.ShowModal;
+    if aShow then
+    begin
+      aMenu.ShowModal;    
+    end
+    else
+    begin
+      aMenu.MenuHandle(FParameter,PageSelect.ActivePageIndex,edtTable.Text);
+    end;
   finally
     aMenu.Free;
   end;
 end;
+
 
 procedure TfmMain.ChangeConnect;
 begin
   if Config.ConnectWay = '1' then
   begin
     GroupConnect.Caption := 'DBISAM数据库';
-    MenuSupply.Visible := True;
   end
   else
   begin
     GroupConnect.Caption := 'SQLSERVER数据库';
-    MenuSupply.Visible := False;
   end;
-end;
-
-procedure TfmMain.N7Click(Sender: TObject);
-var
-  aSelectStr : String;
-  aSoftwareScrPath : String;
-  aAlterOutputDir,aAlterConditionals,aAlterPathName: String;
-  aOutputDir,aConditionals,aPathName: String;
-  aIsGetAlter,aIsGetScr : Boolean;
-begin
-  inherited;
-  aSelectStr := '编译输出目录：..\..\deploy\client' +GetMidStr(FParameter,'client','data');
-  aSoftwareScrPath :=LeftStr(FParameter,Pos('deploy',FParameter)-1) + 'src\delphi\';
-  aIsGetAlter := GetOutputDirAndConditionalsAndPathName(aSoftwareScrPath + 'Readme.txt' ,'编译输出目录：',
-                                '编译指令：',aAlterOutputDir,aAlterConditionals,aAlterPathName,aSelectStr);
-  aIsGetScr := GetOutputDirAndConditionalsAndPathName(aSoftwareScrPath + 'Omni.dof','OutputDir=',
-                              'Conditionals=',aOutputDir,aConditionals,aPathName);
-  if aAlterPathName = aPathName then
-  begin
-    ShowMessage('修改的目录和当前目录相同，' + aPathName + ',无法修改。');
-    Exit;
-  end;
-                              
-  if aIsGetAlter and aIsGetScr  then
-  begin
-    //修改输出路径
-    FileReplace(aSoftwareScrPath + 'Omni.dof',aOutputDir,aAlterOutputDir,False);
-    //修改编译指令
-    FileReplace(aSoftwareScrPath + 'Omni.dof',aConditionals,aAlterConditionals,False);
-    ShowMessage('修改编译指令成功。'+ #13 + aPathName + '修改为' +aAlterPathName);
-  end
-  else
-  begin
-    ShowMessage('修改编译指令成功。');
-  end;  
-end;
-
-function TfmMain.GetMidStr(aStr : String;aBeginStr : String; aEndStr : String) : String;
-var
-  aBeginNum,aEndStrNum: Integer;
-  aNotLeft  : String;
-begin
-  Result := '';
-  aBeginNum := Pos(aBeginStr,aStr);
-  aNotLeft :=  Copy(aStr,aBeginNum + Length(aBeginStr) ,Length(aStr)-aBeginNum+1);
-
-  aEndStrNum :=  Pos(aEndStr,aNotLeft);
-  Result := LeftStr(aNotLeft,aEndStrNum-1);
-end;
-
-
-procedure TfmMain.FileReplace(FileName  : String;SrcWord : String; ModifyWord : String;CaseFlag : Boolean);
-var
-  List : TStringList;
-begin
-  List := TStringList.Create();
-  try
-    List.LoadFromFile(FileName);
-    if CaseFlag
-    then List.Text := StringReplace(List.Text,SrcWord,ModifyWord,[rfReplaceAll])
-    else List.Text := StringReplace(List.Text,SrcWord,ModifyWord,[rfReplaceAll, rfIgnoreCase]);
-    List.SaveToFile(FileName);
-  finally
-    List.Free;
-  end;
-end;
-
-procedure TfmMain.N8Click(Sender: TObject);
-var
-  aSoftwareScrPath : string;
-  aOutputDir : String;
-  aConditionals : string;
-  aPathName : string;
-begin
-  inherited;
-  aSoftwareScrPath :=LeftStr(FParameter,Pos('deploy',FParameter)-1) + 'src\delphi\';
-
-  if GetOutputDirAndConditionalsAndPathName(aSoftwareScrPath + 'Omni.dof','OutputDir=',
-                                'Conditionals=',aOutputDir,aConditionals,aPathName) then
-  begin
-    ShowMessage('当前路径名称:'  + aPathName + #13
-    + '当前输出路径:' + #13 + aOutputDir + #13
-    + '当前输出编译指令：' + #13 + aConditionals);      
-  end
-  else
-  begin
-    ShowMessage('查看失败。');
-  end;
-end;
-
-function TfmMain.GetOutputDirAndConditionalsAndPathName(aFilePath : String;
-aOutputDirKeyStr : String; aConditionalsKeyStr : String;
-var aOutputDir : string; var aConditionals : String;var aPathName : String;aSelectStr : String = '') : Boolean;
-var
-  aFile : TStringList;
-  aStr : String;
-  aSelectNum : Integer;
-begin
-  Result := False;
-  aFile := TStringList.Create();
-  try
-    if not FileExists(aFilePath) then
-    begin
-      Exit;
-    end;
-    aFile.LoadFromFile(aFilePath);
-    aStr := aFile.Text;
-    if aSelectStr <> '' then
-    begin
-      aSelectNum := Pos(aSelectStr,aStr);
-      aStr := Copy(aStr,aSelectNum ,Length(aStr)-aSelectNum+1);
-    end;
-    aOutputDir := GetMidStr(aStr,aOutputDirKeyStr,#13);
-    aConditionals :=  GetMidStr(aStr,aConditionalsKeyStr,#13);
-    aPathName :=  GetPathName(aOutputDir);
-    Result := True;
-
-  finally
-    aFile.Free;
-  end;  
-
-
-end;
-
-function TfmMain.GetPathName(aOutputDir : String) : String;
-var
-  aSelectStr : string;
-begin
-  Result := '';
-  aSelectStr := GetMidStr(aOutputDir,'client','bin');
-  Result := Config.GetHistoryName(aSelectStr,True);
 end;
 
 

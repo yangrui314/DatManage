@@ -6,10 +6,10 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, dxLayoutControl, cxContainer, cxEdit, cxImage, cxControls,
   ExtCtrls, Menus, cxLookAndFeelPainters, StdCtrls, cxButtons, cxLabel,
-  RzStatus,formParent;
+  RzStatus,formParentMenu, formParent;
 
 type
-  TfmAbout = class(TParentForm)
+  TfmAbout = class(TfmParentMenu)
     pnlAbout: TPanel;
     lcMainGroup_Root: TdxLayoutGroup;
     lcMain: TdxLayoutControl;

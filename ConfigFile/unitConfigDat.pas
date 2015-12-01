@@ -120,8 +120,10 @@ begin
       Add('Caption',ftString,255,False);
       Add('OrderID',ftInteger,0,False);
       Add('Visible',ftBoolean,0,False);
+      Add('ClassType',ftString,60,False);
       Add('ClassName',ftString,255,False);
       Add('NotShowFormHint',ftString,255,False);
+      Add('ParentName',ftString,255,False);
     end;
     with IndexDefs do
     begin
@@ -166,14 +168,16 @@ begin
         aMenu.Caption := FieldByName('Caption').AsString;
         aMenu.OrderID := FieldByName('OrderID').AsInteger;
         aMenu.Visible := FieldByName('Visible').AsBoolean;
+        aMenu.ClassType := FieldByName('ClassType').AsString;
         aMenu.ClassName := FieldByName('ClassName').AsString;
         aMenu.NotShowFormHint := FieldByName('NotShowFormHint').AsString;
+        aMenu.ParentName := FieldByName('ParentName').AsString;
         FConfig.FMenuList[I] := (aMenu);
         Inc(I);
         Next;
       end;
       Close;
-    end;   
+    end;
   finally
   
   end;
