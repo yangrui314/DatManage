@@ -146,7 +146,11 @@ end;
 procedure TConfigDat.LoadMenu;
 var
   aMenu : TMenu;
-  I : Integer;
+  I,J,K,N : Integer;
+  aMenuNames : array of String;
+  aMenuOrderIDs : array of Integer;
+  aTemp : Integer;
+  aTempStr : string;
 begin
   try
     with FMenu do
@@ -159,10 +163,38 @@ begin
       Open;
 
       SetLength(FConfig.FMenuList,FMenu.RecordCount);
+
       I := 0;
+      SetLength(aMenuNames,FMenu.RecordCount);
+      SetLength(aMenuOrderIDs,FMenu.RecordCount);
       First;
       while not Eof do
       begin
+        aMenuNames[I] := FieldByName('Name').AsString;
+        aMenuOrderIDs[I] := FieldByName('OrderID').AsInteger;
+        Inc(I);
+        Next;
+      end;
+
+      for J:=0 to FMenu.RecordCount - 1 do
+      begin
+        for K:=0 to (FMenu.RecordCount - 1) - J -1 do
+        begin
+          if aMenuOrderIDs[K]>aMenuOrderIDs[K+1] then
+          begin
+            aTemp:= aMenuOrderIDs[K];
+            aTempStr :=  aMenuNames[K];
+            aMenuOrderIDs[K]:=aMenuOrderIDs[K+1];
+            aMenuNames[K] := aMenuNames[K+1];
+            aMenuOrderIDs[K+1]:=aTemp;
+            aMenuNames[K+1] := aTempStr;
+          end;
+        end;
+      end;
+
+      for N:=0 to FMenu.RecordCount - 1 do
+      begin
+        FMenu.Locate('Name',aMenuNames[N],[]);
         aMenu := TMenu.Create;
         aMenu.Name := FieldByName('Name').AsString;
         aMenu.Caption := FieldByName('Caption').AsString;
@@ -172,14 +204,30 @@ begin
         aMenu.ClassName := FieldByName('ClassName').AsString;
         aMenu.NotShowFormHint := FieldByName('NotShowFormHint').AsString;
         aMenu.ParentName := FieldByName('ParentName').AsString;
-        FConfig.FMenuList[I] := (aMenu);
-        Inc(I);
-        Next;
+        FConfig.FMenuList[N] := (aMenu);
       end;
+
+//      First;
+//      while not Eof do
+//      begin
+//        aMenu := TMenu.Create;
+//        aMenu.Name := FieldByName('Name').AsString;
+//        aMenu.Caption := FieldByName('Caption').AsString;
+//        aMenu.OrderID := FieldByName('OrderID').AsInteger;
+//        aMenu.Visible := FieldByName('Visible').AsBoolean;
+//        aMenu.ClassType := FieldByName('ClassType').AsString;
+//        aMenu.ClassName := FieldByName('ClassName').AsString;
+//        aMenu.NotShowFormHint := FieldByName('NotShowFormHint').AsString;
+//        aMenu.ParentName := FieldByName('ParentName').AsString;
+//        FConfig.FMenuList[I] := (aMenu);
+//        Inc(I);
+//        Next;
+//      end;
       Close;
     end;
   finally
-  
+    SetLength(aMenuNames,0);
+    SetLength(aMenuOrderIDs,0);  
   end;
 end;
 
