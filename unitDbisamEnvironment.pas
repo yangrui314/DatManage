@@ -17,7 +17,7 @@ type
     procedure InitData;override;
   public
     procedure SetEnvironment(aParameter : String);override;
-    procedure SetSQL(const aSQL : String);override;
+    procedure SetSQL(const aSQL : String; aShowError : Boolean = True);override;
     procedure ExecSQL(const aSQL : String);override;
     procedure ExecSQLs(const aSQLs :  array of String);override;
     destructor Destroy;override;
@@ -79,8 +79,9 @@ begin
   aExecSQL.DatabaseName := dExecSQL.DatabaseName;
 end;
 
-procedure TDbisamEnvironment.SetSQL(const aSQL : String);
+procedure TDbisamEnvironment.SetSQL(const aSQL : String; aShowError : Boolean = True);
 begin
+  FLoadTable := True;
   try
     if aSQL = '' then Exit;
     TDBISAMQuery(aMain).Close;
@@ -92,8 +93,18 @@ begin
     FContainData := not aMain.IsEmpty;
   except
     on E: Exception do
-      showmessage('异常类名称:' + E.ClassName
-        + #13#10 + '异常信息:' + E.Message + #13#10 +aSQL );
+    begin
+      FLoadTable := False;
+      if aShowError then
+      begin
+        showmessage('异常类名称:' + E.ClassName
+          + #13#10 + '异常信息:' + E.Message + #13#10 +aSQL );      
+      end
+      else
+      begin
+
+      end;
+    end;
   end;    
 end;
 

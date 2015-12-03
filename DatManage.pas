@@ -23,7 +23,6 @@ type
     MainMenu: TMainMenu;
     BarManager: TdxBarManager;
     BarManagerBar1: TdxBar;
-    btnResult: TdxBarButton;
     btnImportExcel: TdxBarButton;
     btnExport: TdxBarButton;
     btnAdd: TdxBarButton;
@@ -65,6 +64,9 @@ type
     dxBarButton1: TdxBarButton;
     dxBarButton2: TdxBarButton;
     GroupConnect: TdxLayoutGroup;
+    dMainItem2: TdxLayoutItem;
+    btnResult: TcxButton;
+    dMainGroup1: TdxLayoutGroup;
     procedure FormShow(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure btnSelectParameterClick(Sender: TObject);
@@ -73,7 +75,6 @@ type
     procedure btnSaveParameterClick(Sender: TObject);
     procedure btnResultClick(Sender: TObject);
     procedure btnConditionClick(Sender: TObject);
-    procedure btnResult1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure btnImportExcelClick(Sender: TObject);
     procedure btnExportClick(Sender: TObject);
@@ -110,6 +111,7 @@ type
     procedure LoadConfig;
     procedure InitMenu;
     procedure ChangeConnect;
+    procedure ClearCondition;
   public
     class function CreateInstance(var AForm: TfmParentMenu; AFormClassName: String = ''): TfmParentMenu;overload;
   end;
@@ -132,10 +134,12 @@ function TfmMain.GetSQL: string;
 begin
   if PageSelect.ActivePageIndex = 0 then
   begin
-    if FTableName = '' then FTableName := edtTable.EditValue;
+    if FTableName = '' then FTableName := edtTable.EditText;
     if FTableName = '' then
     begin
       Result := '';
+      ShowMessage('请输入表格名称');
+      Exit;
     end
     else
     begin
@@ -424,6 +428,7 @@ begin
   FParameter := DisplayValue;
   FEnvironment.SetEnvironment(FParameter);
   LoadTableName;
+  FResult.ClearGridField;
 end;
 
 procedure TfmMain.edtPathNamePropertiesValidate(Sender: TObject; var DisplayValue: Variant; var ErrorText: TCaption; var Error: Boolean);
@@ -433,6 +438,7 @@ begin
   FParameter := edtParameter.EditValue;
   FEnvironment.SetEnvironment(FParameter);
   LoadTableName;
+  FResult.ClearGridField;  
 end;
 
 procedure TfmMain.btnSaveParameterClick(Sender: TObject);
@@ -459,12 +465,6 @@ begin
 end;
 
 procedure TfmMain.btnConditionClick(Sender: TObject);
-begin
-  inherited;
-  WorkRun;
-end;
-
-procedure TfmMain.btnResult1Click(Sender: TObject);
 begin
   inherited;
   WorkRun;
@@ -498,10 +498,16 @@ procedure TfmMain.btnExportClick(Sender: TObject);
 var
   fmExport: TfmExport;
 begin
-  if not FGetTable then
+  if not FGetTable  then
   begin
     ShowMessage('未选择对应表。无法导入Excel。');
     Exit;
+  end;
+
+  if not FTable.ContainData then
+  begin
+    ShowMessage('无数据，无法导出。');
+    Exit;  
   end;
 
   fmExport := TfmExport.Create(self, FTable);
@@ -546,14 +552,23 @@ procedure TfmMain.edtTablePropertiesValidate(Sender: TObject;
   var DisplayValue: Variant; var ErrorText: TCaption; var Error: Boolean);
 begin
   inherited;
+  ClearCondition;
   FTableName := DisplayValue;
   WorkRun;
+end;
+
+procedure TfmMain.ClearCondition;
+begin
+  edtFieldName.Text := '';
+  edtKeyword.Text := '';
+  edtCondition.Text := '';
 end;
 
 
 procedure TfmMain.edtTablePropertiesChange(Sender: TObject);
 begin
   inherited;
+  ClearCondition;
   edtTable.Properties.Items.Clear;
   LoadTableName(edtTable.Text);
 end;
@@ -561,6 +576,18 @@ end;
 procedure TfmMain.btnDeleteClick(Sender: TObject);
 begin
   inherited;
+  if not FGetTable then
+  begin
+    ShowMessage('未选择对应表。无法删除。');
+    Exit;
+  end;
+
+  if not FTable.ContainData then
+  begin
+    ShowMessage('无数据，无法删除。');
+    Exit;  
+  end;
+
   FResult.DeleteRow;
   WorkRun;
 end;

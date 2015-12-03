@@ -14,10 +14,11 @@ type
     FContainData : Boolean;
     aMain : TDataSet;
     FParameter : String;
+    FLoadTable : Boolean;
     procedure InitData;virtual;
   public
     procedure SetEnvironment(aParameter : String);virtual;
-    procedure SetSQL(const aSQL : String);virtual;abstract;
+    procedure SetSQL(const aSQL : String ; aShowError : Boolean = True);virtual;abstract;
     procedure ExecSQL(const aSQL : String);virtual;abstract;
     procedure ExecSQLs(const aSQLs :  array of String);virtual;abstract;
     destructor Destroy;virtual;
@@ -29,6 +30,7 @@ type
     function LoadTableName(aFilter : String = '') : TStringList;virtual;abstract;
     function CreateParameter : string;virtual;abstract;
     function GetBaseTableSQL(aTableName : String) : string;virtual;
+    function GetLoadTable : Boolean;
   end;
 
 implementation
@@ -36,6 +38,7 @@ implementation
 
 constructor TEnvironment.Create(AOwner: TComponent;aParameter : String);
 begin
+  FLoadTable := False;
   FParameter := aParameter;
   FOwner := AOwner;
   InitData;
@@ -66,6 +69,11 @@ end;
 function TEnvironment.GetBaseTableSQL(aTableName : String) : string;
 begin
   Result := 'select * from '  + aTableName;
+end;
+
+function TEnvironment.GetLoadTable : Boolean;
+begin
+  Result := FLoadTable;    
 end;
 
 end.

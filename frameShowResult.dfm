@@ -19,6 +19,7 @@ object ShowResultFrame: TShowResultFrame
       DataController.Summary.FooterSummaryItems = <>
       DataController.Summary.SummaryGroups = <>
       OptionsData.Editing = False
+      OptionsView.NoDataToDisplayInfoText = '<'#26080#25968#25454'>'
       OptionsView.GroupByBox = False
     end
     object levelField: TcxGridLevel
