@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls,
-  Dialogs,StdCtrls,unitConfig;
+  Dialogs,StdCtrls,unitConfig,unitXmlWay;
 
 
 type
@@ -68,12 +68,25 @@ begin
 end;
 
 procedure TConfigFile.SaveFile;
-begin                            
+var
+  XML : TXmlWay;
+begin
   SaveSystemConfig('LastFolderPath',Config.LastFolderPath);
   SaveSystemConfigToBoolean('ShowName',Config.ShowName);
   SaveSystemConfigToBoolean('ShowPath',Config.ShowPath);
   SaveSystemConfig('SelectShowWay',Config.SelectShowWay);
-  SaveSystemConfig('ConnectWay',Config.ConnectWay);  
+  SaveSystemConfig('ConnectWay',Config.ConnectWay);
+
+  XML := TXmlWay.Create;
+  try
+    XML.SaveSystemConfig('LastFolderPath',Config.LastFolderPath);
+//    XML.SaveSystemConfigToBoolean('ShowName',Config.ShowName);
+//    XML.SaveSystemConfigToBoolean('ShowPath',Config.ShowPath);
+    XML.SaveSystemConfig('SelectShowWay',Config.SelectShowWay);
+    XML.SaveSystemConfig('ConnectWay',Config.ConnectWay);
+  finally
+    XML.Free;
+  end;  
 end;
 
 procedure TConfigFile.SaveSystemConfigToBoolean(aName : String;aValue : Boolean);

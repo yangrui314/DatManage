@@ -42,7 +42,7 @@ implementation
 
 constructor TConfigDat.Create;
 begin
-  FSystemConfig := TDBISAMTable.Create(nil);;
+  FSystemConfig := TDBISAMTable.Create(nil);
   FHistory := TDBISAMTable.Create(nil);
   FMenu  := TDBISAMTable.Create(nil);
   inherited;
