@@ -27,7 +27,8 @@ type
     procedure SaveHistory(aConnectWay : string;aName : String;aPath : String);override;
     function SaveFile(aFilePath : String;var aTable : TTable) : Boolean;override;
     function ReadFile(aFilePath : String;var aTable : TTable) : Boolean;override;
-    procedure LoadMenu; override;              
+    procedure LoadMenu; override;
+    procedure SaveMenu; override;
   end;
 
 
@@ -451,6 +452,42 @@ begin
     SetLength(aMenuNames,0);
     SetLength(aMenuOrderIDs,0);  
   end;
+end;
+
+
+procedure TDatWay.SaveMenu;
+var
+  aMenu : TMenu;
+  I : Integer;
+begin
+    with FMenu do
+    begin
+      DatabaseName:= FMenuName;
+      TableName:= FMenuFilePath;
+      DBSession.AddPassword('YouAreNotPreparedForIT');
+
+      if Active then Close;
+      Open;
+
+      for I := 0 to High(Config.FMenuList) - Low(Config.FMenuList) -1 do
+      begin
+        aMenu := TMenu.Create;
+        aMenu := Config.FMenuList[I];
+        if FMenu.Locate('Name',aMenu.Name,[]) then
+          Edit
+        else Append;
+        FieldByName('Name').AsString := aMenu.Name;
+        FieldByName('Caption').AsString := aMenu.Caption;
+        FieldByName('OrderID').AsInteger := aMenu.OrderID;
+        FieldByName('Visible').AsBoolean := aMenu.Visible ;
+        FieldByName('ClassType').AsString := aMenu.ClassType ;
+        FieldByName('ClassName').AsString := aMenu.ClassName ;
+        FieldByName('NotShowFormHint').AsString := aMenu.NotShowFormHint;
+        FieldByName('ParentName').AsString := aMenu.ParentName;
+        Post;
+      end;
+      Close;
+    end;
 end;
 
 end.

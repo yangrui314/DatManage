@@ -45,6 +45,7 @@ begin
   Config.ConnectWay := FReadFileWay.GetSystemConfig('ConnectWay');
   aHistorys := FReadFileWay.LoadHistorys;
   Config.Historys := aHistorys;
+  FReadFileWay.LoadMenu;
 end;
 
 procedure TConfigFile.SaveFile;
@@ -54,6 +55,7 @@ begin
   SaveSystemConfigToBoolean('ShowPath',Config.ShowPath);
   FHandleFileWay.SaveSystemConfig('SelectShowWay',Config.SelectShowWay);
   FHandleFileWay.SaveSystemConfig('ConnectWay',Config.ConnectWay);
+  FHandleFileWay.SaveMenu;
 end;
 
 procedure TConfigFile.SaveSystemConfigToBoolean(aName : String;aValue : Boolean);

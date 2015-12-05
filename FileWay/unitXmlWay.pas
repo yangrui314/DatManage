@@ -30,7 +30,8 @@ type
     procedure SaveHistory(aConnectWay : string;aName : String;aPath : String);override;
     function SaveFile(aFilePath : String;var aTable : TTable) : Boolean;override;
     function ReadFile(aFilePath : String;var aTable : TTable) : Boolean;override;
-    procedure LoadMenu; override;      
+    procedure LoadMenu; override;
+    procedure SaveMenu; override;          
   end;
 
 
@@ -375,5 +376,95 @@ begin
     SetLength(aMenuOrderIDs,0);  
   end;
 end;
+
+procedure TXmlWay.SaveMenu;
+var
+  aMenu : TMenu;
+  XMLFile: TXMLDocument;
+  Comp : TComponent;
+  pNode,tNode,cNode: IXMLNode;
+  I,J : Integer;
+  aNum : Integer;
+  aLen : Integer;
+  IsEdit : Boolean;
+begin
+  try
+    FMenuXML.Active := True;
+    IsEdit := False;
+    aLen := High(Config.FMenuList) - Low(Config.FMenuList);
+    for J := 0 to High(Config.FMenuList) - Low(Config.FMenuList) -1 do
+    begin
+      aMenu := TMenu.Create;
+      aMenu := Config.FMenuList[J];
+
+      for I:=0 to FMenuXML.DocumentElement.ChildNodes.Count- 1 do
+      begin
+        IsEdit := False;
+        if aMenu.Name = FMenuXML.DocumentElement.ChildNodes[I].ChildNodes['Name'].Text then
+        begin
+          FMenuXML.DocumentElement.ChildNodes[I].ChildNodes['Name'].Text := aMenu.Name;
+          FMenuXML.DocumentElement.ChildNodes[I].ChildNodes['Caption'].Text:= aMenu.Caption;
+          FMenuXML.DocumentElement.ChildNodes[I].ChildNodes['OrderID'].Text:= IntToStr(aMenu.OrderID);
+          if aMenu.Visible then
+          begin
+            FMenuXML.DocumentElement.ChildNodes[I].ChildNodes['Visible'].Text:= '1' ;
+          end
+          else
+          begin
+            FMenuXML.DocumentElement.ChildNodes[I].ChildNodes['Visible'].Text := '0';
+          end;
+          FMenuXML.DocumentElement.ChildNodes[I].ChildNodes['ClassType'].Text := aMenu.ClassName ;
+          FMenuXML.DocumentElement.ChildNodes[I].ChildNodes['NotShowFormHint'].Text:= aMenu.NotShowFormHint;
+          FMenuXML.DocumentElement.ChildNodes[I].ChildNodes['ParentName'].Text := aMenu.ParentName;
+          IsEdit := True;
+          Break;
+        end;
+      end;
+
+      if IsEdit then Continue;
+
+      aNum := FMenuXML.DocumentElement.ChildNodes.Count;
+      pNode := FMenuXML.ChildNodes.FindNode('Config');
+
+      tNode := pNode.AddChild('Message');
+
+      cNode := tNode.AddChild('ID');
+      cNode.Text := IntToStr(J);
+
+      cNode := tNode.AddChild('Name');
+      cNode.Text := aMenu.Name;
+
+      cNode := tNode.AddChild('Caption');
+      cNode.Text := aMenu.Caption;
+
+      cNode := tNode.AddChild('OrderID');
+      cNode.Text := IntToStr(aMenu.OrderID);
+
+      cNode := tNode.AddChild('Visible');
+      if aMenu.Visible then
+      begin
+        cNode.Text := '1' ;
+      end
+      else
+      begin
+        cNode.Text := '2' ;      
+      end;
+      cNode := tNode.AddChild('ClassType');
+      cNode.Text := aMenu.ClassType ;
+
+      cNode := tNode.AddChild('ClassName');
+      cNode.Text := aMenu.ClassName;
+
+      cNode := tNode.AddChild('NotShowFormHint');
+      cNode.Text := aMenu.NotShowFormHint;
+
+      cNode := tNode.AddChild('ParentName');
+      cNode.Text := aMenu.ParentName;
+    end;
+  finally
+    FMenuXML.SaveToFile(FMenuFilePath);
+  end;
+end;
+
 
 end.

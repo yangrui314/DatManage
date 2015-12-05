@@ -34,7 +34,8 @@ type
     procedure SaveHistory(aConnectWay : string;aName : String;aPath : String); virtual;abstract;
     function SaveFile(aFilePath : String;var aTable : TTable) : Boolean; virtual;abstract;
     function ReadFile(aFilePath : String;var aTable : TTable) : Boolean; virtual;abstract;
-    procedure LoadMenu; virtual;abstract;        
+    procedure LoadMenu; virtual;abstract;
+    procedure SaveMenu; virtual;abstract;       
   end;
 
 implementation

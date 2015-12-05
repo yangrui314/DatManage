@@ -21,6 +21,8 @@ type
     procedure SaveHistory(aConnectWay : string;aName : String;aPath : String); 
     function SaveFile(aFilePath : String;var aTable : TTable) : Boolean;
     function ReadFile(aFilePath : String;var aTable : TTable) : Boolean;
+    procedure LoadMenu;
+    procedure SaveMenu;
   end;
 
 
@@ -72,6 +74,16 @@ end;
 destructor THandleFileWay.Destroy;
 begin
   FFileWay.Free;
+end;
+
+procedure THandleFileWay.LoadMenu;
+begin
+  FFileWay.LoadMenu;    
+end;
+
+procedure THandleFileWay.SaveMenu;
+begin
+  FFileWay.SaveMenu;    
 end;
 
 end.
