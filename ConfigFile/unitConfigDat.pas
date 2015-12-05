@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls,
-  Dialogs, DB, dbisamtb,StdCtrls,unitConfigFile;
+  Dialogs, DB, dbisamtb,StdCtrls,unitConfigFile,unitConfig;
 
 
 type
@@ -13,20 +13,22 @@ type
     FSystemConfig : TDBISAMTable;
     FHistory: TDBISAMTable;
     FMenu : TDBISAMTable;
+    FConfigPath : String;
+    FConfig : TConfig;
     procedure InitTable;
     procedure InitSystemConfig;
     procedure InitHistory;
     procedure InitMenu;
   protected
     procedure LoadMenu;
-    procedure InitData; override;
-    function GetSystemConfigValue(aName : String) : String; override;
-    procedure SaveSystemConfig(aName : String;aValue : String); override;
-    function LoadHistorys : TList; override;
+    procedure InitData;
+    function GetSystemConfigValue(aName : String) : String;
+    procedure SaveSystemConfig(aName : String;aValue : String);
+    function LoadHistorys : TList;
   public
     constructor Create; override;
-    procedure SaveHistory(aConnectWay : string;aName : String;aPath : String);override;    
-    destructor Destroy; override;
+    procedure SaveHistory(aConnectWay : string;aName : String;aPath : String);
+    destructor Destroy;
   end;
 
 const

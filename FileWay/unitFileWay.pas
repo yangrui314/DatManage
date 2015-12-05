@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls,
-  Dialogs,StdCtrls;
+  Dialogs,StdCtrls,unitTable,unitMenu;
 
 
 type
@@ -30,6 +30,11 @@ type
     destructor Destroy; virtual;
     function GetSystemConfig(aName : String) : String; virtual;abstract;
     procedure SaveSystemConfig(aName : String;aValue : String); virtual;abstract;
+    function LoadHistorys : TList; virtual;abstract;
+    procedure SaveHistory(aConnectWay : string;aName : String;aPath : String); virtual;abstract;
+    function SaveFile(aFilePath : String;var aTable : TTable) : Boolean; virtual;abstract;
+    function ReadFile(aFilePath : String;var aTable : TTable) : Boolean; virtual;abstract;
+    procedure LoadMenu; virtual;abstract;        
   end;
 
 implementation
@@ -84,6 +89,8 @@ begin
     CreateDir(FConfigPath);
   end;
 end;
+
+
 
 destructor TFileWay.Destroy;
 begin

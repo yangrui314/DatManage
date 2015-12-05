@@ -4,7 +4,8 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls,
-  Dialogs,StdCtrls,unitFileWay, xmldom, XMLIntf, msxmldom, XMLDoc,unitHistory,unitTable;
+  Dialogs,StdCtrls,unitFileWay, xmldom, XMLIntf, msxmldom, XMLDoc,unitHistory,unitTable,
+  unitMenu,unitConfig;
 
 
 type
@@ -25,10 +26,11 @@ type
     destructor Destroy; override;
     function GetSystemConfig(aName : String) : String; override;
     procedure SaveSystemConfig(aName : String;aValue : String); override;
-    function LoadHistorys : TList;
-    procedure SaveHistory(aConnectWay : string;aName : String;aPath : String);
-    function SaveFile(aFilePath : String;var aTable : TTable) : Boolean;
-    function ReadFile(aFilePath : String;var aTable : TTable) : Boolean;
+    function LoadHistorys : TList;override;
+    procedure SaveHistory(aConnectWay : string;aName : String;aPath : String);override;
+    function SaveFile(aFilePath : String;var aTable : TTable) : Boolean;override;
+    function ReadFile(aFilePath : String;var aTable : TTable) : Boolean;override;
+    procedure LoadMenu; override;      
   end;
 
 
@@ -229,7 +231,7 @@ var
   node: IXMLNode;
   num,i: Integer;
   comp : TComponent;
-  XMLRead : TXMLDocument;  
+  XMLRead : TXMLDocument;
 begin
   Result := False;
   if not FileExists(aFilePath) then
@@ -239,7 +241,7 @@ begin
   comp :=TComponent.create(nil);
   XMLRead := TXMLDocument.Create(comp);
   XMLRead.LoadFromFile(aFilePath);
-  
+
   for I:=0 to aTable.TableFieldCount - 1 do
   begin
      aTable.TableFieldCaptionArray[I] :=  XMLRead.DocumentElement.ChildNodes[I].ChildNodes['Caption'].Text;
@@ -302,5 +304,76 @@ begin
   end;
 end;
 
+procedure TXmlWay.LoadMenu;
+var
+  aMenu : TMenu;
+  nodeList: IXMLNodeList;
+  node: IXMLNode;
+  num: Integer;
+  comp : TComponent;
+  XMLRead : TXMLDocument;
+  I,J,K,N,M : Integer;
+  aMenuNames : array of String;
+  aMenuOrderIDs : array of Integer;
+  aTemp : Integer;
+  aTempStr : string;
+begin
+  comp :=TComponent.create(nil);
+  XMLRead := TXMLDocument.Create(comp);
+  XMLRead.LoadFromFile(FMenuFilePath);
+  try
+  SetLength(Config.FMenuList,XMLRead.DocumentElement.ChildNodes.Count);
+
+  I := 0;
+  SetLength(aMenuNames,XMLRead.DocumentElement.ChildNodes.Count);
+  SetLength(aMenuOrderIDs,XMLRead.DocumentElement.ChildNodes.Count);
+
+  for I:=0 to XMLRead.DocumentElement.ChildNodes.Count - 1 do
+  begin
+      aMenuNames[I] := XMLRead.DocumentElement.ChildNodes[I].ChildNodes['Name'].Text;
+      aMenuOrderIDs[I] := StrToInt(XMLRead.DocumentElement.ChildNodes[I].ChildNodes['OrderID'].Text);
+  end;
+
+  for J:=0 to XMLRead.DocumentElement.ChildNodes.Count - 1 do
+  begin
+    for K:=0 to (XMLRead.DocumentElement.ChildNodes.Count - 1) - J -1 do
+    begin
+      if aMenuOrderIDs[K]>aMenuOrderIDs[K+1] then
+      begin
+        aTemp:= aMenuOrderIDs[K];
+        aTempStr :=  aMenuNames[K];
+        aMenuOrderIDs[K]:=aMenuOrderIDs[K+1];
+        aMenuNames[K] := aMenuNames[K+1];
+        aMenuOrderIDs[K+1]:=aTemp;
+        aMenuNames[K+1] := aTempStr;
+      end;
+    end;
+  end;
+
+  for N:=0 to XMLRead.DocumentElement.ChildNodes.Count - 1 do
+  begin
+    for M:=0 to XMLRead.DocumentElement.ChildNodes.Count - 1 do
+    begin
+        if aMenuNames[N] = XMLRead.DocumentElement.ChildNodes[I].ChildNodes['Name'].Text then
+        begin
+          aMenu := TMenu.Create;
+          aMenu.Name := XMLRead.DocumentElement.ChildNodes[I].ChildNodes['Name'].Text;
+          aMenu.Caption := XMLRead.DocumentElement.ChildNodes[I].ChildNodes['Caption'].Text;
+          aMenu.OrderID := StrToInt(XMLRead.DocumentElement.ChildNodes[I].ChildNodes['OrderID'].Text);
+          aMenu.Visible := (XMLRead.DocumentElement.ChildNodes[I].ChildNodes['Visible'].Text = '1');
+          aMenu.ClassType :=XMLRead.DocumentElement.ChildNodes[I].ChildNodes['ClassType'].Text;
+          aMenu.ClassName := XMLRead.DocumentElement.ChildNodes[I].ChildNodes['ClassName'].Text;
+          aMenu.NotShowFormHint := XMLRead.DocumentElement.ChildNodes[I].ChildNodes['NotShowFormHint'].Text;
+          aMenu.ParentName := XMLRead.DocumentElement.ChildNodes[I].ChildNodes['ParentName'].Text;
+          Config.FMenuList[N] := (aMenu);
+          Break;
+        end;
+    end;
+  end;
+  finally
+    SetLength(aMenuNames,0);
+    SetLength(aMenuOrderIDs,0);  
+  end;
+end;
 
 end.
