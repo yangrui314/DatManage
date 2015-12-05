@@ -56,7 +56,6 @@ type
     lcTableItem3: TdxLayoutItem;
     edtKeyword: TcxComboBox;
     lcTableGroup1: TdxLayoutGroup;
-    MenuUpadate: TMenuItem;
     RzVersionInfo: TRzVersionInfo;
     edtCondition: TcxTextEdit;
     lcTableItem4: TdxLayoutItem;
@@ -83,7 +82,6 @@ type
     procedure edtTablePropertiesValidate(Sender: TObject;
       var DisplayValue: Variant; var ErrorText: TCaption;
       var Error: Boolean);
-    procedure MenuUpadateClick(Sender: TObject);
     procedure edtTablePropertiesChange(Sender: TObject);
     procedure btnDeleteClick(Sender: TObject);
   private
@@ -111,16 +109,6 @@ type
     procedure ShowResult(bShow: Boolean); overload;
     procedure ShowResult; overload;
     procedure LoadConfig;
-    procedure StartUpgrade;
-    function NeedUpdate : Boolean;
-    function ReadNowVersion : String;
-    function ReadWebVersion: String;
-    procedure DownloadFile(aURL : string;aFileName : String;aShowProgress : Boolean = True);
-    function GetNeedUpdateToVersion(aNowVersion : string;aWebVersion : string):Boolean;
-    procedure CreateNew;
-    procedure MergeNew;
-    procedure CreateBat;
-    procedure UpdateSelf;
     procedure LoadMenu(aMenuName : String;aHint : String = '';aShow : Boolean = True);
     procedure InitMenu;
     procedure ChangeConnect;
@@ -330,7 +318,7 @@ var
   I ,J: Integer;
   MenuNum : Integer;  
 begin
-  MenuNum := 1;
+  MenuNum := 0;
   for I := 0 to Length(Config.FMenuList) - 1 do
   begin
     if Config.FMenuList[I].ParentName <> '' then
@@ -642,251 +630,6 @@ begin
   inherited;
   FTableName := DisplayValue;
   WorkRun;
-end;
-
-function TfmMain.ReadNowVersion : String;
-begin
-  Result := '';
-  FNowVersion := '';
-  RzVersionInfo.FilePath := Application.ExeName;
-  FNowVersion := RzVersionInfo.FileVersion;
-  Result := RzVersionInfo.FileVersion;
-end;
-
-function TfmMain.ReadWebVersion : String;
-var
-  aConfigPath : string;
-  I : Integer;
-  aReadConfig : TStandardHandle;
-  aStr : string;
-  aNum : Integer;
-begin
-  Result := '';
-  FPatchVersion := '';
-  aConfigPath := ExtractFilePath(ParamStr(0)) + 'Upgrade\' + 'Version.ini';
-  if not FileExists(aConfigPath) then
-  begin
-    Exit;
-  end;
-  aReadConfig := TStandardHandle.Create;
-  try
-    aReadConfig.ReadFile(aConfigPath);
-    for I := 0 to aReadConfig.FileData.Count - 1 do
-    begin
-      aStr := aReadConfig.FileData[I];
-      if Pos('Patch',aStr) <> 0 then
-      begin
-        aNum := Pos('=',aStr);
-        aStr := Copy(aStr,aNum + 1,Length(aStr)-aNum);
-        FPatchVersion := aStr;
-      end;
-
-      if Pos('Version',aStr) <> 0 then
-      begin
-        aNum := Pos('=',aStr);
-        aStr := Copy(aStr,aNum + 1,Length(aStr)-aNum);
-        Result := aStr;
-        Exit;
-      end;
-    end;
-  finally
-    aReadConfig.Free;
-  end;
-end;
-
-
-procedure TfmMain.DownloadFile(aURL : string;aFileName : String;aShowProgress : Boolean = True);
-var
-  aSrcFilePath : string;
-  aCreateFilePath : string;
-  aProgress :  TfmUpgradeProgress;
-  aSavePath : string;
-  aDownLoad : TDownLoadFile;
-begin
-//  lblState.Caption := '下载数据...';
-  aSavePath := ExtractFilePath(ParamStr(0)) + 'Upgrade\';
-
-  if aShowProgress then
-  begin
-    aProgress := TfmUpgradeProgress.Create(Self,aURL,aSavePath + aFileName);
-    try
-    aProgress.ShowModal;
-    finally
-      aProgress.Free;
-    end;  
-  end
-  else
-  begin
-    aDownLoad := TDownLoadFile.Create(Self,aURL,aSavePath + aFileName);
-    try
-    finally
-      aDownLoad.Free;
-    end;
-  end;
-//  lblState.Caption := '状态...';
-end;
-
-
-
-
-function TfmMain.GetNeedUpdateToVersion(aNowVersion : string;aWebVersion : string):Boolean;
-var
-  aNow : Integer;
-  aWeb : Integer;
-  aNowRemain,aWebRemain : string;
-  aNowNumStr,aWebNumStr : String;
-  aNowPostNum,aWebPostNum : Integer;
-  aNowNum,aWebNum : Integer;
-begin
-  Result := False;
-  aNowRemain := aNowVersion;
-  aWebRemain := aWebVersion;
-  while (aNowRemain <> '') or (aWebRemain <> '')  do
-  begin
-    if aNowRemain = '' then
-    begin
-      aNowNum := -1;
-    end
-    else if Pos('.',aNowRemain) = 0  then
-    begin
-      aNowNum := StrToInt(aNowRemain);
-      aNowRemain := '';
-    end
-    else
-    begin
-      aNowPostNum := Pos('.',aNowRemain);
-      aNowNumStr := Copy(aNowRemain,0,aNowPostNum-1);
-      aNowRemain := Copy(aNowRemain,aNowPostNum + 1,Length(aNowRemain)-aNowPostNum);
-      aNowNum :=  StrToInt(aNowNumStr);
-    end;
-
-    if aWebRemain ='' then
-    begin
-      aWebNum := -1;
-    end
-    else if Pos('.',aWebRemain) = 0  then
-    begin
-      aWebNum := StrToInt(aWebRemain);
-      aWebRemain := '';
-    end    
-    else
-    begin
-      aWebPostNum := Pos('.',aWebRemain);
-      aWebNumStr := Copy(aWebRemain,0,aWebPostNum-1);
-      aWebRemain := Copy(aWebRemain,aWebPostNum + 1,Length(aWebRemain)-aWebPostNum);
-      aWebNum :=  StrToInt(aWebNumStr);    
-    end;
-
-
-    if aNowNum < aWebNum then
-    begin
-      Result := True;
-      Exit;
-    end
-    else if aNowNum > aWebNum then
-    begin
-      Result := False;
-      Exit;    
-    end;
-  end;
-end;
-
-function TfmMain.NeedUpdate : Boolean;
-var
-  aNowVersion : string;
-  aWebVersion : string;
-begin
-  Result := False;
-  aNowVersion := ReadNowVersion;
-  DownloadFile(VERSION_URL,'Version.ini',False);
-  aWebVersion :=  ReadWebVersion;
-  Result :=  GetNeedUpdateToVersion(aNowVersion,aWebVersion);
-end;
-
-
-procedure TfmMain.UpdateSelf;
-var
-  Version : string;
-  aNum : Integer;
-  aRemainVersion : string;
-  aNumStr : string;
-  i,j,k,l : Integer;
-  aPath : string;
-  FUsePatch : Boolean;
-begin
-  FUsePatch := False;
-  if not NeedUpdate then
-  begin
-    ShowMessage('已是最新版本,不需要下载。');
-    Exit;
-  end;
-  aPath := ExtractFilePath(ParamStr(0))  + 'Patch\';
-  if (FPatchVersion = FNowVersion) and FileExists(aPath + 'xdelta.exe') and FUsePatch then
-  begin
-    DownloadFile('','Patch.xdt');
-    CreateNew;
-  end
-  else
-  begin
-    DownloadFile(UPGRADE_URL,'Upgrade.zip');
-  end;
-  StartUpgrade;
-end;
-
-procedure TfmMain.MenuUpadateClick(Sender: TObject);
-begin
-  inherited;
-  UpdateSelf;
-end;
-
-procedure TfmMain.CreateNew;
-var
-  aPatchPath : string;
-  aUpgradePath : string;
-  aName : string;
-begin
-  aPatchPath := ExtractFilePath(ParamStr(0))  + 'Patch\';
-  aUpgradePath := ExtractFilePath(ParamStr(0)) + 'Upgrade\';
-  CopyFile((PChar(aUpgradePath + 'Patch.xdt')),(PChar(aPatchPath + 'Patch.xdt')),False);
-  aName := ExtractFileName(ParamStr(0));
-  CopyFile((PChar(ParamStr(0))),(PChar(aPatchPath + 'Old.exe')),False);
-  MergeNew;
-  CopyFile((PChar(aPatchPath + 'New.exe')),(PChar(aUpgradePath + aName )),False);
-end;
-
-procedure TfmMain.MergeNew;
-var
-  aBat : String;
-begin
-  CreateBat;
-  aBat := ExtractFilePath(ParamStr(0))  + 'Patch\' + 'Patch.bat';
-  winexec(pchar(aBat), SW_HIDE);
-end;
-
-
-procedure TfmMain.CreateBat;
-var
-  aBatText : string;
-  aFile : TStandardHandle;
-  aPath : String;  
-begin
-  aPath := ExtractFilePath(ParamStr(0))  + 'Patch\';
-  aBatText := aPath + 'xdelta.exe' + ' patch ' +  aPath+'Patch.xdt '+ aPath + 'Old.exe '+ aPath +'New.exe';
-  aFile := TStandardHandle.Create;
-  try
-    aFile.SaveFile(ExtractFilePath(ParamStr(0))  + 'Patch\' + 'Patch.bat',aBatText);
-  finally
-    aFile.Free;
-  end;
-end;
-
-procedure TfmMain.StartUpgrade;
-var
-  aExec : string;
-begin
-  aExec := ExtractFilePath(ParamStr(0)) + 'Upgrade.exe';
-  WinExec(PChar(aExec), SW_SHOWNORMAL);
-  Application.Terminate;
 end;
 
 

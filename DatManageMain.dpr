@@ -47,7 +47,9 @@ uses
   formMenuCommitPath in 'Menu\formMenuCommitPath.pas' {fmMenuCommitPath},
   unitConditionals in 'unitConditionals.pas',
   formMenuViewConditionals in 'Menu\formMenuViewConditionals.pas' {fmMenuViewConditionals},
-  formMenuUpdateConditionals in 'Menu\formMenuUpdateConditionals.pas' {fmMenuUpdateConditionals};
+  formMenuUpdateConditionals in 'Menu\formMenuUpdateConditionals.pas' {fmMenuUpdateConditionals},
+  unitUpgrade in 'unitUpgrade.pas',
+  formMenuUpgrade in 'Menu\formMenuUpgrade.pas' {fmMenuUpgrade};
 
 {$R *.res}
 
@@ -55,13 +57,5 @@ begin
   Application.Initialize;
   Application.CreateForm(TfmMain, fmMain);
   Application.CreateForm(TdmSys, dmSys);
-  Application.CreateForm(TfmParentMenu, fmParentMenu);
-  Application.CreateForm(TfmMenuConfigPath, fmMenuConfigPath);
-  Application.CreateForm(TfmMenuOpenPath, fmMenuOpenPath);
-  Application.CreateForm(TfmMenuOpenTable, fmMenuOpenTable);
-  Application.CreateForm(TfmMenuUpdatePath, fmMenuUpdatePath);
-  Application.CreateForm(TfmMenuCommitPath, fmMenuCommitPath);
-  Application.CreateForm(TfmMenuViewConditionals, fmMenuViewConditionals);
-  Application.CreateForm(TfmMenuUpdateConditionals, fmMenuUpdateConditionals);
   Application.Run;
 end.

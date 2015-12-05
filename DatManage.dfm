@@ -264,11 +264,6 @@ object fmMain: TfmMain
   object MainMenu: TMainMenu
     Left = 520
     Top = 40
-    object MenuUpadate: TMenuItem
-      Caption = #26356#26032
-      Visible = False
-      OnClick = MenuUpadateClick
-    end
   end
   object BarManager: TdxBarManager
     Font.Charset = DEFAULT_CHARSET
