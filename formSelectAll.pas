@@ -109,7 +109,7 @@ begin
     begin
       aStr := SingleTableSelect(aTableName);
       if aStr <> '' then
-      Result := Result  + #13#10 + SingleTableSelect(aTableName);
+      Result := Result  + #13#10 + aStr;
     end;
 
   end;
@@ -126,7 +126,12 @@ begin
   Result := '';
   try
   aSQL := 'select * from ' + aTableName;
-  FTableField := TTable.Create(FEnvironment, aSQL, aTableName);
+  FTableField := TTable.Create(FEnvironment, aSQL, aTableName,False);
+
+  if not FTableField.Environment.GetLoadTable then
+  begin
+    Result :='表'+aTableName +':'+  '打开失败' +';';
+  end;
 
   for I := 0 to   FTableField.TableFieldCount - 1 do
   begin
@@ -134,7 +139,7 @@ begin
     aStr := FTableField.HandleSpecialStr(FTableField.TableFieldNameArray[I]);
     aSQL := 'select * from ' + aTableName + ' where ' + aStr + ' like '
            + ''''  + '%'  + edtSelectStr.EditValue + '%' + '''' ;
-    FTableSQL := TTable.Create(FEnvironment, aSQL, aTableName);
+    FTableSQL := TTable.Create(FEnvironment, aSQL, aTableName,False);
     if FTableSQL.ContainData then
     begin
       if Result = '' then
@@ -150,7 +155,7 @@ begin
   end;
   except
   on E: Exception do
-    Result := '';
+    Result :='表'+aTableName +':'+  '打开失败' +';';
   end;
 end;
 
@@ -160,7 +165,14 @@ var
 begin
   inherited;
   aMessage := GetResult;
-  edtMessage.Text := aMessage;
+  if aMessage <> '' then
+  begin
+    edtMessage.Text := aMessage;  
+  end
+  else
+  begin
+    edtMessage.Text := '<没找到对应数据>';    
+  end;
 end;
 
 

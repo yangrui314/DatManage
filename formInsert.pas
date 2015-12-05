@@ -345,7 +345,6 @@ begin
 
   aSQL := aPrefixSQL + aPostfixSQL;
   FTable.Environment.ExecSQL(aSQL);
-  ShowMessage('执行成功！SQL执行脚本:'+ aSQL)  
 end;
 
 

@@ -22,7 +22,6 @@ type
     FTable : TTable;
     FFieldShowWay : String;
     procedure LoadData;
-    procedure ClearGridField;
     procedure ClearColumn;
     procedure ClearData(const dgData : TcxGridTableView);
     procedure AddColumn(const Width: Integer; const Caption : String;const DataType : String);
@@ -32,6 +31,7 @@ type
     procedure Update(aTable : TTable; aFieldShowWay : String = '1');
     procedure ExportExcel(aFilePath : String);
     procedure DeleteRow;
+    procedure ClearGridField;    
   end;
 
 implementation
@@ -108,13 +108,6 @@ var
 begin
   ClearGridField;
 
-  if not FTable.ContainData then
-  begin
-    ShowMessage('执行SQL语句完成，无结果显示。');
-    Exit;
-  end;
-
-
   dgField.BeginUpdate;
   try
     for i:=0 to  FTable.TableFieldCount - 1 do
@@ -131,6 +124,13 @@ begin
         end;
       end;
     end;
+
+
+  if not FTable.ContainData then
+  begin
+//    ShowMessage('执行SQL语句完成，无结果显示。');
+    Exit;
+  end;
 
     FTable.TableData.First;
     while not FTable.TableData.Eof do

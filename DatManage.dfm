@@ -82,14 +82,14 @@ object fmMain: TfmMain
       object PageSelect: TcxPageControl
         Left = 10
         Top = 71
-        Width = 821
+        Width = 743
         Height = 98
         ActivePage = SheetTable
         ParentShowHint = False
         ShowHint = False
         TabOrder = 4
         ClientRectBottom = 98
-        ClientRectRight = 821
+        ClientRectRight = 743
         ClientRectTop = 24
         object SheetTable: TcxTabSheet
           Caption = #34920
@@ -97,7 +97,7 @@ object fmMain: TfmMain
           object lcTable: TdxLayoutControl
             Left = 0
             Top = 0
-            Width = 821
+            Width = 743
             Height = 74
             Align = alClient
             ParentBackground = True
@@ -188,7 +188,7 @@ object fmMain: TfmMain
             Align = alClient
             TabOrder = 0
             Height = 74
-            Width = 821
+            Width = 743
           end
         end
       end
@@ -199,6 +199,16 @@ object fmMain: TfmMain
         Height = 27
         Align = dalNone
         BarManager = BarManager
+      end
+      object btnResult: TcxButton
+        Left = 773
+        Top = 71
+        Width = 75
+        Height = 82
+        Caption = #26597#35810
+        TabOrder = 5
+        OnClick = btnResultClick
+        LookAndFeel.Kind = lfOffice11
       end
       object dxLayoutGroup2: TdxLayoutGroup
         ShowCaption = False
@@ -236,12 +246,27 @@ object fmMain: TfmMain
             ControlOptions.ShowBorder = False
           end
         end
-        object dMainItem8: TdxLayoutItem
-          Caption = #33719#21462#25968#25454#19981#21516#26041#24335
+        object dMainGroup1: TdxLayoutGroup
           ShowCaption = False
-          Control = PageSelect
-          ControlOptions.AutoColor = True
-          ControlOptions.ShowBorder = False
+          Hidden = True
+          LayoutDirection = ldHorizontal
+          ShowBorder = False
+          object dMainItem8: TdxLayoutItem
+            AutoAligns = [aaVertical]
+            AlignHorz = ahClient
+            Caption = #33719#21462#25968#25454#19981#21516#26041#24335
+            ShowCaption = False
+            Control = PageSelect
+            ControlOptions.AutoColor = True
+            ControlOptions.ShowBorder = False
+          end
+          object dMainItem2: TdxLayoutItem
+            AutoAligns = [aaVertical]
+            AlignHorz = ahRight
+            ShowCaption = False
+            Control = btnResult
+            ControlOptions.ShowBorder = False
+          end
         end
         object dMainItem5: TdxLayoutItem
           Caption = 'dxBarDockControl1'
@@ -299,11 +324,6 @@ object fmMain: TfmMain
       FloatClientHeight = 0
       ItemLinks = <
         item
-          UserDefine = [udPaintStyle]
-          Visible = True
-          ItemName = 'btnResult'
-        end
-        item
           Visible = True
           ItemName = 'btnImportExcel'
         end
@@ -328,13 +348,6 @@ object fmMain: TfmMain
       UseOwnFont = False
       Visible = True
       WholeRow = True
-    end
-    object btnResult: TdxBarButton
-      Caption = #26597#35810
-      Category = 0
-      Hint = #26597#35810
-      Visible = ivAlways
-      OnClick = btnResult1Click
     end
     object btnImportExcel: TdxBarButton
       Caption = #23548#20837

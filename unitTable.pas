@@ -26,7 +26,7 @@ type
     FFieldSQLTypeArray: array of String;
     FFieldVisibleArray: array of Boolean;
     FFieldCaptionArray: array of String;
-    FFieldMainArray: array of Boolean;                
+    FFieldMainArray: array of Boolean;
     procedure InitData;
     procedure SetFieldNameArray(index:Integer;Value: String);
     function GetFieldNameArray(index:Integer): String;
@@ -51,7 +51,7 @@ type
   protected
   public
     destructor Destroy;
-    constructor Create(aEnvironment : TEnvironment ; aSQL : String;aTableName : String);
+    constructor Create(aEnvironment : TEnvironment ; aSQL : String;aTableName : String;aShowError : Boolean = True);
     procedure Add(AOwner: TComponent);
     procedure SaveSQLFile(aFilePath : String);
 
@@ -89,15 +89,15 @@ implementation
 uses
   formInsert,unitStandardHandle,unitXmlHandle;
 
-constructor TTable.Create(aEnvironment : TEnvironment ; aSQL : String;aTableName : String);
+constructor TTable.Create(aEnvironment : TEnvironment ; aSQL : String;aTableName : String;aShowError : Boolean = True);
 begin
-  aEnvironment.SetSQL(aSQL);
+  aEnvironment.SetSQL(aSQL,aShowError);
   FEnvironment := aEnvironment;
   FSQL := aSQL;
   FTableName := aTableName;
   FData := TDataSet.Create(nil);
   FContainData := FEnvironment.IsContainData;
-  if  FTableName <> '' then 
+  if  (FTableName <> '') and FEnvironment.GetLoadTable  then
   FKeyField := FEnvironment.GetPrimary(FTableName);
   InitData;    
 end;
@@ -229,10 +229,10 @@ procedure TTable.InitData;
 var
   I : Integer;
 begin
-  if not FContainData then
-  begin
-    Exit;
-  end;
+//  if not FContainData then
+//  begin
+//    Exit;
+//  end;
 
 
   FData := FEnvironment.MainData;
@@ -485,8 +485,8 @@ begin
     if  (aDataType = ftAutoInc ) then Continue;
 
     if aFieldName = ''
-    then aFieldName := aFieldName + TableFieldNameArray[I]
-    else aFieldName := aFieldName + ',' + TableFieldNameArray[I];
+    then aFieldName := aFieldName + HandleSpecialStr(TableFieldNameArray[I])
+    else aFieldName := aFieldName + ',' + HandleSpecialStr(TableFieldNameArray[I]);
 
   end;
 
