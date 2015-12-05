@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls,unitHistory,unitMenu,
-  Dialogs;
+  Dialogs,formParentMenu,Forms;
 
 type
   TConfig = class
@@ -40,6 +40,8 @@ type
     property Historys : TList read FHistorys write FHistorys;
     function GetHistoryName(aPath : String ; aInclude : Boolean = False) : String;
     function GetHistoryPath(aName : String ; aInclude : Boolean = False ) : String;
+
+    class function CreateInstance(var AForm: TfmParentMenu; AFormClassName: String = ''): TfmParentMenu;overload;
   end;
 
 var
@@ -47,9 +49,34 @@ var
 
 implementation
 
+
 constructor TConfig.Create;
 begin
   InitData;
+end;
+
+
+class function TConfig.CreateInstance(var AForm: TfmParentMenu; AFormClassName: String = ''): TfmParentMenu;
+var
+  FormClassName: String;
+  FormClass: TPersistentClass;
+begin
+  FormClass := nil;
+
+  if Trim(AFormClassName) <> '' then
+    FormClass := GetClass(AFormClassName);
+
+  if (FormClass = nil) and (FormClassName <> ClassName) then
+    FormClass := FindClass(ClassName);
+
+  if FormClass = nil then
+    FormClass := TfmParentMenu;
+
+  if FormClass <> nil then begin
+    Application.CreateForm(TComponentClass(FormClass), AForm);
+    Result := TfmParentMenu(AForm);
+  end else
+    Result := nil;
 end;
 
 procedure TConfig.InitData;

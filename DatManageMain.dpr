@@ -49,7 +49,8 @@ uses
   formMenuViewConditionals in 'Menu\formMenuViewConditionals.pas' {fmMenuViewConditionals},
   formMenuUpdateConditionals in 'Menu\formMenuUpdateConditionals.pas' {fmMenuUpdateConditionals},
   unitUpgrade in 'unitUpgrade.pas',
-  formMenuUpgrade in 'Menu\formMenuUpgrade.pas' {fmMenuUpgrade};
+  formMenuUpgrade in 'Menu\formMenuUpgrade.pas' {fmMenuUpgrade},
+  unitLoadMenu in 'unitLoadMenu.pas';
 
 {$R *.res}
 
