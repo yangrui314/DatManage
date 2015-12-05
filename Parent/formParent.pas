@@ -12,7 +12,7 @@ type
   private
     { Private declarations }
   public
-    function CheckIsShow : Boolean; virtual;
+
   end;
 
 var
@@ -22,10 +22,7 @@ implementation
 
 {$R *.dfm}
 
-function TParentForm.CheckIsShow : Boolean; 
-begin
-  Result := True;    
-end;
+
 
 
 end.

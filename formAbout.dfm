@@ -372,7 +372,7 @@ object fmAbout: TfmAbout
         OnClick = btnOKClick
       end
       object lblVersion: TcxLabel
-        Left = 71
+        Left = 63
         Top = 71
         Caption = '1.0'
         Transparent = True

@@ -13,8 +13,10 @@ type
     FCaption : String;
     FOrderID : Integer;
     FVisible : Boolean;
+    FClassType : String;
     FClassName : String;
     FNotShowFormHint : String;
+    FParentName : string;
   protected
   public
     constructor Create;
@@ -22,8 +24,10 @@ type
     property Caption : String read  FCaption write FCaption;
     property OrderID : Integer read  FOrderID write FOrderID;
     property Visible : Boolean read  FVisible write FVisible;
+    property ClassType : String read  FClassType write FClassType;    
     property ClassName : String read  FClassName write FClassName;
     property NotShowFormHint : String read  FNotShowFormHint write FNotShowFormHint;
+    property ParentName : String read  FParentName write FParentName;    
   end;
 
 

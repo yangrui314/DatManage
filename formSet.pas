@@ -6,10 +6,10 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, dxLayoutControl, cxContainer, cxEdit, cxImage, cxControls,
   ExtCtrls, Menus, cxLookAndFeelPainters, StdCtrls, cxButtons, cxLabel,
-  RzStatus,formParent, cxCheckBox, cxRadioGroup, cxPC;
+  RzStatus,formParent, cxCheckBox, cxRadioGroup, cxPC,formParentMenu;
 
 type
-  TfmSet = class(TParentForm)
+  TfmSet = class(TfmParentMenu)
     pnlSet: TPanel;
     Page: TcxPageControl;
     SheetShow: TcxTabSheet;

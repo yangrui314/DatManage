@@ -6,10 +6,10 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, formParent, dxLayoutControl, cxControls, ExtCtrls, cxGraphics,
   Menus, cxLookAndFeelPainters, StdCtrls, cxButtons, cxContainer, cxEdit,
-  cxTextEdit, cxMaskEdit, cxDropDownEdit, cxLookAndFeels;
+  cxTextEdit, cxMaskEdit, cxDropDownEdit, cxLookAndFeels,formParentMenu;
 
 type
-  TfmSVN = class(TParentForm)
+  TfmSVN = class(TfmParentMenu)
     pnlMain: TPanel;
     lcMainGroup_Root: TdxLayoutGroup;
     lcMain: TdxLayoutControl;

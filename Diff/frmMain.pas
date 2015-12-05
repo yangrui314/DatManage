@@ -8,10 +8,10 @@ uses
   Menus, cxLookAndFeelPainters, cxButtons, cxStyles, cxCustomData,
   cxGraphics, cxFilter, cxData, cxDataStorage, cxGridCustomView,
   cxGridCustomTableView, cxGridTableView, cxGridBandedTableView, cxClasses,
-  cxGridLevel, cxGrid, cxProgressBar, cxButtonEdit,formParent;
+  cxGridLevel, cxGrid, cxProgressBar, cxButtonEdit,formParent,formParentMenu;
 
 type
-  TMainForm = class(TParentForm)
+  TMainForm = class(TfmParentMenu)
     pnlDIC: TPanel;
     lblDataA: TLabel;
     lblDataB: TLabel;

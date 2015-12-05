@@ -38,7 +38,16 @@ uses
   unitDownLoadFile in 'unitDownLoadFile.pas',
   unitMenu in 'unitMenu.pas',
   unitSQLEnvironment in 'unitSQLEnvironment.pas',
-  unitDbisamEnvironment in 'unitDbisamEnvironment.pas';
+  unitDbisamEnvironment in 'unitDbisamEnvironment.pas',
+  formParentMenu in 'Menu\formParentMenu.pas' {fmParentMenu},
+  formMenuConfigPath in 'Menu\formMenuConfigPath.pas' {fmMenuConfigPath},
+  formMenuOpenPath in 'Menu\formMenuOpenPath.pas' {fmMenuOpenPath},
+  formMenuOpenTable in 'Menu\formMenuOpenTable.pas' {fmMenuOpenTable},
+  formMenuUpdatePath in 'Menu\formMenuUpdatePath.pas' {fmMenuUpdatePath},
+  formMenuCommitPath in 'Menu\formMenuCommitPath.pas' {fmMenuCommitPath},
+  unitConditionals in 'unitConditionals.pas',
+  formMenuViewConditionals in 'Menu\formMenuViewConditionals.pas' {fmMenuViewConditionals},
+  formMenuUpdateConditionals in 'Menu\formMenuUpdateConditionals.pas' {fmMenuUpdateConditionals};
 
 {$R *.res}
 
@@ -46,5 +55,13 @@ begin
   Application.Initialize;
   Application.CreateForm(TfmMain, fmMain);
   Application.CreateForm(TdmSys, dmSys);
+  Application.CreateForm(TfmParentMenu, fmParentMenu);
+  Application.CreateForm(TfmMenuConfigPath, fmMenuConfigPath);
+  Application.CreateForm(TfmMenuOpenPath, fmMenuOpenPath);
+  Application.CreateForm(TfmMenuOpenTable, fmMenuOpenTable);
+  Application.CreateForm(TfmMenuUpdatePath, fmMenuUpdatePath);
+  Application.CreateForm(TfmMenuCommitPath, fmMenuCommitPath);
+  Application.CreateForm(TfmMenuViewConditionals, fmMenuViewConditionals);
+  Application.CreateForm(TfmMenuUpdateConditionals, fmMenuUpdateConditionals);
   Application.Run;
 end.
