@@ -50,7 +50,10 @@ uses
   formMenuUpdateConditionals in 'Menu\formMenuUpdateConditionals.pas' {fmMenuUpdateConditionals},
   unitUpgrade in 'unitUpgrade.pas',
   formMenuUpgrade in 'Menu\formMenuUpgrade.pas' {fmMenuUpgrade},
-  unitLoadMenu in 'unitLoadMenu.pas';
+  unitLoadMenu in 'unitLoadMenu.pas',
+  unitFileWay in 'FileWay\unitFileWay.pas',
+  unitXmlWay in 'FileWay\unitXmlWay.pas',
+  unitDatWay in 'FileWay\unitDatWay.pas';
 
 {$R *.res}
 
