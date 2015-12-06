@@ -4,13 +4,11 @@ uses
   Forms,
   DatManage in 'DatManage.pas' {fmMain},
   UnitFileHandle in 'FileHandle\unitFileHandle.pas',
-  unitStandardHandle in 'FileHandle\unitStandardHandle.pas',
   unitTable in 'unitTable.pas',
   unitEnvironment in 'unitEnvironment.pas',
   frameShowResult in 'frameShowResult.pas' {ShowResultFrame: TFrame},
   formTableProperty in 'formTableProperty.pas' {fmTableProperty},
   formInsert in 'formInsert.pas' {fmInsert},
-  unitExcelHandle in 'FileHandle\unitExcelHandle.pas',
   formExport in 'formExport.pas' {fmExport},
   frameTableProperty in 'frameTableProperty.pas' {frmTableProperty: TFrame},
   unitXmlHandle in 'FileHandle\unitXmlHandle.pas',
@@ -54,7 +52,9 @@ uses
   unitFileWay in 'FileWay\unitFileWay.pas',
   unitXmlWay in 'FileWay\unitXmlWay.pas',
   unitDatWay in 'FileWay\unitDatWay.pas',
-  unitHandleFileWay in 'unitHandleFileWay.pas';
+  unitHandleFileWay in 'unitHandleFileWay.pas',
+  unitExcelHandle in 'FileWay\unitExcelHandle.pas',
+  unitStandardHandle in 'FileWay\unitStandardHandle.pas';
 
 {$R *.res}
 
