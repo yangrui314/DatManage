@@ -259,7 +259,7 @@ var
   aSavePath : String;
   XMLFile: TXMLDocument;  
 begin
-  XMLFile := TXMLDocument.Create(nil);
+  XMLFile := TXMLDocument.Create(FComp);
   try
     XMLFile.XML.Clear;
     XMLFile.Active := True;                {±ÿ–Îœ»º§ªÓ}
