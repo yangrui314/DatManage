@@ -4,10 +4,10 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls,
-  Dialogs,StdCtrls,unitFileHandle,unitTable;
+  Dialogs,StdCtrls,unitFileHandle,unitTable,unitFileWay;
 
 type
-  TStandardHandle = class(TFileHandle)
+  TStandardHandle = class(TFileWay)
   private
     FData : TStringList;
   protected
@@ -15,7 +15,7 @@ type
     destructor Destroy; override;
     constructor Create;override;
     function SaveFile(aFilePath : String ; aData : String) : Boolean; overload;
-    function ReadFile(aFilePath : String) : Boolean; override;
+    function ReadFile(aFilePath : String) : Boolean;
     property FileData: TStringList read FData write FData;
   end;
 
@@ -34,7 +34,6 @@ var
   aFile: TextFile;
   aStr : String;
 begin
-  inherited SaveFile(aFilePath);
   aStr := aData;
   AssignFile(aFile,aFilePath);
   Rewrite(aFile);

@@ -3,10 +3,10 @@ unit unitExcelHandle;
 interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls,
-  Dialogs,StdCtrls,unitTableHandle,ComObj,unitTable,unitStandardHandle,formProgress;
+  Dialogs,StdCtrls,unitTableHandle,ComObj,unitTable,unitStandardHandle,formProgress,unitFileWay;
 
 type
-  TExcelHandle = class(TTableHandle)
+  TExcelHandle = class(TFileWay)
   private
     Excel,Sheet:Variant;
     aInsertSQLs:  array of String;
@@ -17,6 +17,7 @@ type
     FDelKeyField : String;
     FDelCondition : String;
     FSQLSavePath : String;
+    FTable : TTable;
     function OpenExcel(AFileName : String): Variant;
     procedure AddInsertSQL(RowNum : Integer);
     function LoadInsertSQL(RowNum : Integer): String;
@@ -24,7 +25,7 @@ type
   protected
   public
     destructor Destroy; override;
-    constructor Create(aTable : TTable);override;
+    constructor Create(aTable : TTable);
     function ReadFile(aFilePath : String;aContainDelSQL : Boolean;aDelKeyField : String;aSQLSavePath : String) : Boolean;        
   end;
 
@@ -34,7 +35,7 @@ implementation
 
 constructor TExcelHandle.Create(aTable : TTable);
 begin
-  inherited;
+  FTable := aTable;
   FContainDelSQL := False;
   FDelKeyField :='';
   FDelCondition :='';  
