@@ -87,7 +87,7 @@ type
 implementation
 
 uses
-  formInsert,unitStandardHandle,unitXmlHandle;
+  formInsert,unitStandardHandle,unitXmlWay;
 
 constructor TTable.Create(aEnvironment : TEnvironment ; aSQL : String;aTableName : String;aShowError : Boolean = True);
 begin
@@ -428,17 +428,17 @@ end;
 
 procedure TTable.SaveTableEnvironment;
 var
-  aConfig : TXmlHandle;
+  aConfig : TXmlWay;
   aFilePath : String;
 begin
   if TableName = '' then
   begin
     Exit;
   end;
-  aConfig := TXmlHandle.Create(Self);
+  aConfig := TXmlWay.Create;
   try
     aFilePath := ExtractFileDir(ParamStr(0)) + '\Template\' + TableName + '.xml';
-    aConfig.SaveFile(aFilePath);
+    aConfig.SaveFile(aFilePath,Self);
   finally
     aConfig.Free;
   end;
@@ -446,7 +446,7 @@ end;
 
 procedure TTable.ReadTableEnvironment;
 var
-  aConfig : TXmlHandle;
+  aConfig : TXmlWay;
   aFilePath : String;  
 begin
   if TableName = '' then
@@ -454,10 +454,10 @@ begin
     Exit;
   end;
 
-  aConfig := TXmlHandle.Create(Self);
+  aConfig := TXmlWay.Create;
   try
     aFilePath := ExtractFileDir(ParamStr(0)) + '\Template\' + TableName + '.xml';
-    aConfig.ReadFile(aFilePath);
+    aConfig.ReadFile(aFilePath,Self);
   finally
     aConfig.Free;
   end;

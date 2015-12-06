@@ -3,7 +3,6 @@ program DatManageMain;
 uses
   Forms,
   DatManage in 'DatManage.pas' {fmMain},
-  UnitFileHandle in 'FileHandle\unitFileHandle.pas',
   unitTable in 'unitTable.pas',
   unitEnvironment in 'unitEnvironment.pas',
   frameShowResult in 'frameShowResult.pas' {ShowResultFrame: TFrame},
@@ -11,10 +10,7 @@ uses
   formInsert in 'formInsert.pas' {fmInsert},
   formExport in 'formExport.pas' {fmExport},
   frameTableProperty in 'frameTableProperty.pas' {frmTableProperty: TFrame},
-  unitXmlHandle in 'FileHandle\unitXmlHandle.pas',
   formAbout in 'formAbout.pas' {fmAbout},
-  unitTableHandle in 'FileHandle\unitTableHandle.pas',
-  unitUnTableHandle in 'FileHandle\unitUnTableHandle.pas',
   formImport in 'formImport.pas' {fmImport},
   frameProgressBar in 'frameProgressBar.pas' {frmProgressBar: TFrame},
   formProgress in 'formProgress.pas' {fmProgress},

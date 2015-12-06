@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls,
-  Dialogs,StdCtrls,unitFileHandle,unitTable,unitFileWay;
+  Dialogs,StdCtrls,unitTable,unitFileWay;
 
 type
   TStandardHandle = class(TFileWay)

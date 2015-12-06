@@ -3,7 +3,7 @@ unit unitExcelHandle;
 interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls,
-  Dialogs,StdCtrls,unitTableHandle,ComObj,unitTable,unitStandardHandle,formProgress,unitFileWay;
+  Dialogs,StdCtrls,ComObj,unitTable,unitStandardHandle,formProgress,unitFileWay;
 
 type
   TExcelHandle = class(TFileWay)
