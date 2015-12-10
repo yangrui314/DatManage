@@ -426,6 +426,7 @@ begin
   inherited;
   edtPathName.EditValue := Config.GetHistoryName(DisplayValue);
   FParameter := DisplayValue;
+  Config.SystemParameter := FParameter;
   FEnvironment.SetEnvironment(FParameter);
   LoadTableName;
   FResult.ClearGridField;
@@ -436,6 +437,7 @@ begin
   inherited;
   edtParameter.EditValue := Config.GetHistoryPath(DisplayValue);
   FParameter := edtParameter.EditValue;
+  Config.SystemParameter := FParameter;  
   FEnvironment.SetEnvironment(FParameter);
   LoadTableName;
   FResult.ClearGridField;  

@@ -138,7 +138,7 @@ var
   aNotShowFormHint : string;
   aShow : Boolean;
 begin
-  Config.SystemParameter := FParameter;
+//  Config.SystemParameter := FParameter;
   aMenuName := (Sender as TMenuItem).Name;
   aNotShowFormHint := (Sender as TMenuItem).Hint;
   aClassName := Copy(aMenuName,5,Length(aMenuName)-4);

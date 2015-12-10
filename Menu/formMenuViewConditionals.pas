@@ -19,6 +19,9 @@ var
 
 implementation
 
+  uses
+    unitConfig;
+
 {$R *.dfm}
 
 procedure TfmMenuViewConditionals.MenuHandle(aParameter : String;aActivePageIndex : Integer;aTable : String);
@@ -28,7 +31,7 @@ begin
   inherited;
   aCdn := TConditionals.Create;
   try
-    aCdn.View(aParameter);
+    aCdn.View(Config.SystemParameter);
   finally
     aCdn.Free;
   end;
