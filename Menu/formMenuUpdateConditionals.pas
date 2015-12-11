@@ -11,7 +11,7 @@ type
   private
     { Private declarations }
   public
-    procedure MenuHandle(aParameter : String;aActivePageIndex : Integer;aTable : String);override;
+    procedure MenuHandle;override;
   end;
 
 var
@@ -24,14 +24,14 @@ implementation
 
 {$R *.dfm}
 
-procedure TfmMenuUpdateConditionals.MenuHandle(aParameter : String;aActivePageIndex : Integer;aTable : String);
+procedure TfmMenuUpdateConditionals.MenuHandle;
 var
   aCdn : TConditionals;
 begin
   inherited;
   aCdn := TConditionals.Create;
   try
-    aCdn.Update(Config.SystemParameter);
+    aCdn.Update(FParameter);
   finally
     aCdn.Free;
   end;

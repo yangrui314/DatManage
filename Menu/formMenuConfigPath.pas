@@ -11,7 +11,7 @@ type
   private
 
   public
-    procedure MenuHandle(aParameter : String;aActivePageIndex : Integer;aTable : String);override;
+    procedure MenuHandle;override;
   end;
 
 var
@@ -21,8 +21,9 @@ implementation
 
 {$R *.dfm}
 
-procedure TfmMenuConfigPath.MenuHandle(aParameter : String;aActivePageIndex : Integer;aTable : String);
+procedure TfmMenuConfigPath.MenuHandle;
 begin
+  inherited;
   ShellExecute(Handle, 'open', 'Explorer.exe', PChar(ExtractFileDir(ParamStr(0)) + '\Config'), nil, 1);
 end;
 

@@ -9,15 +9,25 @@ uses
 type
   TfmParentMenu = class(TParentForm)
   private
+  protected
+    FParameter : String;
+    FActivePageIndex : Integer;
+    FTableName :String;
+    function GetParameter : String;
+    function GetActivePageIndex : Integer;
+    function GetTableName : String;    
   public
-    procedure MenuHandle(aParameter : String;aActivePageIndex : Integer;aTable : String) ;virtual;
-    function CheckIsShow : Boolean; virtual;    
+    procedure MenuHandle ;virtual;
+    function CheckIsShow : Boolean; virtual;
   end;
 
 var
   fmParentMenu: TfmParentMenu;
 
 implementation
+
+uses
+    unitConfig;
 
 {$R *.dfm}
 
@@ -26,9 +36,26 @@ begin
   Result := True;
 end;
 
-procedure TfmParentMenu.MenuHandle(aParameter : String;aActivePageIndex : Integer;aTable : String) ;
+procedure TfmParentMenu.MenuHandle;
 begin
-  //不做处理    
+  FParameter := GetParameter;
+  FActivePageIndex := GetActivePageIndex;
+  FTableName := GetTableName;
+end;
+
+function TfmParentMenu.GetParameter : String;
+begin
+  Result := Config.SystemParameter;
+end;
+
+function TfmParentMenu.GetActivePageIndex : Integer;
+begin
+  Result := Config.SystemActivePageIndex;
+end;
+
+function TfmParentMenu.GetTableName : String;
+begin
+  Result := Config.SystemTableName;    
 end;
 
 

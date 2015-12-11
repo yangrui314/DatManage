@@ -10,24 +10,18 @@ type
   TLoadMenu = class
   private
     MainMenu : TMainMenu;
-    FParameter : String;
-    FActivePageIndex : Integer;
-    FTable : String;
     procedure MenuClick(Sender: TObject);
   protected
     procedure LoadMenu(aMenuName : String;aHint : String = '';aShow : Boolean = True);
     procedure InitMenu;  
   public
-    procedure Load(var aMainMenu : TMainMenu;aParameter : String;aActivePageIndex : Integer;aTable : String);
+    procedure Load(var aMainMenu : TMainMenu);
   end;
 
 implementation
 
-procedure TLoadMenu.Load(var aMainMenu : TMainMenu;aParameter : String;aActivePageIndex : Integer;aTable : String);
+procedure TLoadMenu.Load(var aMainMenu : TMainMenu);
 begin
-  FParameter := aParameter;
-  FActivePageIndex:= aActivePageIndex;
-  FTable := aTable;
   MainMenu := aMainMenu;
   InitMenu;
   aMainMenu := MainMenu;
@@ -57,7 +51,7 @@ begin
     end
     else
     begin
-      aMenu.MenuHandle(FParameter,FActivePageIndex,FTable);
+      aMenu.MenuHandle;
     end;
   finally
     aMenu.Free;

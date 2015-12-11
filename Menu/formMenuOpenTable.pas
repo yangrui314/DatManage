@@ -11,7 +11,7 @@ type
   private
     { Private declarations }
   public
-    procedure MenuHandle(aParameter : String;aActivePageIndex : Integer;aTable : String);override;
+    procedure MenuHandle;override;
   end;
 
 var
@@ -20,22 +20,22 @@ var
 implementation
 
 {$R *.dfm}
-procedure TfmMenuOpenTable.MenuHandle(aParameter : String;aActivePageIndex : Integer;aTable : String);
+procedure TfmMenuOpenTable.MenuHandle;
 var
   aDatPath: string;
 begin
   inherited;
   //打开表
-  if (aActivePageIndex = 1) or (aTable = '') then
+  if (FActivePageIndex = 1) or (FTableName = '') then
   begin
     ShowMessage('未选择表或SQL查询模式。');
     Exit;
   end;
-  if RightStr(aParameter, 1) = '\' then
-    aDatPath := aParameter
+  if RightStr(FParameter, 1) = '\' then
+    aDatPath := FParameter
   else
-    aDatPath := aParameter + '\';
-  aDatPath := aDatPath + aTable + '.dat';
+    aDatPath := FParameter + '\';
+  aDatPath := aDatPath + FTableName + '.dat';
   ShellExecute(Handle, 'open', 'Explorer.exe', PChar(aDatPath), nil, 1);
 end;
 

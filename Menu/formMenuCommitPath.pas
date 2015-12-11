@@ -11,7 +11,7 @@ type
   private
     { Private declarations }
   public
-    procedure MenuHandle(aParameter : String;aActivePageIndex : Integer;aTable : String);override;
+    procedure MenuHandle;override;
   end;
 
 var
@@ -22,7 +22,7 @@ implementation
 {$R *.dfm}
 
 
-procedure TfmMenuCommitPath.MenuHandle(aParameter : String;aActivePageIndex : Integer;aTable : String);
+procedure TfmMenuCommitPath.MenuHandle;
 var
   aDatPath : string;
   FSVN : TfmSVN;
@@ -30,10 +30,10 @@ begin
   inherited;
   FSVN := TfmSVN.Create(Self);
   try
-    if RightStr(aParameter, 1) = '\' then
-      aDatPath := aParameter
+    if RightStr(FParameter, 1) = '\' then
+      aDatPath := FParameter
     else
-      aDatPath := aParameter + '\';  
+      aDatPath := FParameter + '\';  
     FSVN.WorkRun(aDatPath,'commit');
   finally
     FSVN.Free;

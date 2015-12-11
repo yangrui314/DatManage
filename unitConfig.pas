@@ -17,6 +17,8 @@ type
     FSelectShowWay : String;
     FConnectWay : String;
     FSystemParameter : String;
+    FSystemActivePageIndex : Integer;
+    FSystemTableName :String;
 
     constructor Create;
     procedure InitData;
@@ -34,8 +36,12 @@ type
     property SelectShowWay: string read FSelectShowWay write FSelectShowWay;
     property ConnectWay : string read  FConnectWay write  FConnectWay;
 
-    //临时
+    //主表三个参数
     property SystemParameter : string read  FSystemParameter write  FSystemParameter;
+    property SystemActivePageIndex : Integer read  FSystemActivePageIndex write  FSystemActivePageIndex;
+    property SystemTableName : string read  FSystemTableName write  FSystemTableName;    
+
+
 
     property Historys : TList read FHistorys write FHistorys;
     function GetHistoryName(aPath : String ; aInclude : Boolean = False) : String;

@@ -85,6 +85,7 @@ type
       var Error: Boolean);
     procedure edtTablePropertiesChange(Sender: TObject);
     procedure btnDeleteClick(Sender: TObject);
+    procedure PageSelectChange(Sender: TObject);
   private
     FParameter: string;
     FTableName: string;
@@ -112,6 +113,7 @@ type
     procedure InitMenu;
     procedure ChangeConnect;
     procedure ClearCondition;
+    procedure UpdateConfigSystem;
   public
     class function CreateInstance(var AForm: TfmParentMenu; AFormClassName: String = ''): TfmParentMenu;overload;
   end;
@@ -298,7 +300,7 @@ var
   aLoadMenu : TLoadMenu;
 begin
   aLoadMenu := TLoadMenu.Create;
-  aLoadMenu.Load(MainMenu,FParameter,PageSelect.ActivePageIndex,edtTable.Text);
+  aLoadMenu.Load(MainMenu);
 end;
 
 procedure TfmMain.LoadConfig;
@@ -311,6 +313,7 @@ begin
 //  edtCreatePath.Properties.Items.Add(Config.LastFolderPath);
 //  edtPathName.EditValue := '最后一条记录';
   FParameter := Config.LastFolderPath;
+  UpdateConfigSystem;
   FInitConnectWay := Config.ConnectWay;
 
   for I := 0 to Config.Historys.Count - 1 do
@@ -426,7 +429,7 @@ begin
   inherited;
   edtPathName.EditValue := Config.GetHistoryName(DisplayValue);
   FParameter := DisplayValue;
-  Config.SystemParameter := FParameter;
+  UpdateConfigSystem;
   FEnvironment.SetEnvironment(FParameter);
   LoadTableName;
   FResult.ClearGridField;
@@ -437,7 +440,7 @@ begin
   inherited;
   edtParameter.EditValue := Config.GetHistoryPath(DisplayValue);
   FParameter := edtParameter.EditValue;
-  Config.SystemParameter := FParameter;  
+  UpdateConfigSystem; 
   FEnvironment.SetEnvironment(FParameter);
   LoadTableName;
   FResult.ClearGridField;  
@@ -556,6 +559,7 @@ begin
   inherited;
   ClearCondition;
   FTableName := DisplayValue;
+  UpdateConfigSystem;  
   WorkRun;
 end;
 
@@ -572,6 +576,7 @@ begin
   inherited;
   ClearCondition;
   edtTable.Properties.Items.Clear;
+  UpdateConfigSystem;  
   LoadTableName(edtTable.Text);
 end;
 
@@ -606,6 +611,19 @@ begin
   end;
 end;
 
+procedure TfmMain.UpdateConfigSystem;
+begin
+  Config.SystemParameter := FParameter;
+  Config.SystemActivePageIndex := PageSelect.ActivePageIndex;
+  Config.SystemTableName := edtTable.Text;    
+end;
+
+
+procedure TfmMain.PageSelectChange(Sender: TObject);
+begin
+  inherited;
+  UpdateConfigSystem;
+end;
 
 end.
 

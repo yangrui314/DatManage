@@ -11,7 +11,7 @@ type
   private
     { Private declarations }
   public
-    procedure MenuHandle(aParameter : String;aActivePageIndex : Integer;aTable : String);override;
+    procedure MenuHandle;override;
   end;
 
 var
@@ -21,7 +21,7 @@ implementation
 
 {$R *.dfm}
 
-procedure TfmMenuUpgrade.MenuHandle(aParameter : String;aActivePageIndex : Integer;aTable : String);
+procedure TfmMenuUpgrade.MenuHandle;
 var
   aUpgrade : TUpgrade;
 begin

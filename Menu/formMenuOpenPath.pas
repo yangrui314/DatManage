@@ -11,7 +11,7 @@ type
   private
     { Private declarations }
   public
-    procedure MenuHandle(aParameter : String;aActivePageIndex : Integer;aTable : String);override;
+    procedure MenuHandle;override;
   end;
 
 var
@@ -21,24 +21,24 @@ implementation
 
 {$R *.dfm}
 
-procedure TfmMenuOpenPath.MenuHandle(aParameter : String;aActivePageIndex : Integer;aTable : String);
+procedure TfmMenuOpenPath.MenuHandle;
 var
   aDatPath: string;
 begin
   inherited;
-  if (aActivePageIndex = 1) or (aTable = '') then
+  if (FActivePageIndex = 1) or (FTableName = '') then
   begin
     //打开目录
-    ShellExecute(Handle, 'open', 'Explorer.exe', PChar(aParameter), nil, 1);
+    ShellExecute(Handle, 'open', 'Explorer.exe', PChar(FParameter), nil, 1);
   end
   else
   begin
     //打开目录并定位。
-    if RightStr(aParameter, 1) = '\' then
-      aDatPath := aParameter
+    if RightStr(FParameter, 1) = '\' then
+      aDatPath := FParameter
     else
-      aDatPath := aParameter + '\';
-    aDatPath := aDatPath + aTable + '.dat';
+      aDatPath := FParameter + '\';
+    aDatPath := aDatPath + FTableName + '.dat';
     ShellExecute(0, nil, PChar('explorer.exe'), PChar('/e, ' + '/select,' + aDatPath), nil, SW_NORMAL);
   end;
 end;

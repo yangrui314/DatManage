@@ -88,6 +88,7 @@ object fmMain: TfmMain
         ParentShowHint = False
         ShowHint = False
         TabOrder = 4
+        OnChange = PageSelectChange
         ClientRectBottom = 98
         ClientRectRight = 743
         ClientRectTop = 24
