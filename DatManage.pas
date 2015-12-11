@@ -114,6 +114,8 @@ type
     procedure ChangeConnect;
     procedure ClearCondition;
     procedure UpdateConfigSystem;
+    function GetFieldType : String;
+    function IsQuotation(const aFieldType : String) : Boolean;
   public
     class function CreateInstance(var AForm: TfmParentMenu; AFormClassName: String = ''): TfmParentMenu;overload;
   end;
@@ -133,6 +135,8 @@ uses
 
 
 function TfmMain.GetSQL: string;
+var
+  aFieldType : string;
 begin
   if PageSelect.ActivePageIndex = 0 then
   begin
@@ -146,19 +150,42 @@ begin
     else
     begin
       Result := FEnvironment.GetBaseTableSQL(FTableName);
+      aFieldType := GetFieldType;
       if  (edtFieldName.Text <> '') and  (edtKeyword.Text <> '') and (edtCondition.Text <> '') then
       begin
         if edtKeyword.Text = '包含' then
         begin
-          Result := Result + ' where ' + FTable.HandleSpecialStr(edtFieldName.Text) + ' like ' + '''%'+  edtCondition.Text + '%''';
+          if IsQuotation(aFieldType)   then
+          begin
+            ShowMessage('该字段不能使用''包含''查询。');
+            Result := '';
+          end
+          else
+          begin
+            Result := Result + ' where ' + FTable.HandleSpecialStr(edtFieldName.Text) + ' like ' + '''%'+  edtCondition.Text + '%''';
+          end;
         end
         else if edtKeyword.Text = '等于' then
         begin
-          Result := Result + ' where ' + FTable.HandleSpecialStr(edtFieldName.Text)  + ' = ' +  edtCondition.Text ;
+          if IsQuotation(aFieldType)   then
+          begin
+            Result := Result + ' where ' + FTable.HandleSpecialStr(edtFieldName.Text)  + ' = ' +  edtCondition.Text ;
+          end
+          else
+          begin
+            Result := Result + ' where ' + FTable.HandleSpecialStr(edtFieldName.Text)  + ' = ' + ''''+  edtCondition.Text + '''';
+          end;
         end
         else if edtKeyword.Text = '不等于' then
         begin
-          Result := Result + ' where ' + FTable.HandleSpecialStr(edtFieldName.Text) + ' <> ' +  edtCondition.Text ;
+          if IsQuotation(aFieldType) then
+          begin
+            Result := Result + ' where ' + FTable.HandleSpecialStr(edtFieldName.Text)  + ' <> ' +  edtCondition.Text ;
+          end
+          else
+          begin
+            Result := Result + ' where ' + FTable.HandleSpecialStr(edtFieldName.Text)  + ' <> ' + ''''+  edtCondition.Text + '''';          
+          end;
         end;
       end;
       if  (edtFieldName.Text = '') and  (edtKeyword.Text = '') and (edtCondition.Text <> '') then
@@ -623,6 +650,31 @@ procedure TfmMain.PageSelectChange(Sender: TObject);
 begin
   inherited;
   UpdateConfigSystem;
+end;
+
+function TfmMain.GetFieldType : String;
+var
+  I : Integer;
+begin
+  Result := '';
+  for I := 0 to   FTable.TableFieldCount - 1 do
+  begin
+    if (FTable.TableFieldNameArray[I] = edtFieldName.Text) then
+    begin
+      Result := FTable.TableFieldSQLTypeArray[I];
+      Exit;
+    end;
+  end;
+end;
+
+function TfmMain.IsQuotation(const aFieldType : String) : Boolean;
+begin
+  Result := False;
+  Result := ( aFieldType= 'integer') or (aFieldType = 'AutoInt')
+  or (aFieldType = 'tinyint') or (aFieldType = 'smallint')
+  or (aFieldType = 'bigint') or (aFieldType = 'money')
+  or (aFieldType = 'smallmoney') or (aFieldType = 'float')
+  or (aFieldType = 'bit') or (aFieldType = 'datatime') ;
 end;
 
 end.
