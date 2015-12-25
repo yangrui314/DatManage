@@ -401,9 +401,9 @@ begin
   begin
     Config.LastFolderPath := FParameter;
   end; 
-  FConfigFile.Destroy;
-  FTable.Destroy;
-  FEnvironment.Destroy;
+  FTable.Free;
+  FEnvironment.Free;
+  FConfigFile.Free;
   inherited;
 end;
 
