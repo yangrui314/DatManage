@@ -425,7 +425,8 @@ begin
           begin
             FMenuXML.DocumentElement.ChildNodes[I].ChildNodes['Visible'].Text := '0';
           end;
-          FMenuXML.DocumentElement.ChildNodes[I].ChildNodes['ClassType'].Text := aMenu.ClassName ;
+          FMenuXML.DocumentElement.ChildNodes[I].ChildNodes['ClassType'].Text := aMenu.ClassType ;
+          FMenuXML.DocumentElement.ChildNodes[I].ChildNodes['ClassName'].Text := aMenu.ClassName ;
           FMenuXML.DocumentElement.ChildNodes[I].ChildNodes['NotShowFormHint'].Text:= aMenu.NotShowFormHint;
           FMenuXML.DocumentElement.ChildNodes[I].ChildNodes['ParentName'].Text := aMenu.ParentName;
           IsEdit := True;

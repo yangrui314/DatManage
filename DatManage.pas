@@ -11,7 +11,7 @@ uses
   ExtCtrls, cxMemo, cxVGrid, cxDBVGrid, cxInplaceContainer, unitEnvironment,
   frameShowResult, dxLayoutControl, cxDropDownEdit, cxRadioGroup, unitTable,
   Menus, cxLookAndFeelPainters, cxButtons, cxGridExportLink, unitConfigFile,
-  unitConfigDat, formParent, cxPC, ShellAPI, WinSkinData, dxBar,formSVN,
+   formParent, cxPC, ShellAPI, WinSkinData, dxBar,formSVN,
   cxLookAndFeels, RzStatus,formUpgradeProgress,unitDownLoadFile, cxLabel,
   unitSQLEnvironment,unitDbisamEnvironment,formParentMenu,unitLoadMenu;
 
@@ -335,7 +335,7 @@ var
   I: Integer;
   aTest: string;
 begin
-  FConfigFile := TConfigDat.Create;
+  FConfigFile := TConfigFile.Create;
 //  edtPathName.Properties.Items.Add('最后一条记录');
 //  edtCreatePath.Properties.Items.Add(Config.LastFolderPath);
 //  edtPathName.EditValue := '最后一条记录';
@@ -401,9 +401,9 @@ begin
   begin
     Config.LastFolderPath := FParameter;
   end; 
-  FTable.Free;
-  FEnvironment.Free;
-  FConfigFile.Free;
+  FTable.Destroy;
+  FEnvironment.Destroy;
+  FConfigFile.Destroy;
   inherited;
 end;
 
