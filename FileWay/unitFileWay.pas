@@ -35,7 +35,8 @@ type
     function SaveFile(aFilePath : String;var aTable : TTable) : Boolean; virtual;abstract;
     function ReadFile(aFilePath : String;var aTable : TTable) : Boolean; virtual;abstract;
     procedure LoadMenu; virtual;abstract;
-    procedure SaveMenu; virtual;abstract;       
+    procedure SaveMenu; virtual;abstract;
+    procedure ClearHistorys;virtual;abstract;
   end;
 
 implementation

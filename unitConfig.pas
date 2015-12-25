@@ -16,6 +16,8 @@ type
     FShowPath : Boolean;
     FSelectShowWay : String;
     FConnectWay : String;
+    FFileWay : string;
+
     FSystemParameter : String;
     FSystemActivePageIndex : Integer;
     FSystemTableName :String;
@@ -35,6 +37,8 @@ type
     property ShowPath: Boolean read FShowPath write FShowPath;
     property SelectShowWay: string read FSelectShowWay write FSelectShowWay;
     property ConnectWay : string read  FConnectWay write  FConnectWay;
+    property FileWay : string read  FFileWay write  FFileWay;
+
 
     //主表三个参数
     property SystemParameter : string read  FSystemParameter write  FSystemParameter;
@@ -98,6 +102,8 @@ begin
   FSelectShowWay := '1';
   //连接方式,1代表DBISAM,2代表SQL
   FConnectWay := '1';
+  //文件处理方式,默认dat
+  FFileWay := 'dat';
 end;
 
 procedure TConfig.FreeHistorys;

@@ -1,11 +1,11 @@
 object fmSet: TfmSet
   Left = 416
-  Top = 309
+  Top = 300
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = #35774#32622
-  ClientHeight = 190
-  ClientWidth = 274
+  ClientHeight = 188
+  ClientWidth = 230
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -20,21 +20,21 @@ object fmSet: TfmSet
   object pnlSet: TPanel
     Left = 0
     Top = 0
-    Width = 274
-    Height = 190
+    Width = 230
+    Height = 188
     Align = alClient
     Caption = 'pnlSet'
     TabOrder = 0
     object Page: TcxPageControl
       Left = 1
       Top = 1
-      Width = 272
-      Height = 137
-      ActivePage = SheetConnect
+      Width = 228
+      Height = 135
+      ActivePage = SheetFileWay
       Align = alClient
       TabOrder = 0
-      ClientRectBottom = 137
-      ClientRectRight = 272
+      ClientRectBottom = 135
+      ClientRectRight = 228
       ClientRectTop = 24
       object SheetShow: TcxTabSheet
         Caption = #26174#31034
@@ -42,8 +42,8 @@ object fmSet: TfmSet
         object lcMain: TdxLayoutControl
           Left = 0
           Top = 0
-          Width = 272
-          Height = 113
+          Width = 228
+          Height = 111
           Align = alClient
           TabOrder = 0
           TabStop = False
@@ -96,8 +96,8 @@ object fmSet: TfmSet
         object lcSelect: TdxLayoutControl
           Left = 0
           Top = 0
-          Width = 272
-          Height = 113
+          Width = 228
+          Height = 111
           Align = alClient
           TabOrder = 0
           TabStop = False
@@ -154,8 +154,8 @@ object fmSet: TfmSet
         object lcConnect: TdxLayoutControl
           Left = 0
           Top = 0
-          Width = 272
-          Height = 113
+          Width = 228
+          Height = 111
           Align = alClient
           TabOrder = 0
           TabStop = False
@@ -203,11 +203,66 @@ object fmSet: TfmSet
           end
         end
       end
+      object SheetFileWay: TcxTabSheet
+        Caption = #25991#20214#22788#29702
+        ImageIndex = 3
+        object lcFileWay: TdxLayoutControl
+          Left = 0
+          Top = 0
+          Width = 228
+          Height = 111
+          Align = alClient
+          TabOrder = 0
+          TabStop = False
+          AutoContentSizes = [acsWidth, acsHeight]
+          object rbDAT: TcxRadioButton
+            Left = 10
+            Top = 10
+            Width = 80
+            Height = 17
+            Caption = 'DAT'
+            TabOrder = 0
+            OnClick = rbDATClick
+            Transparent = True
+          end
+          object rbXML: TcxRadioButton
+            Left = 10
+            Top = 33
+            Width = 113
+            Height = 17
+            Caption = 'XML'
+            TabOrder = 1
+            OnClick = rbXMLClick
+            Transparent = True
+          end
+          object dxLayoutGroup5: TdxLayoutGroup
+            AutoAligns = [aaVertical]
+            ShowCaption = False
+            Hidden = True
+            ShowBorder = False
+            object dxLayoutItem4: TdxLayoutItem
+              AutoAligns = [aaVertical]
+              AlignHorz = ahClient
+              Caption = 'cxRadioButton1'
+              ShowCaption = False
+              Control = rbDAT
+              ControlOptions.AutoColor = True
+              ControlOptions.ShowBorder = False
+            end
+            object dxLayoutItem6: TdxLayoutItem
+              ShowCaption = False
+              Control = rbXML
+              ControlOptions.AutoColor = True
+              ControlOptions.ShowBorder = False
+            end
+          end
+        end
+      end
     end
     object pnlOK: TPanel
       Left = 1
-      Top = 138
-      Width = 272
+      Top = 136
+      Width = 228
       Height = 51
       Align = alBottom
       Caption = 'pnlOK'
@@ -215,14 +270,14 @@ object fmSet: TfmSet
       object lcOK: TdxLayoutControl
         Left = 1
         Top = 1
-        Width = 270
+        Width = 226
         Height = 49
         Align = alClient
         TabOrder = 0
         TabStop = False
         AutoContentSizes = [acsWidth, acsHeight]
         object cxButton2: TcxButton
-          Left = 185
+          Left = 141
           Top = 14
           Width = 75
           Height = 25

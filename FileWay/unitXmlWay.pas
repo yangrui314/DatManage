@@ -31,7 +31,8 @@ type
     function SaveFile(aFilePath : String;var aTable : TTable) : Boolean;override;
     function ReadFile(aFilePath : String;var aTable : TTable) : Boolean;override;
     procedure LoadMenu; override;
-    procedure SaveMenu; override;          
+    procedure SaveMenu; override;
+    procedure ClearHistorys;override;          
   end;
 
 
@@ -176,6 +177,17 @@ begin
     aHistory := THistory.Create(FHistoryXML.DocumentElement.ChildNodes[I].ChildNodes['ConnectWay'].Text,
     FHistoryXML.DocumentElement.ChildNodes[I].ChildNodes['Name'].Text,FHistoryXML.DocumentElement.ChildNodes[I].ChildNodes['Path'].Text);
     Result.Add(aHistory);
+  end;
+end;
+
+procedure TXmlWay.ClearHistorys;
+var
+  I : Integer;
+begin
+  FHistoryXML.Active := True;
+  for I:=FHistoryXML.DocumentElement.ChildNodes.Count- 1 downto 0  do
+  begin
+    FHistoryXML.DocumentElement.ChildNodes.Delete(I);
   end;
 end;
 
@@ -355,17 +367,17 @@ begin
   begin
     for M:=0 to XMLRead.DocumentElement.ChildNodes.Count - 1 do
     begin
-        if aMenuNames[N] = XMLRead.DocumentElement.ChildNodes[I].ChildNodes['Name'].Text then
+        if aMenuNames[N] = XMLRead.DocumentElement.ChildNodes[M].ChildNodes['Name'].Text then
         begin
           aMenu := TMenu.Create;
-          aMenu.Name := XMLRead.DocumentElement.ChildNodes[I].ChildNodes['Name'].Text;
-          aMenu.Caption := XMLRead.DocumentElement.ChildNodes[I].ChildNodes['Caption'].Text;
-          aMenu.OrderID := StrToInt(XMLRead.DocumentElement.ChildNodes[I].ChildNodes['OrderID'].Text);
-          aMenu.Visible := (XMLRead.DocumentElement.ChildNodes[I].ChildNodes['Visible'].Text = '1');
-          aMenu.ClassType :=XMLRead.DocumentElement.ChildNodes[I].ChildNodes['ClassType'].Text;
-          aMenu.ClassName := XMLRead.DocumentElement.ChildNodes[I].ChildNodes['ClassName'].Text;
-          aMenu.NotShowFormHint := XMLRead.DocumentElement.ChildNodes[I].ChildNodes['NotShowFormHint'].Text;
-          aMenu.ParentName := XMLRead.DocumentElement.ChildNodes[I].ChildNodes['ParentName'].Text;
+          aMenu.Name := XMLRead.DocumentElement.ChildNodes[M].ChildNodes['Name'].Text;
+          aMenu.Caption := XMLRead.DocumentElement.ChildNodes[M].ChildNodes['Caption'].Text;
+          aMenu.OrderID := StrToInt(XMLRead.DocumentElement.ChildNodes[M].ChildNodes['OrderID'].Text);
+          aMenu.Visible := (XMLRead.DocumentElement.ChildNodes[M].ChildNodes['Visible'].Text = '1');
+          aMenu.ClassType :=XMLRead.DocumentElement.ChildNodes[M].ChildNodes['ClassType'].Text;
+          aMenu.ClassName := XMLRead.DocumentElement.ChildNodes[M].ChildNodes['ClassName'].Text;
+          aMenu.NotShowFormHint := XMLRead.DocumentElement.ChildNodes[M].ChildNodes['NotShowFormHint'].Text;
+          aMenu.ParentName := XMLRead.DocumentElement.ChildNodes[M].ChildNodes['ParentName'].Text;
           Config.FMenuList[N] := (aMenu);
           Break;
         end;
@@ -392,7 +404,7 @@ begin
     FMenuXML.Active := True;
     IsEdit := False;
     aLen := High(Config.FMenuList) - Low(Config.FMenuList);
-    for J := 0 to High(Config.FMenuList) - Low(Config.FMenuList) -1 do
+    for J := 0 to High(Config.FMenuList) - Low(Config.FMenuList) do
     begin
       aMenu := TMenu.Create;
       aMenu := Config.FMenuList[J];

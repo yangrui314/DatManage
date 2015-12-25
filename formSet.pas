@@ -40,6 +40,13 @@ type
     dxLayoutGroup2: TdxLayoutGroup;
     dxLayoutItem2: TdxLayoutItem;
     dxLayoutItem3: TdxLayoutItem;
+    SheetFileWay: TcxTabSheet;
+    lcFileWay: TdxLayoutControl;
+    rbDAT: TcxRadioButton;
+    rbXML: TcxRadioButton;
+    dxLayoutGroup5: TdxLayoutGroup;
+    dxLayoutItem4: TdxLayoutItem;
+    dxLayoutItem6: TdxLayoutItem;
     procedure btnOKClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure cbShowPathClick(Sender: TObject);
@@ -48,6 +55,8 @@ type
     procedure rbSelectCaptionClick(Sender: TObject);
     procedure rbDBISAMClick(Sender: TObject);
     procedure rbSQLSERVERClick(Sender: TObject);
+    procedure rbDATClick(Sender: TObject);
+    procedure rbXMLClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -94,7 +103,19 @@ begin
   begin
     rbDBISAM.Checked := False;
     rbSQLSERVER.Checked := True;    
-  end;  
+  end;
+
+  if Config.FileWay ='dat' then
+  begin
+    rbDAT.Checked := True;
+    rbXML.Checked := False;
+  end
+  else
+  begin
+    rbDAT.Checked := False;
+    rbXML.Checked := True;
+  end;
+
 end;
 
 procedure TfmSet.cbShowPathClick(Sender: TObject);
@@ -131,6 +152,18 @@ procedure TfmSet.rbSQLSERVERClick(Sender: TObject);
 begin
   inherited;
   Config.ConnectWay := '2';
+end;
+
+procedure TfmSet.rbDATClick(Sender: TObject);
+begin
+  inherited;
+  Config.FileWay :='dat';
+end;
+
+procedure TfmSet.rbXMLClick(Sender: TObject);
+begin
+  inherited;
+  Config.FileWay :='xml';
 end;
 
 initialization

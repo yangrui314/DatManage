@@ -29,6 +29,7 @@ type
     function ReadFile(aFilePath : String;var aTable : TTable) : Boolean;override;
     procedure LoadMenu; override;
     procedure SaveMenu; override;
+    procedure ClearHistorys;override;    
   end;
 
 
@@ -214,7 +215,6 @@ var
 begin
   inherited;
   Result := TList.Create;
-//  aHistory := THistory.Create('','');
   FHistory := TDBISAMTable.Create(nil);
   try
     with FHistory do
@@ -237,10 +237,28 @@ begin
       Close;
     end;   
   finally
-//    aHistory.Free;
     FHistory.Free;
   end;
 end;
+
+procedure TDatWay.ClearHistorys;
+var
+  FHistory : TDBISAMTable;
+begin
+  inherited;
+  FHistory := TDBISAMTable.Create(nil);
+  try
+    with FHistory do
+    begin
+      DatabaseName:= FConfigPath;
+      TableName:= FHistoryName;
+      EmptyTable;
+    end;
+  finally
+    FHistory.Free;
+  end;
+end;
+
 
 procedure TDatWay.SaveHistory(aConnectWay : string;aName : String;aPath : String);
 var

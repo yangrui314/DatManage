@@ -12,17 +12,19 @@ type
   private
   protected
     FFileWay : TFileWay;
+    FWayStrPath : String;
   public
     destructor Destroy; virtual;
     constructor Create(aWay : String);
     function GetSystemConfig(aName : String) : String;
     procedure SaveSystemConfig(aName : String;aValue : String);
-    function LoadHistorys : TList; 
-    procedure SaveHistory(aConnectWay : string;aName : String;aPath : String); 
+    function LoadHistorys : TList;
+    procedure SaveHistory(aConnectWay : string;aName : String;aPath : String);
     function SaveFile(aFilePath : String;var aTable : TTable) : Boolean;
     function ReadFile(aFilePath : String;var aTable : TTable) : Boolean;
     procedure LoadMenu;
     procedure SaveMenu;
+    procedure ClearHistorys;
   end;
 
 
@@ -60,6 +62,12 @@ procedure THandleFileWay.SaveHistory(aConnectWay : string;aName : String;aPath :
 begin
   FFileWay.SaveHistory(aConnectWay,aName,aPath);
 end;
+
+procedure THandleFileWay.ClearHistorys;
+begin
+  FFileWay.ClearHistorys;
+end;
+
 
 function THandleFileWay.SaveFile(aFilePath : String;var aTable : TTable) : Boolean;
 begin
