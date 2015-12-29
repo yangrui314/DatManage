@@ -50,7 +50,8 @@ uses
   unitDatWay in 'FileWay\unitDatWay.pas',
   unitHandleFileWay in 'unitHandleFileWay.pas',
   unitExcelHandle in 'FileWay\unitExcelHandle.pas',
-  unitStandardHandle in 'FileWay\unitStandardHandle.pas';
+  unitStandardHandle in 'FileWay\unitStandardHandle.pas',
+  formBatchSQL in 'Menu\formBatchSQL.pas' {fmBatchSQL};
 
 {$R *.res}
 
@@ -58,5 +59,6 @@ begin
   Application.Initialize;
   Application.CreateForm(TfmMain, fmMain);
   Application.CreateForm(TdmSys, dmSys);
+  Application.CreateForm(TfmBatchSQL, fmBatchSQL);
   Application.Run;
 end.

@@ -248,7 +248,7 @@ begin
 
   aSQL := aPrefixSQL + aPostfixSQL;
 
-  FTable.Environment.ExecSQL(aSQL);
+  FTable.Environment.SetSQL(aSQL);
 //  ShowMessage('执行成功！SQL执行脚本:'+ aSQL);    
 end;
 
@@ -329,7 +329,7 @@ begin
 
   aSQL := aPrefixSQL + aPostfixSQL;
 
-  FTable.Environment.ExecSQL(aSQL);
+  FTable.Environment.SetSQL(aSQL);
 //  ShowMessage('执行成功！SQL执行脚本:'+ aSQL);
   Close;
 end;
@@ -344,7 +344,7 @@ begin
   aPostfixSQL := ' where  ' + FKeyConditon + ';';
 
   aSQL := aPrefixSQL + aPostfixSQL;
-  FTable.Environment.ExecSQL(aSQL);
+  FTable.Environment.SetSQL(aSQL);
 end;
 
 

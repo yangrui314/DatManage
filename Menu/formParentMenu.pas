@@ -13,6 +13,7 @@ type
     FParameter : String;
     FActivePageIndex : Integer;
     FTableName :String;
+    function GetParameterCaption : String;
     function GetParameter : String;
     function GetActivePageIndex : Integer;
     function GetTableName : String;    
@@ -41,6 +42,11 @@ begin
   FParameter := GetParameter;
   FActivePageIndex := GetActivePageIndex;
   FTableName := GetTableName;
+end;
+
+function TfmParentMenu.GetParameterCaption : String;
+begin
+  Result := Config.SystemParameterCaption;
 end;
 
 function TfmParentMenu.GetParameter : String;

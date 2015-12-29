@@ -17,7 +17,7 @@ type
     FSelectShowWay : String;
     FConnectWay : String;
     FFileWay : string;
-
+    FSystemParameterCaption : String;
     FSystemParameter : String;
     FSystemActivePageIndex : Integer;
     FSystemTableName :String;
@@ -40,7 +40,8 @@ type
     property FileWay : string read  FFileWay write  FFileWay;
 
 
-    //主表三个参数
+    //主表四个参数
+    property SystemParameterCaption : string read  FSystemParameterCaption write  FSystemParameterCaption;
     property SystemParameter : string read  FSystemParameter write  FSystemParameter;
     property SystemActivePageIndex : Integer read  FSystemActivePageIndex write  FSystemActivePageIndex;
     property SystemTableName : string read  FSystemTableName write  FSystemTableName;    

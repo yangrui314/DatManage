@@ -16,7 +16,6 @@ type
   public
     procedure SetEnvironment(aParameter : String);override;
     procedure SetSQL(const aSQL : String; aShowError : Boolean = True);override;
-    procedure ExecSQL(const aSQL : String);override;
     procedure ExecSQLs(const aSQLs :  array of String);override;
     destructor Destroy;override;
     constructor Create(AOwner: TComponent;aParameter : String);override;
@@ -76,18 +75,21 @@ begin
   except
     on E: Exception do
     begin
+      SaveLog(False,aSQL);
       FLoadTable := False;
       if aShowError then
       begin
         showmessage('异常类名称:' + E.ClassName
-          + #13#10 + '异常信息:' + E.Message + #13#10 +aSQL );      
+          + #13#10 + '异常信息:' + E.Message + #13#10 +aSQL );
       end
       else
       begin
         //
       end;
-     end;     
-  end;    
+      Exit;
+     end;
+  end;
+  SaveLog(True,aSQL);  
 end;
 
 
@@ -157,28 +159,15 @@ begin
   aMain.Free;
 end;
 
-procedure TSQLEnvironment.ExecSQL(const aSQL : String);
-begin
-  try
-    if aSQL = '' then Exit;
-    TADOQuery(aMain).Close;
-    aMainConnection;
-    TADOQuery(aMain).SQL.Clear;
-    TADOQuery(aMain).SQL.Add(aSQL);
-    TADOQuery(aMain).ExecSQL;
-    ShowMessage('执行成功:'+aSQL)
-  except
-    on E: Exception do
-      showmessage('异常类名称:' + E.ClassName
-        + #13#10 + '异常信息:' + E.Message);
-  end;    
-end;
+
 
 procedure TSQLEnvironment.ExecSQLs(const aSQLs :  array of String);
 var
   I : Integer;
   Len : Integer;
+  aSQL : string;
 begin
+  aSQL := '';
   Len := Length(aSQLs);
   try
     TADOQuery(aMain).Close;
@@ -188,16 +177,29 @@ begin
     begin
       if aSQLs[I] = '' then Continue;
       TADOQuery(aMain).SQL.Add(aSQLs[I]+';');
+      if aSQL = '' then
+      begin
+        aSQL := aSQLs[I]+';'
+      end
+      else
+      begin
+        aSQL := aSQL +  #13#10 + aSQLs[I]+';'
+      end;
     end;
     TADOQuery(aMain).ExecSQL;
     ShowMessage('执行语句共'+ IntToStr(Len) + '条,'+'执行SQL成功!')
   except
     on E: Exception do
+    begin
+      SaveLog(False,aSQL);
       showmessage('执行语句共'+ IntToStr(Len) + '条,'+'执行SQL失败'
-       + #13#10 + 
+       + #13#10 +
       '异常类名称:' + E.ClassName
         + #13#10 + '异常信息:' + E.Message);
-  end;    
+      Exit;
+    end;
+  end;
+  SaveLog(True,aSQL);      
 end;
 
 function TSQLEnvironment.LoadTableName(aFilter : String = '') : TStringList;
@@ -226,7 +228,7 @@ begin
     adsTable.SQL.Add(TableSQL);
     adsTable.ExecSQL;
     adsTable.Open;
-    
+
     adsTable.First;
     while not adsTable.Eof do
     begin

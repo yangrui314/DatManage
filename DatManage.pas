@@ -641,6 +641,7 @@ end;
 procedure TfmMain.UpdateConfigSystem;
 begin
   Config.SystemParameter := FParameter;
+  Config.SystemParameterCaption := edtPathName.Text;
   Config.SystemActivePageIndex := PageSelect.ActivePageIndex;
   Config.SystemTableName := edtTable.Text;    
 end;
