@@ -5,7 +5,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls,
   Dialogs,StdCtrls,unitFileWay, DB, dbisamtb,unitHistory,unitTable,unitMenu,
-  unitConfig;
+  unitConfig,unitWorkLog;
 
 
 type
@@ -15,9 +15,11 @@ type
     FSystemConfig : TDBISAMTable;
     FHistory: TDBISAMTable;
     FMenu : TDBISAMTable;
+    FWorkLog : TDBISAMTable;
     procedure CreateSystemConfig;override;
     procedure CreateHistory; override;
     procedure CreateMenu; override;
+    procedure CreateWorkLog; override;    
   public
     constructor Create; override;
     destructor Destroy; override;    
@@ -29,7 +31,9 @@ type
     function ReadFile(aFilePath : String;var aTable : TTable) : Boolean;override;
     procedure LoadMenu; override;
     procedure SaveMenu; override;
-    procedure ClearHistorys;override;    
+    procedure ClearHistorys;override;
+    procedure SaveWorkLog(var WorkLog : TWorkLog);override;
+    function LoadWorkLog : TWorkLog;override;           
   end;
 
 
@@ -41,6 +45,7 @@ begin
   FSystemConfig := TDBISAMTable.Create(nil);
   FHistory := TDBISAMTable.Create(nil);
   FMenu  := TDBISAMTable.Create(nil);
+  FWorkLog := TDBISAMTable.Create(nil);
   inherited;
 end;
 
@@ -49,6 +54,7 @@ begin
   inherited;
   FHistory.Free;
   FMenu.Free;
+  FWorkLog.Free;
   FSystemConfig.Free;      
 end;
 
@@ -128,7 +134,34 @@ begin
       Add('ByName','Name',[ixUnique]);
     end;
     if not Exists then
-      CreateTable(0,1,0,True,'YouAreNotPreparedForIT')
+      CreateTable(0,1,0,True,'YouAreNotPreparedForIT');
+  end;
+end;
+
+
+procedure TDatWay.CreateWorkLog;
+begin
+  with FWorkLog do
+  begin
+    DatabaseName:= FConfigPath;
+    TableName:= FWorkLogName;
+    with FieldDefs do
+    begin 
+      Clear; 
+      Add('ID',ftAutoInc,0,False);
+      Add('EnvironmentName',ftString,255,False);
+      Add('BeginDate',ftDateTime,255,False);
+      Add('EndDate',ftDateTime,0,False);
+      Add('WorkDay',ftInteger,0,False);
+      Add('WorkLog',ftString,60,False);
+    end;
+    with IndexDefs do
+    begin
+      Clear;
+      Add('','ID',[ixPrimary]);
+    end;
+    if not Exists then
+      CreateTable;
   end;
 end;
 
@@ -507,5 +540,35 @@ begin
       Close;
     end;
 end;
+
+procedure TDatWay.SaveWorkLog(var WorkLog : TWorkLog);
+begin
+  with FWorkLog do
+  begin
+    DatabaseName:= FConfigPath;
+    TableName:= FWorkLogName;
+
+    if Active then Close;
+    Open;
+
+    First;
+    Append;
+    FieldByName('EnvironmentName').AsString := WorkLog.EnvironmentName;
+    FieldByName('BeginDate').AsDateTime := WorkLog.BeginDate;
+    FieldByName('EndDate').AsDateTime := WorkLog.EndDate;
+    FieldByName('WorkDay').AsInteger := WorkLog.WorkDay;
+    FieldByName('WorkLog').AsString := WorkLog.WorkLog;    
+    Post;
+    Close;
+  end;
+end;
+
+
+
+function TDatWay.LoadWorkLog : TWorkLog;
+begin
+    
+end;
+
 
 end.

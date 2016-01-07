@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls,
-  Dialogs,StdCtrls,unitTable,unitMenu;
+  Dialogs,StdCtrls,unitTable,unitMenu,unitWorkLog;
 
 
 type
@@ -15,15 +15,18 @@ type
     FSystemConfigName : String;
     FHistoryName : String;
     FMenuName : String;
+    FWorkLogName : String;
     FSystemConfigFilePath : String;
     FHistoryFilePath : String;
     FMenuFilePath : String;
+    FWorkLogFilePath : String;    
     FExt : String;
     procedure ForceCreateConfigPath;
     procedure InitData; virtual;
     procedure CreateSystemConfig;virtual;abstract;
     procedure CreateHistory; virtual;abstract;
     procedure CreateMenu; virtual;abstract;
+    procedure CreateWorkLog; virtual;abstract;    
     procedure NotFileCreateFile;
   public
     constructor Create; virtual;
@@ -37,6 +40,8 @@ type
     procedure LoadMenu; virtual;abstract;
     procedure SaveMenu; virtual;abstract;
     procedure ClearHistorys;virtual;abstract;
+    procedure SaveWorkLog(var WorkLog : TWorkLog);virtual;abstract;
+    function LoadWorkLog : TWorkLog;virtual;abstract;    
   end;
 
 implementation
@@ -49,6 +54,7 @@ begin
   FSystemConfigName := 'SystemConfig';
   FHistoryName := 'History';
   FMenuName := 'Menu';
+  FWorkLogName := 'WorkLog';
   FExt := '';
   InitData;
 end;
@@ -71,7 +77,12 @@ begin
     if not FileExists(FMenuFilePath) then
     begin
       CreateMenu;  
-    end; 
+    end;
+
+    if not FileExists(FWorkLogFilePath) then
+    begin
+      CreateWorkLog;  
+    end;      
   end;    
 end;
 
@@ -81,7 +92,8 @@ begin
   FSystemConfigFilePath := FConfigPath + '\' + FSystemConfigName + FExt;
   FHistoryFilePath := FConfigPath + '\' + FHistoryName + FExt;
   FMenuFilePath := FConfigPath + '\' + FMenuName + FExt;
-  NotFileCreateFile;    
+  FWorkLogFilePath := FConfigPath + '\' + FWorkLogName + FExt;
+  NotFileCreateFile;
 end;
 
 procedure TFileWay.ForceCreateConfigPath;

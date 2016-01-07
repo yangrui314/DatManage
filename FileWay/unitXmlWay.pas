@@ -5,7 +5,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls,
   Dialogs,StdCtrls,unitFileWay, xmldom, XMLIntf, msxmldom, XMLDoc,unitHistory,unitTable,
-  unitMenu,unitConfig;
+  unitMenu,unitConfig,unitWorkLog;
 
 
 type
@@ -15,10 +15,12 @@ type
     FComp : TComponent;
     FSystemConfigXML : TXMLDocument;
     FHistoryXML : TXMLDocument;
-    FMenuXML : TXMLDocument;    
+    FMenuXML : TXMLDocument;
+    FWorkLogXML : TXMLDocument;
     procedure CreateSystemConfig;override;
     procedure CreateHistory; override;
     procedure CreateMenu; override;
+    procedure CreateWorkLog; override;    
     procedure InitData; override;
     procedure CreateXMLFile(aFileName : string; aFilePath : string; aFieldCount : String);
   public
@@ -32,7 +34,9 @@ type
     function ReadFile(aFilePath : String;var aTable : TTable) : Boolean;override;
     procedure LoadMenu; override;
     procedure SaveMenu; override;
-    procedure ClearHistorys;override;          
+    procedure ClearHistorys;override;
+    procedure SaveWorkLog(var WorkLog : TWorkLog);override;
+    function LoadWorkLog : TWorkLog;override;               
   end;
 
 
@@ -46,6 +50,7 @@ begin
   FSystemConfigXML := TXMLDocument.Create(FComp);
   FHistoryXML := TXMLDocument.Create(FComp);
   FMenuXML := TXMLDocument.Create(FComp);
+  FWorkLogXML := TXMLDocument.Create(FComp);
   inherited;
 end;
 
@@ -56,6 +61,7 @@ begin
   FSystemConfigXML.Free;
   FHistoryXML.Free;
   FMenuXML.Free;
+  FWorkLogXML.Free;
   FComp.Free;
 end;
 
@@ -65,7 +71,8 @@ begin
   inherited;
   FSystemConfigXML.LoadFromFile(FSystemConfigFilePath);
   FHistoryXML.LoadFromFile(FHistoryFilePath);
-  FMenuXML.LoadFromFile(FMenuFilePath);  
+  FMenuXML.LoadFromFile(FMenuFilePath);
+  FWorkLogXML.LoadFromFile(FWorkLogFilePath);
 end;
 
 
@@ -84,6 +91,10 @@ begin
   CreateXMLFile(FMenuName,FMenuFilePath,'9')
 end;
 
+procedure TXmlWay.CreateWorkLog;
+begin
+  CreateXMLFile(FWorkLogName,FWorkLogFilePath,'6')
+end;
 
 procedure TXmlWay.CreateXMLFile(aFileName : string; aFilePath : string; aFieldCount : String);
 var
@@ -477,6 +488,54 @@ begin
   finally
     FMenuXML.SaveToFile(FMenuFilePath);
   end;
+end;
+
+
+procedure TXmlWay.SaveWorkLog(var WorkLog : TWorkLog);
+var
+  XMLFile: TXMLDocument;
+  Comp : TComponent;
+  pNode,tNode,cNode: IXMLNode;
+  I : Integer;
+  aNum : Integer;  
+begin
+  inherited;
+  try
+    FWorkLogXML.Active := True;
+
+    aNum := FWorkLogXML.DocumentElement.ChildNodes.Count;
+    pNode := FWorkLogXML.ChildNodes.FindNode('Config');
+
+
+    tNode := pNode.AddChild('Message');
+
+    cNode := tNode.AddChild('ID');
+    cNode.Text := IntToStr(aNum  + 1);
+
+    cNode := tNode.AddChild('EnvironmentName');
+    cNode.Text := WorkLog.EnvironmentName;
+
+    cNode := tNode.AddChild('BeginDate');
+    cNode.Text := FormatDateTime('yyyy-mm-dd hh:ss',WorkLog.BeginDate);
+
+    cNode := tNode.AddChild('EndDate');
+    cNode.Text := FormatDateTime('yyyy-mm-dd hh:ss',WorkLog.EndDate);
+
+    cNode := tNode.AddChild('WorkDay');
+    cNode.Text := IntToStr(WorkLog.WorkDay);
+
+    cNode := tNode.AddChild('WorkLog');
+    cNode.Text := WorkLog.WorkLog;
+  finally
+    FHistoryXML.SaveToFile(FHistoryFilePath);
+  end;
+end;
+
+
+
+function TXmlWay.LoadWorkLog : TWorkLog;
+begin
+    
 end;
 
 

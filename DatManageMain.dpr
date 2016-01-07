@@ -51,7 +51,10 @@ uses
   unitHandleFileWay in 'unitHandleFileWay.pas',
   unitExcelHandle in 'FileWay\unitExcelHandle.pas',
   unitStandardHandle in 'FileWay\unitStandardHandle.pas',
-  formBatchSQL in 'Menu\formBatchSQL.pas' {fmBatchSQL};
+  formBatchSQL in 'Menu\formBatchSQL.pas' {fmBatchSQL},
+  formSaveWorkLog in 'Menu\formSaveWorkLog.pas' {fmSaveWorkLog},
+  unitWorkLog in 'UnitData\unitWorkLog.pas',
+  formSendEmail in 'Menu\formSendEmail.pas' {fmSendEmail};
 
 {$R *.res}
 
@@ -60,5 +63,7 @@ begin
   Application.CreateForm(TfmMain, fmMain);
   Application.CreateForm(TdmSys, dmSys);
   Application.CreateForm(TfmBatchSQL, fmBatchSQL);
+  Application.CreateForm(TfmSaveWorkLog, fmSaveWorkLog);
+  Application.CreateForm(TfmSendEmail, fmSendEmail);
   Application.Run;
 end.

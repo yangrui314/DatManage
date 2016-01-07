@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls,
-  Dialogs,StdCtrls,unitTable,unitFileWay,unitXmlWay,unitDatWay;
+  Dialogs,StdCtrls,unitTable,unitFileWay,unitXmlWay,unitDatWay,unitWorkLog;
 
 
 type
@@ -25,6 +25,8 @@ type
     procedure LoadMenu;
     procedure SaveMenu;
     procedure ClearHistorys;
+    procedure SaveWorkLog(var WorkLog : TWorkLog);
+    function LoadWorkLog : TWorkLog;
   end;
 
 
@@ -93,5 +95,16 @@ procedure THandleFileWay.SaveMenu;
 begin
   FFileWay.SaveMenu;    
 end;
+
+procedure THandleFileWay.SaveWorkLog(var WorkLog : TWorkLog);
+begin
+  FFileWay.SaveWorkLog(WorkLog);
+end;
+
+function THandleFileWay.LoadWorkLog : TWorkLog;
+begin
+  Result := FFileWay.LoadWorkLog;
+end;
+
 
 end.
