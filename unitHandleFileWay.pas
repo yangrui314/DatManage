@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls,
-  Dialogs,StdCtrls,unitTable,unitFileWay,unitXmlWay,unitDatWay,unitWorkLog;
+  Dialogs,StdCtrls,unitTable,unitFileWay,unitXmlWay,unitDatWay,unitWorkLog,unitHistory;
 
 
 type
@@ -19,7 +19,7 @@ type
     function GetSystemConfig(aName : String) : String;
     procedure SaveSystemConfig(aName : String;aValue : String);
     function LoadHistorys : TList;
-    procedure SaveHistory(aConnectWay : string;aName : String;aPath : String);
+    procedure SaveHistory(const aHistory : THistory);
     function SaveFile(aFilePath : String;var aTable : TTable) : Boolean;
     function ReadFile(aFilePath : String;var aTable : TTable) : Boolean;
     procedure LoadMenu;
@@ -60,9 +60,9 @@ begin
   Result := FFileWay.LoadHistorys;
 end;
 
-procedure THandleFileWay.SaveHistory(aConnectWay : string;aName : String;aPath : String);
+procedure THandleFileWay.SaveHistory(const aHistory : THistory);
 begin
-  FFileWay.SaveHistory(aConnectWay,aName,aPath);
+  FFileWay.SaveHistory(aHistory);
 end;
 
 procedure THandleFileWay.ClearHistorys;

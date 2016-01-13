@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls,
-  Dialogs,StdCtrls,unitConfig,unitXmlWay,unitHandleFileWay;
+  Dialogs,StdCtrls,unitConfig,unitXmlWay,unitHandleFileWay,unitHistory;
 
 
 type
@@ -21,15 +21,15 @@ type
   public
     constructor Create; virtual;
     destructor Destroy; virtual;
-    procedure SaveHistory(aConnectWay : string;aName : String;aPath : String);overload;    
+    procedure SaveHistory(const aConnectWay : string;const aName : String;const aPath : String);overload;
+    procedure SaveHistory(const aHistory : THistory);overload;
     procedure SaveHistory;overload;
+    procedure ClearHistorys;
   end;
 
 
 implementation
 
-  uses
-    unitHistory;
 
 
 constructor TConfigFile.Create;
@@ -79,10 +79,26 @@ begin
   end;
 end;
 
-procedure TConfigFile.SaveHistory(aConnectWay : string;aName : String;aPath : String);
+procedure TConfigFile.SaveHistory(const aHistory : THistory);
 begin
-  FHandleFileWay.SaveHistory(aConnectWay,aName,aPath);
+  FHandleFileWay.SaveHistory(aHistory);
 end;
+
+procedure TConfigFile.SaveHistory(const aConnectWay : string;const aName : String;const aPath : String);
+var
+  aHistory : THistory;
+begin
+  aHistory := THistory.Create;
+  try
+    aHistory.ConnectWay :=aConnectWay;
+    aHistory.Name :=  aName;
+    aHistory.Path := aPath;
+    SaveHistory(aHistory);
+  finally
+    aHistory.Free;
+  end;
+end;
+
 
 procedure TConfigFile.SaveHistory;
 var
@@ -91,8 +107,13 @@ begin
   FHandleFileWay.ClearHistorys;
   for I := 0 to Config.Historys.Count - 1 do
   begin
-    SaveHistory(THistory(Config.Historys[I]).ConnectWay,THistory(Config.Historys[I]).Name,THistory(Config.Historys[I]).Path);
+    SaveHistory(THistory(Config.Historys[I]));
   end;
+end;
+
+procedure TConfigFile.ClearHistorys;
+begin
+  FHandleFileWay.ClearHistorys;
 end;
 
 function TConfigFile.GetWayStr : String;

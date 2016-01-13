@@ -16,7 +16,6 @@ uses
   formProgress in 'formProgress.pas' {fmProgress},
   unitConfig in 'unitConfig.pas',
   unitConfigFile in 'ConfigFile\unitConfigFile.pas',
-  unitConfigDat in 'ConfigFile\unitConfigDat.pas',
   formParent in 'Parent\formParent.pas' {ParentForm},
   unitHistory in 'unitHistory.pas',
   formSavePath in 'formSavePath.pas' {fmSavePath},
@@ -54,7 +53,8 @@ uses
   formBatchSQL in 'Menu\formBatchSQL.pas' {fmBatchSQL},
   formSaveWorkLog in 'Menu\formSaveWorkLog.pas' {fmSaveWorkLog},
   unitWorkLog in 'UnitData\unitWorkLog.pas',
-  formSendEmail in 'Menu\formSendEmail.pas' {fmSendEmail};
+  formSendEmail in 'Menu\formSendEmail.pas' {fmSendEmail},
+  formMenuBatchImportPath in 'Menu\formMenuBatchImportPath.pas' {fmMenuBatchImportPath};
 
 {$R *.res}
 
@@ -65,5 +65,6 @@ begin
   Application.CreateForm(TfmBatchSQL, fmBatchSQL);
   Application.CreateForm(TfmSaveWorkLog, fmSaveWorkLog);
   Application.CreateForm(TfmSendEmail, fmSendEmail);
+  Application.CreateForm(TfmMenuBatchImportPath, fmMenuBatchImportPath);
   Application.Run;
 end.

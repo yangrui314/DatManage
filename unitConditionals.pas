@@ -13,13 +13,17 @@ type
     function GetOutputDirAndConditionalsAndPathName(aFilePath : String;
         aOutputDirKeyStr : String; aConditionalsKeyStr : String;
         var aOutputDir : string; var aConditionals : String;var aPathName : String;aSelectStr : String = '') : Boolean;    
-    function GetMidStr(aStr : String;aBeginStr : String; aEndStr : String) : String;
     function GetPathName(aOutputDir : String) : String;
     procedure FileReplace(FileName  : String;SrcWord : String; ModifyWord : String;CaseFlag : Boolean);    
+    function GetMidStr(aStr : String;aBeginStr : String; aEndStr : String = '') : String;
   protected
   public
     procedure View(aParameter : String);
     procedure Update(aParameter : String);
+    function GetStrNum(const aFilePath : String;const aSelectStr : String) : Integer;
+    function GetFileMidStr(aFilePath : String;aBeginStr : String; aEndStr : String = '') : String;
+    function AnalysisStr(const aStr : String;var aName : String; var aOutputDir : String; var aConditionals : String) : Boolean;
+    function ConvertToPath(const aBasePath : String ;const aOutputDir : String) : String;
   end;
 
 implementation
@@ -85,6 +89,83 @@ begin
   end;  
 end;
 
+function TConditionals.GetStrNum(const aFilePath : String;const aSelectStr : String) : Integer;
+var
+  aFile : TStringList;
+  aStr : String;
+  aNum : Integer;
+  aTempStr,aNotLeft : String;
+begin
+  Result := 0;
+  aFile := TStringList.Create();
+  try
+    if not FileExists(aFilePath) then
+    begin
+      Exit;
+    end;
+    aFile.LoadFromFile(aFilePath);
+    aStr := aFile.Text;
+    aTempStr := aStr;
+    aNum := 0;
+    while (Pos(aSelectStr,aTempStr) <> 0)  do
+    begin
+      aNotLeft := GetMidStr(aTempStr,aSelectStr);
+      aTempStr := aNotLeft;
+      Inc(aNum);
+    end;
+    Result := aNum;
+  finally
+    aFile.Free;
+  end;
+end;
+
+function TConditionals.GetFileMidStr(aFilePath : String;aBeginStr : String; aEndStr : String) : String;
+var
+  aFile : TStringList;
+  aStr : String;
+  aNum : Integer;
+begin
+  Result := '';
+  aFile := TStringList.Create();
+  try
+    if not FileExists(aFilePath) then
+    begin
+      Exit;
+    end;
+    aFile.LoadFromFile(aFilePath);
+    aStr := aFile.Text;
+    Result := GetMidStr(aStr,aBeginStr,aEndStr);
+  finally
+    aFile.Free;
+  end;
+end;
+
+
+function TConditionals.AnalysisStr(const aStr : String;var aName : String; var aOutputDir : String; var aConditionals : String) : Boolean;
+var
+  aNameEndNum : Integer;
+begin
+  Result := False;
+  aNameEndNum :=  Pos(#13,WideString(aStr));
+  aName := LeftStr(aStr,aNameEndNum-1);
+  aOutputDir := GetMidStr(aStr,'±‡“Î ‰≥ˆƒø¬º£∫',#13);
+  if (Pos('£∫',aOutputDir) <> 0) then
+  begin
+    aOutputDir := GetMidStr(aOutputDir,'£∫');
+  end;
+  aConditionals := GetMidStr(aStr,'±‡“Î÷∏¡Ó£∫',#13);
+  Result := True;
+end;
+
+
+function TConditionals.ConvertToPath(const aBasePath : String ;const aOutputDir : String) : String;
+begin
+  // aOutputDir ..\..\deploy\client\dg-n-tax\bin
+  // aBasePath D:\Project\new_omni\
+  Result := '';
+  Result := aBasePath + 'trunk\engineering\' + GetMidStr(aOutputDir,'..\..\','bin') +'data';
+end;
+
 function TConditionals.GetOutputDirAndConditionalsAndPathName(aFilePath : String;
 aOutputDirKeyStr : String; aConditionalsKeyStr : String;
 var aOutputDir : string; var aConditionals : String;var aPathName : String;aSelectStr : String = '') : Boolean;
@@ -127,8 +208,16 @@ begin
   aBeginNum := Pos(aBeginStr,aStr);
   aNotLeft :=  Copy(aStr,aBeginNum + Length(aBeginStr) ,Length(aStr)-aBeginNum+1);
 
-  aEndStrNum :=  Pos(aEndStr,aNotLeft);
-  Result := LeftStr(aNotLeft,aEndStrNum-1);
+  if aEndStr = '' then
+  begin
+    Result := aNotLeft;
+  end
+  else
+  begin
+    aEndStrNum :=  Pos(aEndStr,WideString(aNotLeft));
+    Result := LeftStr(aNotLeft,aEndStrNum-1);  
+  end;
+
 end;
 
 function TConditionals.GetPathName(aOutputDir : String) : String;

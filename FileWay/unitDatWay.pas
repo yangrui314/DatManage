@@ -19,14 +19,15 @@ type
     procedure CreateSystemConfig;override;
     procedure CreateHistory; override;
     procedure CreateMenu; override;
-    procedure CreateWorkLog; override;    
+    procedure CreateWorkLog; override;
+    procedure InitData; override;       
   public
     constructor Create; override;
     destructor Destroy; override;    
     function GetSystemConfig(aName : String) : String; override;
     procedure SaveSystemConfig(aName : String;aValue : String); override;
     function LoadHistorys : TList;override;
-    procedure SaveHistory(aConnectWay : string;aName : String;aPath : String);override;
+    procedure SaveHistory(const aHistory : THistory);override;
     function SaveFile(aFilePath : String;var aTable : TTable) : Boolean;override;
     function ReadFile(aFilePath : String;var aTable : TTable) : Boolean;override;
     procedure LoadMenu; override;
@@ -96,6 +97,9 @@ begin
       Add('ConnectWay',ftString,255,False);      
       Add('Name',ftString,255,False);
       Add('Path',ftString,255,False);
+      Add('FullName',ftString,255,False);      
+      Add('OutputDir',ftString,255,False);
+      Add('Conditionals',ftString,500,False);      
     end;
     with IndexDefs do
     begin
@@ -150,8 +154,8 @@ begin
       Clear; 
       Add('ID',ftAutoInc,0,False);
       Add('EnvironmentName',ftString,255,False);
-      Add('BeginDate',ftDateTime,255,False);
-      Add('EndDate',ftDateTime,0,False);
+      Add('BeginDate',ftDate,0,False);
+      Add('EndDate',ftDate,0,False);
       Add('WorkDay',ftInteger,0,False);
       Add('WorkLog',ftString,60,False);
     end;
@@ -163,6 +167,12 @@ begin
     if not Exists then
       CreateTable;
   end;
+end;
+
+procedure TDatWay.InitData;
+begin
+  FExt := '.dat';
+  inherited;
 end;
 
 function TDatWay.GetSystemConfig(aName : String) : String;
@@ -248,6 +258,7 @@ var
 begin
   inherited;
   Result := TList.Create;
+  if not FileExists(FHistoryFilePath) then Exit;
   FHistory := TDBISAMTable.Create(nil);
   try
     with FHistory do
@@ -263,6 +274,9 @@ begin
       while not Eof do
       begin
         aHistory := THistory.Create(FieldByName('ConnectWay').AsString,FieldByName('Name').AsString,FieldByName('Path').AsString);
+        aHistory.FullName  := FieldByName('FullName').AsString;
+        aHistory.OutputDir := FieldByName('OutputDir').AsString;
+        aHistory.Conditionals := FieldByName('Conditionals').AsString;
         Result.Add(aHistory);
         Next;
       end;
@@ -279,6 +293,7 @@ var
   FHistory : TDBISAMTable;
 begin
   inherited;
+  if not FileExists(FHistoryFilePath) then Exit;
   FHistory := TDBISAMTable.Create(nil);
   try
     with FHistory do
@@ -293,12 +308,12 @@ begin
 end;
 
 
-procedure TDatWay.SaveHistory(aConnectWay : string;aName : String;aPath : String);
+procedure TDatWay.SaveHistory(const aHistory : THistory);
 var
   FHistory : TDBISAMTable;
 begin
   inherited;
-  FHistory := TDBISAMTable.Create(nil);  
+  FHistory := TDBISAMTable.Create(nil);
   try
     with FHistory do
     begin
@@ -308,13 +323,13 @@ begin
       if Active then Close;
       Open;
     
-      if Locate('Name',aName,[]) then
+      if Locate('Name',aHistory.Name,[]) then
       begin
         ShowMessage('该名称历史记录已经存在，无法保存。');
         Exit;
       end;
 
-      if Locate('Path',aPath,[]) then
+      if Locate('Path',aHistory.Path,[]) then
       begin
         ShowMessage('该路径历史记录已经存在，无法保存。');
         Exit;
@@ -322,9 +337,12 @@ begin
 
       First;
       Append;
-      FieldByName('ConnectWay').AsString := aConnectWay;
-      FieldByName('Name').AsString := aName;
-      FieldByName('Path').AsString := aPath;
+      FieldByName('ConnectWay').AsString := aHistory.ConnectWay;
+      FieldByName('Name').AsString := aHistory.Name;
+      FieldByName('Path').AsString := aHistory.Path;
+      FieldByName('FullName').AsString := aHistory.FullName;
+      FieldByName('OutputDir').AsString := aHistory.OutputDir;
+      FieldByName('Conditionals').AsString := aHistory.Conditionals;
       Post;
 
       Close;

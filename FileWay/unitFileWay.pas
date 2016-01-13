@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls,
-  Dialogs,StdCtrls,unitTable,unitMenu,unitWorkLog;
+  Dialogs,StdCtrls,unitTable,unitMenu,unitWorkLog,unitHistory;
 
 
 type
@@ -34,7 +34,7 @@ type
     function GetSystemConfig(aName : String) : String; virtual;abstract;
     procedure SaveSystemConfig(aName : String;aValue : String); virtual;abstract;
     function LoadHistorys : TList; virtual;abstract;
-    procedure SaveHistory(aConnectWay : string;aName : String;aPath : String); virtual;abstract;
+    procedure SaveHistory(const aHistory : THistory); virtual;abstract;
     function SaveFile(aFilePath : String;var aTable : TTable) : Boolean; virtual;abstract;
     function ReadFile(aFilePath : String;var aTable : TTable) : Boolean; virtual;abstract;
     procedure LoadMenu; virtual;abstract;

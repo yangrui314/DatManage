@@ -29,7 +29,7 @@ type
     function GetSystemConfig(aName : String) : String; override;
     procedure SaveSystemConfig(aName : String;aValue : String); override;
     function LoadHistorys : TList;override;
-    procedure SaveHistory(aConnectWay : string;aName : String;aPath : String);override;
+    procedure SaveHistory(const aHistory : THistory);override;
     function SaveFile(aFilePath : String;var aTable : TTable) : Boolean;override;
     function ReadFile(aFilePath : String;var aTable : TTable) : Boolean;override;
     procedure LoadMenu; override;
@@ -182,11 +182,15 @@ var
 begin
   inherited;
   Result := TList.Create;
+  if not FileExists(FHistoryFilePath) then Exit;  
   FHistoryXML.Active := True;
   for I:=0 to FHistoryXML.DocumentElement.ChildNodes.Count- 1 do
   begin
     aHistory := THistory.Create(FHistoryXML.DocumentElement.ChildNodes[I].ChildNodes['ConnectWay'].Text,
     FHistoryXML.DocumentElement.ChildNodes[I].ChildNodes['Name'].Text,FHistoryXML.DocumentElement.ChildNodes[I].ChildNodes['Path'].Text);
+    aHistory.FullName  := FHistoryXML.DocumentElement.ChildNodes[I].ChildNodes['FullName'].Text;
+    aHistory.OutputDir := FHistoryXML.DocumentElement.ChildNodes[I].ChildNodes['OutputDir'].Text;
+    aHistory.Conditionals := FHistoryXML.DocumentElement.ChildNodes[I].ChildNodes['Conditionals'].Text;
     Result.Add(aHistory);
   end;
 end;
@@ -195,6 +199,7 @@ procedure TXmlWay.ClearHistorys;
 var
   I : Integer;
 begin
+  if not FileExists(FHistoryFilePath) then Exit;
   FHistoryXML.Active := True;
   for I:=FHistoryXML.DocumentElement.ChildNodes.Count- 1 downto 0  do
   begin
@@ -202,7 +207,7 @@ begin
   end;
 end;
 
-procedure TXmlWay.SaveHistory(aConnectWay : string;aName : String;aPath : String);
+procedure TXmlWay.SaveHistory(const aHistory : THistory);
 var
   XMLFile: TXMLDocument;
   Comp : TComponent;
@@ -215,13 +220,13 @@ begin
     FHistoryXML.Active := True;
     for I:=0 to FHistoryXML.DocumentElement.ChildNodes.Count- 1 do
     begin
-      if aName = FHistoryXML.DocumentElement.ChildNodes[I].ChildNodes['Name'].Text then
+      if aHistory.Name = FHistoryXML.DocumentElement.ChildNodes[I].ChildNodes['Name'].Text then
       begin
         ShowMessage('该名称历史记录已经存在，无法保存。');
         Exit;
       end;
 
-      if aPath = FHistoryXML.DocumentElement.ChildNodes[I].ChildNodes['Path'].Text then
+      if aHistory.Path = FHistoryXML.DocumentElement.ChildNodes[I].ChildNodes['Path'].Text then
       begin
         ShowMessage('该路径历史记录已经存在，无法保存。');
         Exit;
@@ -237,13 +242,22 @@ begin
     cNode.Text := IntToStr(aNum  + 1);
 
     cNode := tNode.AddChild('ConnectWay');
-    cNode.Text := aConnectWay;
+    cNode.Text := aHistory.ConnectWay;
 
     cNode := tNode.AddChild('Name');
-    cNode.Text := aName;
+    cNode.Text := aHistory.Name;
 
     cNode := tNode.AddChild('Path');
-    cNode.Text := aPath;
+    cNode.Text := aHistory.Path;
+
+    cNode := tNode.AddChild('FullName');
+    cNode.Text := aHistory.FullName;
+
+    cNode := tNode.AddChild('OutputDir');
+    cNode.Text := aHistory.OutputDir;
+
+    cNode := tNode.AddChild('Conditionals');
+    cNode.Text := aHistory.Conditionals;
   finally
     FHistoryXML.SaveToFile(FHistoryFilePath);
   end;
