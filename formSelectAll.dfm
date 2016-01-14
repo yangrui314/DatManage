@@ -4,7 +4,7 @@ inherited fmSelectAll: TfmSelectAll
   Width = 290
   Height = 240
   Caption = 'fmSelectAll'
-  Position = poDefault
+  Position = poDesktopCenter
   OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13

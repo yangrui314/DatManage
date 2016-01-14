@@ -52,7 +52,7 @@ implementation
 
 
   uses
-    StrUtils;
+    StrUtils,formProgress;
 
 {$R *.dfm}
 
@@ -104,22 +104,36 @@ var
   I : Integer;
   aTableName : String;
   aStr : string;
+  aProgress : TfmProgress;
 begin
   Result := '';
-  for I := 0 to FTableList.Count - 1 do
-  begin
-    aTableName := FTableList[I];
-    if Result = '' then
+  aProgress := TfmProgress.Create(Self);
+  try
+    aProgress.FProgressBar.SetCaption('正在加载数据...');
+    aProgress.FProgressBar.SetPosition(0);
+    aProgress.FProgressBar.SetMax(FTableList.Count);
+    aProgress.Show;    
+    for I := 0 to FTableList.Count - 1 do
     begin
-      Result :=  SingleTable(aTableName);
-    end
-    else
-    begin
-      aStr := SingleTable(aTableName);
-      if aStr <> '' then
-      Result := Result  + #13#10 + aStr;
-    end;
+      if aProgress.FProgressBar.GetCancel then Exit;
 
+      aProgress.FProgressBar.SetCaption('正在查询表'+FTableList[I]+','+ IntToStr(I)+ '/'+IntToStr(FTableList.Count));
+      aProgress.FProgressBar.SetPosition(I);
+      aProgress.FProgressBar.UpdateProcess;
+      aTableName := FTableList[I];
+      if Result = '' then
+      begin
+        Result :=  SingleTable(aTableName);
+      end
+      else
+      begin
+        aStr := SingleTable(aTableName);
+        if aStr <> '' then
+        Result := Result  + #13#10 + aStr;
+      end;
+    end;
+  finally
+    aProgress.Free;
   end;
 
 end;

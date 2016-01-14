@@ -44,14 +44,18 @@ function  TfmMenuTurn.TurnText(const Str : String; const MidStr : String ;const 
 var
   TempStr : String;
 begin
- {将字符串以：=为中间点，；为终点。将其翻转过来。}
- TempStr := Str;
- while Pos(EndStr,TempStr) <> 0 do
- begin
-   Result := Result +  TurnOneStr(GetHeadStrAll(TempStr,EndStr),MidStr,EndStr);
-   TempStr := GetFootStr(TempStr,EndStr);
- end;
+  {将字符串以：=为中间点，；为终点。将其翻转过来。}
+  TempStr := Str;
+  while Pos(EndStr,TempStr) <> 0 do
+  begin
+    if Result = ''
+    then Result := TurnOneStr(GetHeadStrAll(TempStr,EndStr),MidStr,EndStr)
+    else Result := Result + #13#10 + TurnOneStr(GetHeadStrAll(TempStr,EndStr),MidStr,EndStr);
 
+    TempStr := GetFootStr(TempStr,EndStr);
+    TempStr := StringReplace(TempStr, #13, '', [rfReplaceAll]);
+    TempStr := StringReplace(TempStr, #10, '', [rfReplaceAll]);
+  end;
 end;
 
 
@@ -61,7 +65,7 @@ end;
     {单列转换}
     if Pos(MidStr,Str) = 0
     then  Result := Str
-    else  Result := GetFootStr(GetHeadStr(Str,EndStr),MidStr) + MidStr + GetHeadStr(GetHeadStr(Str,EndStr),MidStr) + EndStr ;
+    else  Result := Trim(GetFootStr(GetHeadStr(Str,EndStr),MidStr)) + ' '+ MidStr + ' ' + Trim(GetHeadStr(GetHeadStr(Str,EndStr),MidStr)) + EndStr ;
 
  end;
 

@@ -35,6 +35,8 @@ inherited fmMenuTurn: TfmMenuTurn
       object MSrc: TcxMemo
         Left = 10
         Top = 10
+        Lines.Strings = (
+          'a := b;')
         TabOrder = 0
         Height = 89
         Width = 185
@@ -42,6 +44,8 @@ inherited fmMenuTurn: TfmMenuTurn
       object MText: TcxMemo
         Left = 10
         Top = 105
+        Lines.Strings = (
+          'b := a;')
         TabOrder = 1
         Height = 89
         Width = 366
