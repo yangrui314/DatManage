@@ -17,10 +17,12 @@ type
     FHistoryXML : TXMLDocument;
     FMenuXML : TXMLDocument;
     FWorkLogXML : TXMLDocument;
+    FPasswordXML : TXMLDocument;      
     procedure CreateSystemConfig;override;
     procedure CreateHistory; override;
     procedure CreateMenu; override;
-    procedure CreateWorkLog; override;    
+    procedure CreateWorkLog; override;
+    procedure CreatePassword; override;         
     procedure InitData; override;
     procedure CreateXMLFile(aFileName : string; aFilePath : string; aFieldCount : String);
   public
@@ -36,7 +38,8 @@ type
     procedure SaveMenu; override;
     procedure ClearHistorys;override;
     procedure SaveWorkLog(var WorkLog : TWorkLog);override;
-    function LoadWorkLog : TWorkLog;override;               
+    function LoadWorkLog : TWorkLog;override;
+    function LoadPasswords : TStringList;override;
   end;
 
 
@@ -51,6 +54,7 @@ begin
   FHistoryXML := TXMLDocument.Create(FComp);
   FMenuXML := TXMLDocument.Create(FComp);
   FWorkLogXML := TXMLDocument.Create(FComp);
+  FPasswordXML := TXMLDocument.Create(FComp);
   inherited;
 end;
 
@@ -62,6 +66,7 @@ begin
   FHistoryXML.Free;
   FMenuXML.Free;
   FWorkLogXML.Free;
+  FPasswordXML.Free;
   FComp.Free;
 end;
 
@@ -94,6 +99,11 @@ end;
 procedure TXmlWay.CreateWorkLog;
 begin
   CreateXMLFile(FWorkLogName,FWorkLogFilePath,'6')
+end;
+
+procedure TXmlWay.CreatePassword;
+begin
+  CreateXMLFile(FPasswordName,FPasswordFilePath,'2')
 end;
 
 procedure TXmlWay.CreateXMLFile(aFileName : string; aFilePath : string; aFieldCount : String);
@@ -192,6 +202,22 @@ begin
     aHistory.OutputDir := FHistoryXML.DocumentElement.ChildNodes[I].ChildNodes['OutputDir'].Text;
     aHistory.Conditionals := FHistoryXML.DocumentElement.ChildNodes[I].ChildNodes['Conditionals'].Text;
     Result.Add(aHistory);
+  end;
+end;
+
+
+function TXmlWay.LoadPasswords : TStringList;
+var
+  aHistory : THistory;
+  I : Integer;  
+begin
+  inherited;
+  Result := TStringList.Create;
+  if not FileExists(FPasswordFilePath) then Exit;
+  FPasswordXML.Active := True;
+  for I:=0 to FPasswordXML.DocumentElement.ChildNodes.Count- 1 do
+  begin
+    Result.Add(FPasswordXML.DocumentElement.ChildNodes[I].ChildNodes['Password'].Text);
   end;
 end;
 

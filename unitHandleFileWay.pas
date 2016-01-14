@@ -27,6 +27,7 @@ type
     procedure ClearHistorys;
     procedure SaveWorkLog(var WorkLog : TWorkLog);
     function LoadWorkLog : TWorkLog;
+    function LoadPasswords : TStringList;   
   end;
 
 
@@ -58,6 +59,11 @@ end;
 function THandleFileWay.LoadHistorys : TList;
 begin
   Result := FFileWay.LoadHistorys;
+end;
+
+function THandleFileWay.LoadPasswords : TStringList;
+begin
+  Result := FFileWay.LoadPasswords;
 end;
 
 procedure THandleFileWay.SaveHistory(const aHistory : THistory);

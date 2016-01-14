@@ -52,6 +52,7 @@ begin
   Config.ConnectWay := FHandleFileWay.GetSystemConfig('ConnectWay');
   aHistorys := FHandleFileWay.LoadHistorys;
   Config.Historys := aHistorys;
+  Config.Password := FHandleFileWay.LoadPasswords;
   FHandleFileWay.LoadMenu;
 end;
 

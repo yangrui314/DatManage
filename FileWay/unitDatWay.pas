@@ -16,14 +16,17 @@ type
     FHistory: TDBISAMTable;
     FMenu : TDBISAMTable;
     FWorkLog : TDBISAMTable;
+    FPassword : TDBISAMTable;
+
     procedure CreateSystemConfig;override;
     procedure CreateHistory; override;
     procedure CreateMenu; override;
     procedure CreateWorkLog; override;
-    procedure InitData; override;       
+    procedure CreatePassword; override;
+    procedure InitData; override;
   public
     constructor Create; override;
-    destructor Destroy; override;    
+    destructor Destroy; override;
     function GetSystemConfig(aName : String) : String; override;
     procedure SaveSystemConfig(aName : String;aValue : String); override;
     function LoadHistorys : TList;override;
@@ -34,9 +37,14 @@ type
     procedure SaveMenu; override;
     procedure ClearHistorys;override;
     procedure SaveWorkLog(var WorkLog : TWorkLog);override;
-    function LoadWorkLog : TWorkLog;override;           
+    function LoadWorkLog : TWorkLog;override;
+    function LoadPasswords : TStringList;override;               
   end;
 
+
+  //本软件需要加密的配置的密码 2016-01-14
+const
+  SELF_CONFIG_PASSWORD = 'YouAreNotPreparedForIT';
 
 implementation
 
@@ -47,6 +55,7 @@ begin
   FHistory := TDBISAMTable.Create(nil);
   FMenu  := TDBISAMTable.Create(nil);
   FWorkLog := TDBISAMTable.Create(nil);
+  FPassword := TDBISAMTable.Create(nil);
   inherited;
 end;
 
@@ -56,7 +65,8 @@ begin
   FHistory.Free;
   FMenu.Free;
   FWorkLog.Free;
-  FSystemConfig.Free;      
+  FSystemConfig.Free;
+  FPassword.Free;      
 end;
 
 procedure TDatWay.CreateSystemConfig;
@@ -138,7 +148,7 @@ begin
       Add('ByName','Name',[ixUnique]);
     end;
     if not Exists then
-      CreateTable(0,1,0,True,'YouAreNotPreparedForIT');
+      CreateTable(0,1,0,True,SELF_CONFIG_PASSWORD);
   end;
 end;
 
@@ -168,6 +178,30 @@ begin
       CreateTable;
   end;
 end;
+
+
+procedure TDatWay.CreatePassword;
+begin
+  with FPassword do
+  begin
+    DatabaseName:= FConfigPath;
+    TableName:= FPasswordName;
+    with FieldDefs do
+    begin 
+      Clear; 
+      Add('ID',ftAutoInc,0,False);
+      Add('Password',ftString,255,False);
+    end;
+    with IndexDefs do
+    begin
+      Clear;
+      Add('','ID',[ixPrimary]);
+    end;
+    if not Exists then
+      CreateTable(0,1,0,True,SELF_CONFIG_PASSWORD);
+  end;
+end;
+
 
 procedure TDatWay.InitData;
 begin
@@ -285,6 +319,31 @@ begin
     end;   
   finally
     FHistory.Free;
+  end;
+end;
+
+
+function TDatWay.LoadPasswords : TStringList;
+begin
+  inherited;
+  Result := TStringList.Create;
+  if not FileExists(FPasswordFilePath) then Exit;
+  with FPassword do
+  begin
+    DatabaseName:= FConfigPath;
+    TableName:= FPasswordName;
+    DBSession.AddPassword(SELF_CONFIG_PASSWORD);
+
+    if Active then Close;
+    Open;
+
+    First;
+    while not Eof do
+    begin
+      Result.Add(FieldByName('Password').AsString);
+      Next;
+    end;
+    Close;
   end;
 end;
 
@@ -449,7 +508,7 @@ begin
     begin
       DatabaseName:= FMenuName;
       TableName:= FMenuFilePath;
-      DBSession.AddPassword('YouAreNotPreparedForIT');
+      DBSession.AddPassword(SELF_CONFIG_PASSWORD);
 
       if Active then Close;
       Open;
@@ -533,7 +592,7 @@ begin
     begin
       DatabaseName:= FMenuName;
       TableName:= FMenuFilePath;
-      DBSession.AddPassword('YouAreNotPreparedForIT');
+      DBSession.AddPassword(SELF_CONFIG_PASSWORD);
 
       if Active then Close;
       Open;

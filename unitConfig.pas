@@ -22,6 +22,8 @@ type
     FSystemActivePageIndex : Integer;
     FSystemTableName :String;
 
+    FPassword : TStringList;
+
     constructor Create;
     procedure InitData;
     procedure SetHistorys(aHistorys : TList);
@@ -38,7 +40,7 @@ type
     property SelectShowWay: string read FSelectShowWay write FSelectShowWay;
     property ConnectWay : string read  FConnectWay write  FConnectWay;
     property FileWay : string read  FFileWay write  FFileWay;
-
+    property Password : TStringList read  FPassword write  FPassword;
 
     //主表四个参数
     property SystemParameterCaption : string read  FSystemParameterCaption write  FSystemParameterCaption;

@@ -6,7 +6,8 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, formParent, dxLayoutControl, cxContainer, cxEdit, cxTextEdit,
   cxControls, ExtCtrls, Menus, cxLookAndFeelPainters, StdCtrls, cxButtons,unitEnvironment,
-  unitTable,DB, cxLookAndFeels, cxMemo,unitConfig,unitSQLEnvironment,unitDbisamEnvironment,formParentMenu;
+  unitTable,DB, cxLookAndFeels, cxMemo,unitConfig,unitSQLEnvironment,unitDbisamEnvironment,formParentMenu,
+  cxRadioGroup;
 
 type
   TfmSelectAll = class(TfmParentMenu)
@@ -19,6 +20,11 @@ type
     lcMainItem2: TdxLayoutItem;
     edtMessage: TcxMemo;
     lcMainItem3: TdxLayoutItem;
+    rbData: TcxRadioButton;
+    lcMainItem4: TdxLayoutItem;
+    lcMainItem5: TdxLayoutItem;
+    rbField: TcxRadioButton;
+    lcMainGroup2: TdxLayoutGroup;
     procedure cbSelectAllClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
   private
@@ -32,7 +38,9 @@ type
     procedure LoadTableName;
     procedure AddTable(const aTableName: string);
     function GetResult : String;
+    function SingleTable(const aTableName : String) : String;
     function SingleTableSelect(const aTableName : String) : String;
+    function SingleTableSelectField(const aTableName : String) : String;
   public
     destructor Destroy;
   end;
@@ -103,17 +111,30 @@ begin
     aTableName := FTableList[I];
     if Result = '' then
     begin
-      Result :=  SingleTableSelect(aTableName);
+      Result :=  SingleTable(aTableName);
     end
     else
     begin
-      aStr := SingleTableSelect(aTableName);
+      aStr := SingleTable(aTableName);
       if aStr <> '' then
       Result := Result  + #13#10 + aStr;
     end;
 
   end;
 
+end;
+
+function TfmSelectAll.SingleTable(const aTableName : String) : String;
+begin
+  Result := '';
+  if rbData.Checked then
+  begin
+    Result := SingleTableSelect(aTableName);
+  end
+  else
+  begin
+    Result := SingleTableSelectField(aTableName);  
+  end;
 end;
 
 
@@ -159,6 +180,44 @@ begin
   end;
 end;
 
+
+function TfmSelectAll.SingleTableSelectField(const aTableName : String) : String;
+var
+  I : Integer;
+  aSQL : string;
+  aStr : string;
+begin
+  Result := '';
+  try
+  aSQL := 'select * from ' + aTableName;
+  FTableField := TTable.Create(FEnvironment, aSQL, aTableName,False);
+
+  if not FTableField.Environment.GetLoadTable then
+  begin
+    Result :='表'+aTableName +':'+  '打开失败' +';';
+  end;
+
+  for I := 0 to   FTableField.TableFieldCount - 1 do
+  begin
+    if ( Pos(edtSelectStr.EditValue,FTableField.TableFieldNameArray[I]) <> 0 ) then
+    begin
+      if Result = '' then
+      begin
+        Result := '表'+aTableName +':'+  FTableField.TableFieldNameArray[I] +';';
+      end
+      else
+      begin
+        Result := Result +#13#10 + '表'+aTableName +':'+  FTableField.TableFieldNameArray[I] +';';
+      end;
+    end;
+  end;
+  except
+  on E: Exception do
+    Result :='表'+aTableName +':'+  '打开失败' +';';
+  end;
+end;
+
+
 procedure TfmSelectAll.cbSelectAllClick(Sender: TObject);
 var
   aMessage : string;
@@ -180,7 +239,7 @@ procedure TfmSelectAll.FormCreate(Sender: TObject);
 begin
   inherited;
   FPath := Config.SystemParameter;
-  Height := 215;
+  Height := 265;
   Width := 300;
   FTableList :=  TStringList.Create;
   if Config.ConnectWay = '1' then

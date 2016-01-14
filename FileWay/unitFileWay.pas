@@ -12,21 +12,27 @@ type
   private
   protected
     FConfigPath : String;
+
     FSystemConfigName : String;
     FHistoryName : String;
     FMenuName : String;
     FWorkLogName : String;
+    FPasswordName : String;
+
     FSystemConfigFilePath : String;
     FHistoryFilePath : String;
     FMenuFilePath : String;
-    FWorkLogFilePath : String;    
+    FWorkLogFilePath : String;
+    FPasswordFilePath : String;    
+
     FExt : String;
     procedure ForceCreateConfigPath;
     procedure InitData; virtual;
     procedure CreateSystemConfig;virtual;abstract;
     procedure CreateHistory; virtual;abstract;
     procedure CreateMenu; virtual;abstract;
-    procedure CreateWorkLog; virtual;abstract;    
+    procedure CreateWorkLog; virtual;abstract;
+    procedure CreatePassword; virtual;abstract;         
     procedure NotFileCreateFile;
   public
     constructor Create; virtual;
@@ -41,7 +47,8 @@ type
     procedure SaveMenu; virtual;abstract;
     procedure ClearHistorys;virtual;abstract;
     procedure SaveWorkLog(var WorkLog : TWorkLog);virtual;abstract;
-    function LoadWorkLog : TWorkLog;virtual;abstract;    
+    function LoadWorkLog : TWorkLog;virtual;abstract;
+    function LoadPasswords : TStringList; virtual;abstract;
   end;
 
 implementation
@@ -55,6 +62,7 @@ begin
   FHistoryName := 'History';
   FMenuName := 'Menu';
   FWorkLogName := 'WorkLog';
+  FPasswordName := 'Password';  
   FExt := '';
   InitData;
 end;
@@ -82,7 +90,12 @@ begin
     if not FileExists(FWorkLogFilePath) then
     begin
       CreateWorkLog;  
-    end;      
+    end;
+
+    if  not FileExists(FPasswordFilePath) then
+    begin
+      CreatePassword;
+    end;
   end;    
 end;
 
@@ -93,6 +106,7 @@ begin
   FHistoryFilePath := FConfigPath + '\' + FHistoryName + FExt;
   FMenuFilePath := FConfigPath + '\' + FMenuName + FExt;
   FWorkLogFilePath := FConfigPath + '\' + FWorkLogName + FExt;
+  FPasswordFilePath := FConfigPath + '\' + FPasswordName + FExt;  
   NotFileCreateFile;
 end;
 

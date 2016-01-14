@@ -29,6 +29,8 @@ type
   end;
 
 implementation
+  uses
+    unitConfig;
 
 
 
@@ -55,26 +57,26 @@ end;
 
 procedure TDbisamEnvironment.InitData;
 var
-  Test : String;
+  I : Integer;
 begin
   inherited;
   dMain.Directory := FParameter;
   dMain.DatabaseName := 'OmniDatabase' + IntToStr(Random(100));
   dMain.Open;
-  dMain.Session.AddPassword('YouAreNotPrepared');
-  dMain.Session.AddPassword('YouAreNotPrepared');
-  dMain.Session.AddPassword('YouAreNotPreparedForIT');
+
+  for I:= 0  to  Config.Password.Count - 1 do
+  begin
+    dMain.Session.AddPassword(Config.Password[I]);
+  end;
   TDBISAMQuery(aMain).DatabaseName := dMain.DatabaseName;
-
-
-
 
   dExecSQL.Directory := FParameter;
   dExecSQL.DatabaseName := 'OmniExecSQL' + IntToStr(Random(100));
   dExecSQL.Open;
-  dExecSQL.Session.AddPassword('YouAreNotPrepared');
-  dExecSQL.Session.AddPassword('YouAreNotPrepared');
-  dExecSQL.Session.AddPassword('YouAreNotPreparedForIT');
+  for I:= 0  to  Config.Password.Count - 1 do
+  begin
+    dExecSQL.Session.AddPassword(Config.Password[I]);
+  end;
   aExecSQL.DatabaseName := dExecSQL.DatabaseName;
 end;
 
