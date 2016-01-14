@@ -3,7 +3,7 @@ object fmAbout: TfmAbout
   Top = 309
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
-  Caption = #20851#20110
+  Caption = '\'
   ClientHeight = 146
   ClientWidth = 218
   Color = clBtnFace
