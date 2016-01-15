@@ -55,7 +55,9 @@ uses
   unitWorkLog in 'UnitData\unitWorkLog.pas',
   formSendEmail in 'Menu\formSendEmail.pas' {fmSendEmail},
   formMenuBatchImportPath in 'Menu\formMenuBatchImportPath.pas' {fmMenuBatchImportPath},
-  formMenuTurn in 'Menu\formMenuTurn.pas' {fmMenuTurn};
+  formMenuTurn in 'Menu\formMenuTurn.pas' {fmMenuTurn},
+  unitParentHelper in 'Helper\unitParentHelper.pas',
+  unitStrHelper in 'Helper\unitStrHelper.pas';
 
 {$R *.res}
 
@@ -63,10 +65,5 @@ begin
   Application.Initialize;
   Application.CreateForm(TfmMain, fmMain);
   Application.CreateForm(TdmSys, dmSys);
-  Application.CreateForm(TfmBatchSQL, fmBatchSQL);
-  Application.CreateForm(TfmSaveWorkLog, fmSaveWorkLog);
-  Application.CreateForm(TfmSendEmail, fmSendEmail);
-  Application.CreateForm(TfmMenuBatchImportPath, fmMenuBatchImportPath);
-  Application.CreateForm(TfmMenuTurn, fmMenuTurn);
   Application.Run;
 end.

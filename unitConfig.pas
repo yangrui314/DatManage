@@ -54,6 +54,7 @@ type
     function GetHistoryName(aPath : String ; aInclude : Boolean = False) : String;
     function GetHistoryPath(aName : String ; aInclude : Boolean = False ) : String;
 
+    function GetMenuCaption(const aClassName : String) : String;
     class function CreateInstance(var AForm: TfmParentMenu; AFormClassName: String = ''): TfmParentMenu;overload;
   end;
 
@@ -209,7 +210,20 @@ begin
   end;
 end;
 
-
+function TConfig.GetMenuCaption(const aClassName : String) : String;
+var
+  I: Integer;
+begin
+  Result := '';
+  for I := 0 to Length(FMenuList) - 1 do
+  begin
+    if FMenuList[I].ClassName = aClassName then
+    begin
+      Result := FMenuList[I].Caption;
+      Exit;
+    end
+  end;
+end;
 
 
 destructor TConfig.Destroy;

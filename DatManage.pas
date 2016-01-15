@@ -67,6 +67,9 @@ type
     dMainItem2: TdxLayoutItem;
     btnResult: TcxButton;
     dMainGroup1: TdxLayoutGroup;
+    lblResult: TcxLabel;
+    dMainItem1: TdxLayoutItem;
+    dMainGroup3: TdxLayoutGroup;
     procedure FormShow(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure btnSelectParameterClick(Sender: TObject);
@@ -128,7 +131,7 @@ implementation
 uses
   FileCtrl, StrUtils, unitStandardHandle, formTableProperty, unitExcelHandle,
   formExport, formAbout, formImport, unitConfig, unitHistory, formSavePath,
-  formSet,formSelectAll,frmMain;
+  formSet,formSelectAll,frmMain,unitStrHelper;
 
 
 {$R *.dfm}
@@ -233,6 +236,7 @@ procedure TfmMain.WorkRun;
 var
   aSQL: string;
 begin
+  lblResult.Caption := '查询中...';
   try
     aSQL := GetSQL;
     if aSQL = '' then
@@ -248,8 +252,57 @@ end;
 procedure TfmMain.LoadField(aSQL: string);
 var
   I : Integer;
+  aHint : String;
 begin
   FTable := TTable.Create(FEnvironment, aSQL, FTableName);
+  if  PageSelect.ActivePageIndex = 0  then
+  begin
+    aHint := '打开'+FTableName;
+  end
+  else
+  begin
+    if (Pos('update',aSQL) <> 0 ) then
+    begin
+      aHint := '更新';
+      aHint := aHint + Trim(StrHelper.GetMidStr(aSQL,'update','set'))
+    end
+    else if (Pos('delete',aSQL) <> 0) then
+    begin
+      aHint := '删除';
+      if (Pos('where',aSQL) <> 0) then
+      begin
+        aHint := aHint + Trim(StrHelper.GetMidStr(aSQL,'from','where'))
+      end
+      else
+      begin
+        aHint := aHint + Trim(StrHelper.GetMidStr(aSQL,'from'))
+      end;      
+    end
+    else
+    begin
+      aHint := '查询';
+      if (Pos('where',aSQL) <> 0) then
+      begin
+        aHint := aHint + Trim(StrHelper.GetMidStr(aSQL,'from','where'))
+      end
+      else
+      begin
+        aHint := aHint + Trim(StrHelper.GetMidStr(aSQL,'from'))
+      end;       
+    end;
+  end;
+
+  if FEnvironment.SQLSuccess then
+  begin
+    lblResult.Caption := aHint +#13#10 +  '执行成功' +#13#10 + '标识号:' + IntToStr(Random(100))  ;
+    lblResult.Style.TextColor := clBlue;
+  end
+  else
+  begin
+    lblResult.Caption :=  aHint + #13#10 + '失败' + #13#10 + '标识号:' + IntToStr(Random(100)) ;
+    lblResult.Style.TextColor := clRed;
+  end;
+
 
   edtFieldName.Properties.Items.Clear;
   for I := 0 to   FTable.TableFieldCount - 1 do

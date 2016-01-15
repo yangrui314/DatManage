@@ -3,6 +3,7 @@ object fmMain: TfmMain
   Top = 69
   Width = 876
   Height = 629
+  Caption = 'DatManage'
   Color = clBtnFace
   ParentFont = True
   Menu = MainMenu
@@ -205,11 +206,19 @@ object fmMain: TfmMain
         Left = 773
         Top = 71
         Width = 75
-        Height = 82
+        Height = 26
         Caption = #26597#35810
         TabOrder = 5
         OnClick = btnResultClick
         LookAndFeel.Kind = lfOffice11
+      end
+      object lblResult: TcxLabel
+        Left = 773
+        Top = 103
+        Align = alClient
+        Caption = #25191#34892#32467#26524
+        Properties.WordWrap = True
+        Width = 75
       end
       object dxLayoutGroup2: TdxLayoutGroup
         ShowCaption = False
@@ -261,12 +270,26 @@ object fmMain: TfmMain
             ControlOptions.AutoColor = True
             ControlOptions.ShowBorder = False
           end
-          object dMainItem2: TdxLayoutItem
-            AutoAligns = [aaVertical]
-            AlignHorz = ahRight
+          object dMainGroup3: TdxLayoutGroup
             ShowCaption = False
-            Control = btnResult
-            ControlOptions.ShowBorder = False
+            Hidden = True
+            ShowBorder = False
+            object dMainItem2: TdxLayoutItem
+              AutoAligns = [aaVertical]
+              AlignHorz = ahRight
+              ShowCaption = False
+              Control = btnResult
+              ControlOptions.ShowBorder = False
+            end
+            object dMainItem1: TdxLayoutItem
+              AutoAligns = []
+              AlignHorz = ahClient
+              AlignVert = avClient
+              Caption = 'cxLabel1'
+              ShowCaption = False
+              Control = lblResult
+              ControlOptions.ShowBorder = False
+            end
           end
         end
         object dMainItem5: TdxLayoutItem

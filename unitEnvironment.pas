@@ -16,6 +16,7 @@ type
     FParameter : String;
     FLogPath : String;
     FLoadTable : Boolean;
+    FSQLSuccess : Boolean;
     procedure InitData;virtual;
     procedure SaveLog(const aIsSuccess : Boolean;const aSQL : String;const aMessage: String = '');
   public
@@ -32,6 +33,7 @@ type
     function CreateParameter : string;virtual;abstract;
     function GetBaseTableSQL(aTableName : String) : string;virtual;
     function GetLoadTable : Boolean;
+    property SQLSuccess: Boolean read FSQLSuccess;
   end;
 
 implementation
@@ -41,6 +43,7 @@ implementation
 
 constructor TEnvironment.Create(AOwner: TComponent;aParameter : String);
 begin
+  FSQLSuccess := False;
   FLoadTable := False;
   FParameter := aParameter;
   FOwner := AOwner;
@@ -127,6 +130,7 @@ var
  end;
 
 begin
+  FSQLSuccess:= aIsSuccess;
   aLogFile := TStandardHandle.Create;
   try
     aLogStr := aLogFile.ReadFileToStr(FLogPath);

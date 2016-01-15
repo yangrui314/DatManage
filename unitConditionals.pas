@@ -14,8 +14,8 @@ type
         aOutputDirKeyStr : String; aConditionalsKeyStr : String;
         var aOutputDir : string; var aConditionals : String;var aPathName : String;aSelectStr : String = '') : Boolean;    
     function GetPathName(aOutputDir : String) : String;
-    procedure FileReplace(FileName  : String;SrcWord : String; ModifyWord : String;CaseFlag : Boolean);    
-    function GetMidStr(aStr : String;aBeginStr : String; aEndStr : String = '') : String;
+    procedure FileReplace(FileName  : String;SrcWord : String; ModifyWord : String;CaseFlag : Boolean);   
+
   protected
   public
     procedure View(aParameter : String);
@@ -27,6 +27,9 @@ type
   end;
 
 implementation
+
+  uses
+    unitStrHelper;
 
 procedure TConditionals.View(aParameter : String);
 var
@@ -63,7 +66,7 @@ var
 begin
   inherited;
   FParameter := aParameter;
-  aSelectStr := '±‡“Î ‰≥ˆƒø¬º£∫..\..\deploy\client' +GetMidStr(FParameter,'client','data');
+  aSelectStr := '±‡“Î ‰≥ˆƒø¬º£∫..\..\deploy\client' + StrHelper.GetMidStr(FParameter,'client','data');
   aSoftwareScrPath :=LeftStr(FParameter,Pos('deploy',FParameter)-1) + 'src\delphi\';
   aIsGetAlter := GetOutputDirAndConditionalsAndPathName(aSoftwareScrPath + 'Readme.txt' ,'±‡“Î ‰≥ˆƒø¬º£∫',
                                 '±‡“Î÷∏¡Ó£∫',aAlterOutputDir,aAlterConditionals,aAlterPathName,aSelectStr);
@@ -109,7 +112,7 @@ begin
     aNum := 0;
     while (Pos(aSelectStr,aTempStr) <> 0)  do
     begin
-      aNotLeft := GetMidStr(aTempStr,aSelectStr);
+      aNotLeft := StrHelper.GetMidStr(aTempStr,aSelectStr);
       aTempStr := aNotLeft;
       Inc(aNum);
     end;
@@ -134,7 +137,7 @@ begin
     end;
     aFile.LoadFromFile(aFilePath);
     aStr := aFile.Text;
-    Result := GetMidStr(aStr,aBeginStr,aEndStr);
+    Result := StrHelper.GetMidStr(aStr,aBeginStr,aEndStr);
   finally
     aFile.Free;
   end;
@@ -148,12 +151,12 @@ begin
   Result := False;
   aNameEndNum :=  Pos(#13,WideString(aStr));
   aName := LeftStr(aStr,aNameEndNum-1);
-  aOutputDir := GetMidStr(aStr,'±‡“Î ‰≥ˆƒø¬º£∫',#13);
+  aOutputDir := StrHelper.GetMidStr(aStr,'±‡“Î ‰≥ˆƒø¬º£∫',#13);
   if (Pos('£∫',aOutputDir) <> 0) then
   begin
-    aOutputDir := GetMidStr(aOutputDir,'£∫');
+    aOutputDir := StrHelper.GetMidStr(aOutputDir,'£∫');
   end;
-  aConditionals := GetMidStr(aStr,'±‡“Î÷∏¡Ó£∫',#13);
+  aConditionals := StrHelper.GetMidStr(aStr,'±‡“Î÷∏¡Ó£∫',#13);
   Result := True;
 end;
 
@@ -163,7 +166,7 @@ begin
   // aOutputDir ..\..\deploy\client\dg-n-tax\bin
   // aBasePath D:\Project\new_omni\
   Result := '';
-  Result := aBasePath + 'trunk\engineering\' + GetMidStr(aOutputDir,'..\..\','bin') +'data';
+  Result := aBasePath + 'trunk\engineering\' + StrHelper.GetMidStr(aOutputDir,'..\..\','bin') +'data';
 end;
 
 function TConditionals.GetOutputDirAndConditionalsAndPathName(aFilePath : String;
@@ -188,8 +191,8 @@ begin
       aSelectNum := Pos(aSelectStr,aStr);
       aStr := Copy(aStr,aSelectNum ,Length(aStr)-aSelectNum+1);
     end;
-    aOutputDir := GetMidStr(aStr,aOutputDirKeyStr,#13);
-    aConditionals :=  GetMidStr(aStr,aConditionalsKeyStr,#13);
+    aOutputDir := StrHelper.GetMidStr(aStr,aOutputDirKeyStr,#13);
+    aConditionals :=  StrHelper.GetMidStr(aStr,aConditionalsKeyStr,#13);
     aPathName :=  GetPathName(aOutputDir);
     Result := True;
 
@@ -199,33 +202,14 @@ begin
 end;
 
 
-function TConditionals.GetMidStr(aStr : String;aBeginStr : String; aEndStr : String) : String;
-var
-  aBeginNum,aEndStrNum: Integer;
-  aNotLeft  : String;
-begin
-  Result := '';
-  aBeginNum := Pos(aBeginStr,aStr);
-  aNotLeft :=  Copy(aStr,aBeginNum + Length(aBeginStr) ,Length(aStr)-aBeginNum+1);
 
-  if aEndStr = '' then
-  begin
-    Result := aNotLeft;
-  end
-  else
-  begin
-    aEndStrNum :=  Pos(aEndStr,WideString(aNotLeft));
-    Result := LeftStr(aNotLeft,aEndStrNum-1);  
-  end;
-
-end;
 
 function TConditionals.GetPathName(aOutputDir : String) : String;
 var
   aSelectStr : string;
 begin
   Result := '';
-  aSelectStr := GetMidStr(aOutputDir,'client','bin');
+  aSelectStr := StrHelper.GetMidStr(aOutputDir,'client','bin');
   Result := Config.GetHistoryName(aSelectStr,True);
 end;
 

@@ -32,6 +32,7 @@ var
   aMenu : TfmParentMenu;
 begin
   Config.CreateInstance(aMenu,aMenuName);
+  aMenu.Caption := Config.GetMenuCaption(aMenuName);
   try
     if not aMenu.CheckIsShow then
     begin
