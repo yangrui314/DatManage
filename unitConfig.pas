@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls,unitHistory,unitMenu,
-  Dialogs,formParentMenu,Forms;
+  Dialogs,formParentMenu,Forms,unitEnvironment,unitTable;
 
 type
   TConfig = class
@@ -24,6 +24,10 @@ type
 
     FPassword : TStringList;
 
+    //Main
+    FGetTable: Boolean;
+    //FConfigFile: TConfigFile;
+    
     constructor Create;
     procedure InitData;
     procedure SetHistorys(aHistorys : TList);
@@ -33,6 +37,11 @@ type
   protected
   public
     FMenuList :  array of TMenu;
+
+    //Main
+    SystemEnvironment: TEnvironment;
+    SystemTable: TTable;
+
     property InitFolderPath: string read FInitFolderPath;
     property LastFolderPath: string read FLastFolderPath write FLastFolderPath;
     property ShowName: Boolean read FShowName write FShowName;
@@ -48,7 +57,7 @@ type
     property SystemActivePageIndex : Integer read  FSystemActivePageIndex write  FSystemActivePageIndex;
     property SystemTableName : string read  FSystemTableName write  FSystemTableName;    
 
-
+    property GetTable : Boolean read  FGetTable write  FGetTable;
 
     property Historys : TList read FHistorys write FHistorys;
     function GetHistoryName(aPath : String ; aInclude : Boolean = False) : String;
@@ -108,6 +117,9 @@ begin
   FConnectWay := '1';
   //文件处理方式,默认dat
   FFileWay := 'dat';
+
+
+
 end;
 
 procedure TConfig.FreeHistorys;

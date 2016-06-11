@@ -18,7 +18,7 @@ object fmExport: TfmExport
     Top = 0
     Width = 596
     Height = 185
-    ActivePage = SheetField
+    ActivePage = SheetWay
     Align = alTop
     HideTabs = True
     TabOrder = 0
@@ -84,6 +84,21 @@ object fmExport: TfmExport
           TabOrder = 2
           Width = 121
         end
+        object edtDelKeyField: TcxComboBox
+          Left = 99
+          Top = 145
+          Properties.ImmediatePost = True
+          TabOrder = 5
+          Width = 360
+        end
+        object cbContainDelSQL: TcxCheckBox
+          Left = 10
+          Top = 118
+          Caption = #21253#21547#21024#38500#35821#21477
+          Properties.ImmediatePost = True
+          TabOrder = 4
+          Width = 425
+        end
         object lcMainGroup_Root: TdxLayoutGroup
           ShowCaption = False
           Hidden = True
@@ -107,6 +122,16 @@ object fmExport: TfmExport
             Caption = 'cxCheckBox1'
             ShowCaption = False
             Control = cbSelectField
+            ControlOptions.ShowBorder = False
+          end
+          object lcMainItem6: TdxLayoutItem
+            ShowCaption = False
+            Control = cbContainDelSQL
+            ControlOptions.ShowBorder = False
+          end
+          object lcMainItem5: TdxLayoutItem
+            Caption = #20851#38190#23383#27573#65306
+            Control = edtDelKeyField
             ControlOptions.ShowBorder = False
           end
         end

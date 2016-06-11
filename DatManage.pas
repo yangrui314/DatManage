@@ -92,10 +92,9 @@ type
   private
     FParameter: string;
     FTableName: string;
-    FEnvironment: TEnvironment;
+//    FEnvironment: TEnvironment;
     FResult: TShowResultFrame;
-    FTable: TTable;
-    FGetTable: Boolean;
+//    FTable: TTable;
     FConfigFile: TConfigFile;
     FSVN : TfmSVN;
     FPatchVersion : String;
@@ -131,7 +130,7 @@ implementation
 uses
   FileCtrl, StrUtils, unitStandardHandle, formTableProperty, unitExcelHandle,
   formExport, formAbout, formImport, unitConfig, unitHistory, formSavePath,
-  formSet,formSelectAll,frmMain,unitStrHelper;
+  formSet,formSelectAll,frmMain,unitStrHelper,unitSystemHelper;
 
 
 {$R *.dfm}
@@ -152,7 +151,7 @@ begin
     end
     else
     begin
-      Result := FEnvironment.GetBaseTableSQL(FTableName);
+      Result := Config.SystemEnvironment.GetBaseTableSQL(FTableName);
       aFieldType := GetFieldType;
       if  (edtFieldName.Text <> '') and  (edtKeyword.Text <> '') and (edtCondition.Text <> '') then
       begin
@@ -165,29 +164,29 @@ begin
           end
           else
           begin
-            Result := Result + ' where ' + FTable.HandleSpecialStr(edtFieldName.Text) + ' like ' + '''%'+  edtCondition.Text + '%''';
+            Result := Result + ' where ' + Config.SystemTable.HandleSpecialStr(edtFieldName.Text) + ' like ' + '''%'+  edtCondition.Text + '%''';
           end;
         end
         else if edtKeyword.Text = '等于' then
         begin
           if IsQuotation(aFieldType)   then
           begin
-            Result := Result + ' where ' + FTable.HandleSpecialStr(edtFieldName.Text)  + ' = ' +  edtCondition.Text ;
+            Result := Result + ' where ' + Config.SystemTable.HandleSpecialStr(edtFieldName.Text)  + ' = ' +  edtCondition.Text ;
           end
           else
           begin
-            Result := Result + ' where ' + FTable.HandleSpecialStr(edtFieldName.Text)  + ' = ' + ''''+  edtCondition.Text + '''';
+            Result := Result + ' where ' + Config.SystemTable.HandleSpecialStr(edtFieldName.Text)  + ' = ' + ''''+  edtCondition.Text + '''';
           end;
         end
         else if edtKeyword.Text = '不等于' then
         begin
           if IsQuotation(aFieldType) then
           begin
-            Result := Result + ' where ' + FTable.HandleSpecialStr(edtFieldName.Text)  + ' <> ' +  edtCondition.Text ;
+            Result := Result + ' where ' + Config.SystemTable.HandleSpecialStr(edtFieldName.Text)  + ' <> ' +  edtCondition.Text ;
           end
           else
           begin
-            Result := Result + ' where ' + FTable.HandleSpecialStr(edtFieldName.Text)  + ' <> ' + ''''+  edtCondition.Text + '''';          
+            Result := Result + ' where ' + Config.SystemTable.HandleSpecialStr(edtFieldName.Text)  + ' <> ' + ''''+  edtCondition.Text + '''';          
           end;
         end;
       end;
@@ -254,10 +253,10 @@ var
   I : Integer;
   aHint : String;
 begin
-  FTable := TTable.Create(FEnvironment, aSQL, FTableName);
+  Config.SystemTable := TTable.Create(Config.SystemEnvironment, aSQL, FTableName);
   if  PageSelect.ActivePageIndex = 0  then
   begin
-    aHint := '打开'+FTableName;
+    aHint := '打开'+ FTableName;
   end
   else
   begin
@@ -278,6 +277,11 @@ begin
         aHint := aHint + Trim(StrHelper.GetMidStr(aSQL,'from'))
       end;      
     end
+    else if (Pos('insert',aSQL) <> 0) then
+    begin
+      aHint := '插入';
+      aHint := aHint + Trim(StrHelper.GetMidStr(aSQL,'into','('));
+    end
     else
     begin
       aHint := '查询';
@@ -292,7 +296,7 @@ begin
     end;
   end;
 
-  if FEnvironment.SQLSuccess then
+  if Config.SystemEnvironment.SQLSuccess then
   begin
     lblResult.Caption := aHint +#13#10 +  '执行成功' +#13#10 + '标识号:' + IntToStr(Random(100))  ;
     lblResult.Style.TextColor := clBlue;
@@ -303,15 +307,15 @@ begin
     lblResult.Style.TextColor := clRed;
   end;
 
+//暂时屏蔽掉该功能 yr 2016-06-12
+//  edtFieldName.Properties.Items.Clear;
+//  for I := 0 to   Config.SystemTable.TableFieldCount - 1 do
+//  begin
+//    edtFieldName.Properties.Items.Add(Config.SystemTable.TableFieldNameArray[I]);
+//  end;
 
-  edtFieldName.Properties.Items.Clear;
-  for I := 0 to   FTable.TableFieldCount - 1 do
-  begin
-    edtFieldName.Properties.Items.Add(FTable.TableFieldNameArray[I]);
-  end;
-
-  FGetTable := True;
-  FResult.Update(FTable, Config.SelectShowWay);
+  Config.GetTable := True;
+  FResult.Update(Config.SystemTable, Config.SelectShowWay);
 end;
 
 procedure TfmMain.LoadTableName(aFilter : String = '');
@@ -319,10 +323,10 @@ var
   aTables : TStringList;
   I : Integer;
 begin
-  if (FEnvironment = nil) or (FParameter = '') then Exit;
+  if (Config.SystemEnvironment = nil) or (FParameter = '') then Exit;
   edtTable.Properties.Items.Clear;
   aTables := TStringList.Create;
-  aTables := FEnvironment.LoadTableName(aFilter);
+  aTables := Config.SystemEnvironment.LoadTableName(aFilter);
   try
     for I := 0 to aTables.Count - 1 do
     begin
@@ -349,20 +353,20 @@ begin
   edtParameter.Text := FParameter;
   if Config.ConnectWay = '1' then
   begin
-    FEnvironment := TDbisamEnvironment.Create(Self, FParameter);
+    Config.SystemEnvironment := TDbisamEnvironment.Create(Self, FParameter);
   end
   else
   begin
-    FEnvironment := TSQLEnvironment.Create(Self, FParameter);  
+    Config.SystemEnvironment := TSQLEnvironment.Create(Self, FParameter);  
   end;
   ChangeConnect;
-  FTable := TTable.Create(FEnvironment, '', '');
+  Config.SystemTable := TTable.Create(Config.SystemEnvironment, '', '');
   LoadTableName;  
   FResult := TShowResultFrame.Create(Self);
   FResult.Parent := pnlResult;
   FResult.Align := alClient;
   CheckState;
-  FGetTable := False;
+  Config.GetTable := False;
   dMain.Height := 248;
   InitMenu;
   ShowResult;
@@ -454,8 +458,8 @@ begin
   begin
     Config.LastFolderPath := FParameter;
   end; 
-  FTable.Destroy;
-  FEnvironment.Destroy;
+  Config.SystemTable.Destroy;
+  Config.SystemEnvironment.Destroy;
   FConfigFile.Destroy;
   inherited;
 end;
@@ -467,7 +471,7 @@ end;
 
 procedure TfmMain.ShowResult;
 begin
-  ShowResult(FGetTable);
+  ShowResult(Config.GetTable);
 end;
 
 procedure TfmMain.ShowResult(bShow: Boolean);
@@ -493,14 +497,14 @@ end;
 
 procedure TfmMain.btnSelectParameterClick(Sender: TObject);
 begin
-  FParameter := FEnvironment.CreateParameter;
+  FParameter := Config.SystemEnvironment.CreateParameter;
   edtPathName.EditValue := '';
   if FParameter = '' then
   begin
     Exit;
   end;
   edtParameter.Text := FParameter;
-  FEnvironment.SetEnvironment(FParameter);
+  Config.SystemEnvironment.SetEnvironment(FParameter);
   LoadTableName;
 end;
 
@@ -510,7 +514,7 @@ begin
   edtPathName.EditValue := Config.GetHistoryName(DisplayValue);
   FParameter := DisplayValue;
   UpdateConfigSystem;
-  FEnvironment.SetEnvironment(FParameter);
+  Config.SystemEnvironment.SetEnvironment(FParameter);
   LoadTableName;
   FResult.ClearGridField;
 end;
@@ -521,7 +525,7 @@ begin
   edtParameter.EditValue := Config.GetHistoryPath(DisplayValue);
   FParameter := edtParameter.EditValue;
   UpdateConfigSystem; 
-  FEnvironment.SetEnvironment(FParameter);
+  Config.SystemEnvironment.SetEnvironment(FParameter);
   LoadTableName;
   FResult.ClearGridField;  
 end;
@@ -565,13 +569,13 @@ procedure TfmMain.btnImportExcelClick(Sender: TObject);
 var
   fmImport: TfmImport;
 begin
-  if not FGetTable then
+  if not Config.GetTable then
   begin
     ShowMessage('未选择对应表。无法导入Excel。');
     Exit;
   end;
 
-  fmImport := TfmImport.Create(self, FTable);
+  fmImport := TfmImport.Create(self, Config.SystemTable);
   try
     fmImport.ShowModal;
   finally
@@ -583,19 +587,19 @@ procedure TfmMain.btnExportClick(Sender: TObject);
 var
   fmExport: TfmExport;
 begin
-  if not FGetTable  then
+  if not Config.GetTable  then
   begin
     ShowMessage('未选择对应表。无法导入Excel。');
     Exit;
   end;
 
-  if not FTable.ContainData then
+  if not Config.SystemTable.ContainData then
   begin
     ShowMessage('无数据，无法导出。');
     Exit;  
   end;
 
-  fmExport := TfmExport.Create(self, FTable);
+  fmExport := TfmExport.Create(self, Config.SystemTable);
   try
     fmExport.ShowModal;
   finally
@@ -606,25 +610,25 @@ end;
 procedure TfmMain.btnAddClick(Sender: TObject);
 begin
   inherited;
-  if not FGetTable then
+  if not Config.GetTable then
   begin
     ShowMessage('未选择对应表。无属性。');
     Exit;
   end;
-  FTable.Add(Self);
+  Config.SystemTable.Add(Self);
 end;
 
 procedure TfmMain.btnPropertyClick(Sender: TObject);
 var
   fmTableProperty: TfmTableProperty;
 begin
-  if not FGetTable then
+  if not Config.GetTable then
   begin
     ShowMessage('未选择对应表。无属性。');
     Exit;
   end;
 
-  fmTableProperty := TfmTableProperty.Create(Self, FTable);
+  fmTableProperty := TfmTableProperty.Create(Self, Config.SystemTable);
   with fmTableProperty do
   try
     ShowModal;
@@ -654,22 +658,22 @@ end;
 procedure TfmMain.edtTablePropertiesChange(Sender: TObject);
 begin
   inherited;
-  ClearCondition;
-  edtTable.Properties.Items.Clear;
-  UpdateConfigSystem;  
-  LoadTableName(edtTable.Text);
+//  ClearCondition;
+//  edtTable.Properties.Items.Clear;
+//  UpdateConfigSystem;  
+//  LoadTableName(edtTable.Text);
 end;
 
 procedure TfmMain.btnDeleteClick(Sender: TObject);
 begin
   inherited;
-  if not FGetTable then
+  if not Config.GetTable then
   begin
     ShowMessage('未选择对应表。无法删除。');
     Exit;
   end;
 
-  if not FTable.ContainData then
+  if not Config.SystemTable.ContainData then
   begin
     ShowMessage('无数据，无法删除。');
     Exit;  
@@ -711,11 +715,11 @@ var
   I : Integer;
 begin
   Result := '';
-  for I := 0 to   FTable.TableFieldCount - 1 do
+  for I := 0 to   Config.SystemTable.TableFieldCount - 1 do
   begin
-    if (FTable.TableFieldNameArray[I] = edtFieldName.Text) then
+    if (Config.SystemTable.TableFieldNameArray[I] = edtFieldName.Text) then
     begin
-      Result := FTable.TableFieldSQLTypeArray[I];
+      Result := Config.SystemTable.TableFieldSQLTypeArray[I];
       Exit;
     end;
   end;

@@ -83,7 +83,7 @@ object fmMain: TfmMain
       object PageSelect: TcxPageControl
         Left = 10
         Top = 71
-        Width = 743
+        Width = 663
         Height = 98
         ActivePage = SheetTable
         ParentShowHint = False
@@ -91,7 +91,7 @@ object fmMain: TfmMain
         TabOrder = 4
         OnChange = PageSelectChange
         ClientRectBottom = 98
-        ClientRectRight = 743
+        ClientRectRight = 663
         ClientRectTop = 24
         object SheetTable: TcxTabSheet
           Caption = #34920
@@ -99,7 +99,7 @@ object fmMain: TfmMain
           object lcTable: TdxLayoutControl
             Left = 0
             Top = 0
-            Width = 743
+            Width = 663
             Height = 74
             Align = alClient
             ParentBackground = True
@@ -113,24 +113,24 @@ object fmMain: TfmMain
               Properties.OnChange = edtTablePropertiesChange
               Properties.OnValidate = edtTablePropertiesValidate
               TabOrder = 0
-              Width = 200
+              Width = 125
             end
             object edtFieldName: TcxComboBox
-              Left = 334
+              Left = 235
               Top = 10
               Properties.ImmediatePost = True
               TabOrder = 1
-              Width = 121
+              Width = 422
             end
             object edtKeyword: TcxComboBox
               Left = 75
               Top = 37
               Properties.ImmediatePost = True
               TabOrder = 2
-              Width = 200
+              Width = 125
             end
             object edtCondition: TcxTextEdit
-              Left = 334
+              Left = 235
               Top = 37
               TabOrder = 3
               Width = 121
@@ -154,7 +154,7 @@ object fmMain: TfmMain
                 object lcTableItem1: TdxLayoutItem
                   AutoAligns = [aaVertical]
                   AlignHorz = ahClient
-                  Caption = #36807#28388#23383#27573
+                  Caption = #23383#27573
                   Control = edtFieldName
                   ControlOptions.ShowBorder = False
                 end
@@ -190,7 +190,7 @@ object fmMain: TfmMain
             Align = alClient
             TabOrder = 0
             Height = 74
-            Width = 743
+            Width = 663
           end
         end
       end
@@ -203,22 +203,23 @@ object fmMain: TfmMain
         BarManager = BarManager
       end
       object btnResult: TcxButton
-        Left = 773
+        Left = 698
         Top = 71
         Width = 75
-        Height = 26
+        Height = 98
         Caption = #26597#35810
         TabOrder = 5
         OnClick = btnResultClick
         LookAndFeel.Kind = lfOffice11
       end
       object lblResult: TcxLabel
-        Left = 773
-        Top = 103
+        Left = 779
+        Top = 71
         Align = alClient
         Caption = #25191#34892#32467#26524
         Properties.WordWrap = True
-        Width = 75
+        Transparent = True
+        Width = 69
       end
       object dxLayoutGroup2: TdxLayoutGroup
         ShowCaption = False
@@ -273,6 +274,7 @@ object fmMain: TfmMain
           object dMainGroup3: TdxLayoutGroup
             ShowCaption = False
             Hidden = True
+            LayoutDirection = ldHorizontal
             ShowBorder = False
             object dMainItem2: TdxLayoutItem
               AutoAligns = [aaVertical]
@@ -283,7 +285,7 @@ object fmMain: TfmMain
             end
             object dMainItem1: TdxLayoutItem
               AutoAligns = []
-              AlignHorz = ahClient
+              AlignHorz = ahRight
               AlignVert = avClient
               Caption = 'cxLabel1'
               ShowCaption = False

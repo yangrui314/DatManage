@@ -38,6 +38,10 @@ type
     lcMainItem3: TdxLayoutItem;
     edtExportTableName: TcxTextEdit;
     lcMainItem4: TdxLayoutItem;
+    lcMainItem5: TdxLayoutItem;
+    edtDelKeyField: TcxComboBox;
+    lcMainItem6: TdxLayoutItem;
+    cbContainDelSQL: TcxCheckBox;
     procedure btnNextClick(Sender: TObject);
     procedure btnPreviousClick(Sender: TObject);
     procedure btnFinishClick(Sender: TObject);

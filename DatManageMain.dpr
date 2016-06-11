@@ -57,7 +57,8 @@ uses
   formMenuBatchImportPath in 'Menu\formMenuBatchImportPath.pas' {fmMenuBatchImportPath},
   formMenuTurn in 'Menu\formMenuTurn.pas' {fmMenuTurn},
   unitParentHelper in 'Helper\unitParentHelper.pas',
-  unitStrHelper in 'Helper\unitStrHelper.pas';
+  unitStrHelper in 'Helper\unitStrHelper.pas',
+  unitSystemHelper in 'Helper\unitSystemHelper.pas';
 
 {$R *.res}
 
