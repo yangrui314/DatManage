@@ -131,6 +131,9 @@ var
 
 begin
   FSQLSuccess:= aIsSuccess;
+  //由于日志保存影响了速度，暂时屏蔽日志。yr 2016-06-12
+  Exit;
+
   aLogFile := TStandardHandle.Create;
   try
     aLogStr := aLogFile.ReadFileToStr(FLogPath);
