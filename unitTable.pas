@@ -53,7 +53,7 @@ type
     destructor Destroy;
     constructor Create(aEnvironment : TEnvironment ; aSQL : String;aTableName : String;aShowError : Boolean = True);
     procedure Add(AOwner: TComponent);
-    procedure SaveSQLFile(aFilePath : String);
+    procedure SaveSQLFile(aFilePath : String;aContainDelSQL : Boolean; aDelKeyField : String);
 
     procedure SaveTableEnvironment;
     procedure ReadTableEnvironment;
@@ -465,7 +465,7 @@ end;
 
 
 
-procedure TTable.SaveSQLFile(aFilePath : String);
+procedure TTable.SaveSQLFile(aFilePath : String;aContainDelSQL : Boolean; aDelKeyField : String);
 var
   aSQL : String;
   aPrefixSQL : String;
@@ -476,6 +476,8 @@ var
   I : Integer;
   aDataType : TFieldType;
   aFirst : Boolean;
+  aDelCondition : String;
+  DelSQL : String;
 begin
   for I:=0 to  TableFieldCount - 1 do
   begin
@@ -495,6 +497,7 @@ begin
   TableData.First;
   while not TableData.Eof do
   begin
+
     aPostfixSQL := ' VALUES ( ';
     aFirst := True;
     for i:=0 to  TableData.Fields.Count - 1 do
@@ -524,7 +527,7 @@ begin
         then aValue := '1'
         else aValue := '0';
       end
-      else if  aDataType = ftDateTime      then
+      else if  aDataType = ftDateTime  then
       begin
         aValue :=  ' ''' +  FormatDateTime('yyyy-mm-dd', TableData.FieldByName(aFieldName).AsDateTime) + ''' ' ;;
       end
@@ -536,12 +539,20 @@ begin
       then aPostfixSQL := aPostfixSQL + aValue
       else aPostfixSQL := aPostfixSQL + ','+ aValue ;
       aFirst := False;
+      if aDelKeyField =aFieldName then
+        aDelCondition := aValue;
     end;
     aPostfixSQL :=  aPostfixSQL + ')';
 
+    if aContainDelSQL and (TableName <> '') and (aDelKeyField <> '') then
+    begin
+      DelSQL := 'Delete from ' + TableName +
+      ' where '+ aDelKeyField + ' = ' + aDelCondition +' ' + ';';
+    end;
+
     if aSQL = ''
-    then aSQL := aPrefixSQL + aPostfixSQL + ';'
-    else aSQL := aSQL +#13#10  + aPrefixSQL + aPostfixSQL + ';' ;
+    then aSQL := DelSQL + #13#10+ aPrefixSQL + aPostfixSQL + ';'
+    else aSQL := aSQL +#13#10  + DelSQL + #13#10 + aPrefixSQL + aPostfixSQL + ';' ;
     TableData.Next;
   end;
   SaveFile(aFilePath,aSQL);

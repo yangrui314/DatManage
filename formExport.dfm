@@ -96,6 +96,7 @@ object fmExport: TfmExport
           Top = 118
           Caption = #21253#21547#21024#38500#35821#21477
           Properties.ImmediatePost = True
+          Properties.OnValidate = cbContainDelSQLPropertiesValidate
           TabOrder = 4
           Width = 425
         end

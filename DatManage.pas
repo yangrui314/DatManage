@@ -307,12 +307,12 @@ begin
     lblResult.Style.TextColor := clRed;
   end;
 
-//暂时屏蔽掉该功能 yr 2016-06-12
-//  edtFieldName.Properties.Items.Clear;
-//  for I := 0 to   Config.SystemTable.TableFieldCount - 1 do
-//  begin
-//    edtFieldName.Properties.Items.Add(Config.SystemTable.TableFieldNameArray[I]);
-//  end;
+  //加载字段名称
+  edtFieldName.Properties.Items.Clear;
+  for I := 0 to   Config.SystemTable.TableFieldCount - 1 do
+  begin
+    edtFieldName.Properties.Items.Add(Config.SystemTable.TableFieldNameArray[I]);
+  end;
 
   Config.GetTable := True;
   FResult.Update(Config.SystemTable, Config.SelectShowWay);

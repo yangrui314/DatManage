@@ -53,6 +53,9 @@ type
     procedure btnFilePathPropertiesValidate(Sender: TObject;
       var DisplayValue: Variant; var ErrorText: TCaption;
       var Error: Boolean);
+    procedure cbContainDelSQLPropertiesValidate(Sender: TObject;
+      var DisplayValue: Variant; var ErrorText: TCaption;
+      var Error: Boolean);
   private
     FField : TfrmTableProperty;
     FTable : TTable;
@@ -66,7 +69,8 @@ type
     procedure InitField;
     procedure LoadPreview;
     procedure InitPreview;
-    procedure CheckWay;    
+    procedure CheckWay;
+    procedure SetState;
   public
     constructor Create(AOwner: TComponent;aTable: TTable);
     property ActivePage: Integer read GetActivePage write SetActivePage ;
@@ -89,14 +93,24 @@ begin
   NavigateChange(0);
   InitField;
   InitPreview;
-  lcMainItem4.Visible := FNotTableName and (FWay = 2);  
+  lcMainItem4.Visible := FNotTableName and (FWay = 2);
+  cbContainDelSQL.Checked := True;
+  SetState;  
 end;
 
 procedure TfmExport.InitField;
+var
+  I : Integer;
 begin
   FField := TfrmTableProperty.Create(Self,FTable,True);
   FField.Parent := pnlField;
   FField.Align := alClient;
+
+  edtDelKeyField.Properties.Items.Clear;
+  for I:=0  to FTable.TableFieldCount - 1 do
+  begin
+    edtDelKeyField.Properties.Items.Add(FTable.TableFieldNameArray[I]);
+  end;
 end;
 
 procedure TfmExport.InitPreview;
@@ -184,6 +198,11 @@ begin
     Exit;
   end;
 
+  if cbContainDelSQL.Checked and (edtDelKeyField.EditText = '') then
+  begin
+    ShowMessage('«Î ‰»Îπÿº¸◊÷∂Œ');
+    Exit;
+  end;
 
 
 
@@ -248,7 +267,7 @@ begin
     if FNotTableName
     then FTable.TableName := edtExportTableName.EditValue;
 
-    FTable.SaveSQLFile(FFilePath);
+    FTable.SaveSQLFile(FFilePath,cbContainDelSQL.Checked,edtDelKeyField.EditText);
 
     if FNotTableName
     then FTable.TableName := '';
@@ -296,5 +315,25 @@ procedure TfmExport.btnFilePathPropertiesValidate(Sender: TObject;
 begin
   FFilePath := DisplayValue;
 end;
+
+procedure TfmExport.cbContainDelSQLPropertiesValidate(Sender: TObject;
+  var DisplayValue: Variant; var ErrorText: TCaption; var Error: Boolean);
+begin
+  inherited;
+  SetState;
+end;
+
+procedure TfmExport.SetState;
+begin
+  if cbContainDelSQL.Checked then
+  begin
+    edtDelKeyField.Enabled := True;
+  end
+  else
+  begin
+    edtDelKeyField.Enabled := False;  
+  end;
+end;
+
 
 end.

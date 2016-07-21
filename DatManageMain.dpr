@@ -58,7 +58,8 @@ uses
   formMenuTurn in 'Menu\formMenuTurn.pas' {fmMenuTurn},
   unitParentHelper in 'Helper\unitParentHelper.pas',
   unitStrHelper in 'Helper\unitStrHelper.pas',
-  unitSystemHelper in 'Helper\unitSystemHelper.pas';
+  unitSystemHelper in 'Helper\unitSystemHelper.pas',
+  formMenuBatchReName in 'Menu\formMenuBatchReName.pas' {fmMenuBatchReName};
 
 {$R *.res}
 
@@ -66,5 +67,6 @@ begin
   Application.Initialize;
   Application.CreateForm(TfmMain, fmMain);
   Application.CreateForm(TdmSys, dmSys);
+  Application.CreateForm(TfmMenuBatchReName, fmMenuBatchReName);
   Application.Run;
 end.
