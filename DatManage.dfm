@@ -19,7 +19,7 @@ object fmMain: TfmMain
     Left = 0
     Top = 225
     Width = 860
-    Height = 366
+    Height = 346
     Align = alClient
     Caption = 'pnlResult'
     ParentBackground = True

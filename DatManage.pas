@@ -480,6 +480,12 @@ var
   aResultHeight: Integer;
   aDefaultHeight: Integer;
 begin
+  if fmMain.WindowState =  wsMaximized then
+  begin
+    pnlResult.Visible := bShow;
+    Exit;
+  end;
+
   if pnlResult.Visible = bShow then
     Exit;
   pnlResult.Visible := bShow;

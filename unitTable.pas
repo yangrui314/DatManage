@@ -531,6 +531,12 @@ begin
       begin
         aValue :=  ' ''' +  FormatDateTime('yyyy-mm-dd', TableData.FieldByName(aFieldName).AsDateTime) + ''' ' ;;
       end
+      else if aDataType = ftLargeint then
+      begin
+        if  TableData.FieldByName(aFieldName).AsString = ''
+        then aValue := 'null'
+        else aValue := IntToStr(TableData.FieldByName(aFieldName).AsInteger);
+      end
       else
       begin
         aValue :=  ''''+ TableData.FieldByName(aFieldName).AsString + '''';
