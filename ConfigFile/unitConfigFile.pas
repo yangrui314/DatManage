@@ -64,7 +64,6 @@ begin
   SaveSystemConfigToBoolean('ShowPath',Config.ShowPath);
   FHandleFileWay.SaveSystemConfig('SelectShowWay',Config.SelectShowWay);
   FHandleFileWay.SaveSystemConfig('ConnectWay',Config.ConnectWay);
-  SaveHistory;
   FHandleFileWay.SaveMenu;
 end;
 
