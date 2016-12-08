@@ -11,7 +11,7 @@ uses
   ExtCtrls, cxMemo, cxVGrid, cxDBVGrid, cxInplaceContainer, unitEnvironment,
   frameShowResult, dxLayoutControl, cxDropDownEdit, cxRadioGroup, unitTable,
   Menus, cxLookAndFeelPainters, cxButtons, cxGridExportLink, unitConfigFile,
-   formParent, cxPC, ShellAPI, WinSkinData, dxBar,formSVN,
+   formParent, cxPC, ShellAPI, WinSkinData, dxBar,
   cxLookAndFeels, RzStatus,formUpgradeProgress,unitDownLoadFile, cxLabel,
   unitSQLEnvironment,unitDbisamEnvironment,formParentMenu,unitLoadMenu;
 
@@ -77,7 +77,6 @@ type
     procedure edtPathNamePropertiesValidate(Sender: TObject; var DisplayValue: Variant; var ErrorText: TCaption; var Error: Boolean);
     procedure btnSaveParameterClick(Sender: TObject);
     procedure btnResultClick(Sender: TObject);
-    procedure FormCreate(Sender: TObject);
     procedure btnImportExcelClick(Sender: TObject);
     procedure btnExportClick(Sender: TObject);
     procedure btnAddClick(Sender: TObject);
@@ -95,7 +94,6 @@ type
     FResult: TShowResultFrame;
 //    FTable: TTable;
     FConfigFile: TConfigFile;
-    FSVN : TfmSVN;
     FPatchVersion : String;
     FNowVersion : string;
     FInitConnectWay : String;
@@ -484,7 +482,6 @@ end;
 
 procedure TfmMain.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
-  FSVN.Free;
   if (FInitConnectWay <> Config.ConnectWay) then
   begin
     Config.LastFolderPath := '';
@@ -598,12 +595,6 @@ var
 begin
   inherited;
   WorkRun;
-end;
-
-procedure TfmMain.FormCreate(Sender: TObject);
-begin
-  inherited;
-  FSVN := TfmSVN.Create(Self);
 end;
 
 procedure TfmMain.btnImportExcelClick(Sender: TObject);
