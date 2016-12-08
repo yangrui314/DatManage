@@ -117,6 +117,9 @@ type
     procedure UpdateConfigSystem;
     function GetFieldType : String;
     function IsQuotation(const aFieldType : String) : Boolean;
+  protected
+    procedure ClearRubbish;
+    procedure DelFiles(const aFilePath : String;const aExt : String);
   public
     class function CreateInstance(var AForm: TfmParentMenu; AFormClassName: String = ''): TfmParentMenu;overload;
   end;
@@ -129,7 +132,8 @@ implementation
 uses
   FileCtrl, StrUtils, unitStandardHandle, formTableProperty, unitExcelHandle,
   formExport, formAbout, formImport, unitConfig, unitHistory, formSavePath,
-  formSet,formSelectAll,frmMain,unitStrHelper,unitSystemHelper,cnDebug;
+  formSet,formSelectAll,frmMain,unitStrHelper,unitSystemHelper,cnDebug,
+  unitFileHelper;
 
 
 {$R *.dfm}
@@ -446,6 +450,38 @@ begin
   end;
 end;
 
+procedure TfmMain.DelFiles(const aFilePath : String;const aExt : String);
+var
+  TmpFiles :TStringList;
+  TmpPath : String;
+  TempExt : String;
+  I : Integer;
+begin
+  TempExt := aExt;
+  if LeftStr(TempExt,1) <> '.' then
+    TempExt := '.' + TempExt;
+    
+  TmpFiles := FileHelper.GetFilesByPathAndExt(aFilePath,TempExt);
+  for I := 0 to TmpFiles.Count - 1 do
+  begin
+    TmpPath := ExtractFileDir(ParamStr(0)) + '\' + TmpFiles[I] + TempExt;
+    if FileExists(TmpPath) then
+      DeleteFile(TmpPath);
+  end;
+end;
+
+
+procedure TfmMain.ClearRubbish;
+var
+  aSoftPath : String;
+begin
+  //清除软件目录的不需要的文件 yr 2016-12-08
+  aSoftPath := ExtractFileDir(ParamStr(0)) + '\';
+  DelFiles(aSoftPath,'dat');
+  DelFiles(aSoftPath,'idx');
+  DelFiles(aSoftPath,'blb');
+end;
+
 procedure TfmMain.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   FSVN.Free;
@@ -460,8 +496,12 @@ begin
   Config.SystemTable.Destroy;
   Config.SystemEnvironment.Destroy;
   FConfigFile.Destroy;
+  ClearRubbish;
   inherited;
 end;
+
+
+
 
 procedure TfmMain.CheckState;
 begin

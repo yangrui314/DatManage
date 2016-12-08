@@ -16,7 +16,7 @@ type
     function GetSQL(const aPageIndex : Integer): string;
     procedure LoadField(aSQL: string);
     procedure ShowResult(bShow: Boolean); overload;
-    procedure ShowResult; overload;                
+    procedure ShowResult; overload;
   end;
 
 var
@@ -212,6 +212,10 @@ begin
 //  end;
 //  pnlResult.Height := aDefaultHeight;
 end;
+
+
+
+
 
 initialization
   SystemHelper := TSystemHelper.Create;

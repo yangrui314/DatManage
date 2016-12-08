@@ -59,7 +59,8 @@ uses
   unitParentHelper in 'Helper\unitParentHelper.pas',
   unitStrHelper in 'Helper\unitStrHelper.pas',
   unitSystemHelper in 'Helper\unitSystemHelper.pas',
-  formMenuBatchReName in 'Menu\formMenuBatchReName.pas' {fmMenuBatchReName};
+  formMenuBatchReName in 'Menu\formMenuBatchReName.pas' {fmMenuBatchReName},
+  unitFileHelper in 'Helper\unitFileHelper.pas';
 
 {$R *.res}
 
