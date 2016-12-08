@@ -51,8 +51,6 @@ uses
   unitExcelHandle in 'FileWay\unitExcelHandle.pas',
   unitStandardHandle in 'FileWay\unitStandardHandle.pas',
   formBatchSQL in 'Menu\formBatchSQL.pas' {fmBatchSQL},
-  formSaveWorkLog in 'Menu\formSaveWorkLog.pas' {fmSaveWorkLog},
-  unitWorkLog in 'UnitData\unitWorkLog.pas',
   formSendEmail in 'Menu\formSendEmail.pas' {fmSendEmail},
   formMenuBatchImportPath in 'Menu\formMenuBatchImportPath.pas' {fmMenuBatchImportPath},
   formMenuTurn in 'Menu\formMenuTurn.pas' {fmMenuTurn},

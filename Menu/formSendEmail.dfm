@@ -42,7 +42,6 @@ inherited fmSendEmail: TfmSendEmail
         Height = 25
         Caption = #21457#36865'Email'
         TabOrder = 3
-        OnClick = btnSaveLogAndSendEmailClick
       end
       object edtPathName: TcxComboBox
         Left = 75

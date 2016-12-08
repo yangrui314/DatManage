@@ -5,7 +5,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls,
   Dialogs,StdCtrls,unitFileWay, DB, dbisamtb,unitHistory,unitTable,unitMenu,
-  unitConfig,unitWorkLog;
+  unitConfig;
 
 
 type
@@ -15,13 +15,11 @@ type
     FSystemConfig : TDBISAMTable;
     FHistory: TDBISAMTable;
     FMenu : TDBISAMTable;
-    FWorkLog : TDBISAMTable;
     FPassword : TDBISAMTable;
 
     procedure CreateSystemConfig;override;
     procedure CreateHistory; override;
     procedure CreateMenu; override;
-    procedure CreateWorkLog; override;
     procedure CreatePassword; override;
     procedure InitData; override;
   public
@@ -36,9 +34,7 @@ type
     procedure LoadMenu; override;
     procedure SaveMenu; override;
     procedure ClearHistorys;override;
-    procedure SaveWorkLog(var WorkLog : TWorkLog);override;
-    function LoadWorkLog : TWorkLog;override;
-    function LoadPasswords : TStringList;override;               
+    function LoadPasswords : TStringList;override;
   end;
 
 
@@ -54,7 +50,6 @@ begin
   FSystemConfig := TDBISAMTable.Create(nil);
   FHistory := TDBISAMTable.Create(nil);
   FMenu  := TDBISAMTable.Create(nil);
-  FWorkLog := TDBISAMTable.Create(nil);
   FPassword := TDBISAMTable.Create(nil);
   inherited;
 end;
@@ -64,7 +59,6 @@ begin
   inherited;
   FHistory.Free;
   FMenu.Free;
-  FWorkLog.Free;
   FSystemConfig.Free;
   FPassword.Free;      
 end;
@@ -153,31 +147,6 @@ begin
 end;
 
 
-procedure TDatWay.CreateWorkLog;
-begin
-  with FWorkLog do
-  begin
-    DatabaseName:= FConfigPath;
-    TableName:= FWorkLogName;
-    with FieldDefs do
-    begin 
-      Clear; 
-      Add('ID',ftAutoInc,0,False);
-      Add('EnvironmentName',ftString,255,False);
-      Add('BeginDate',ftDate,0,False);
-      Add('EndDate',ftDate,0,False);
-      Add('WorkDay',ftInteger,0,False);
-      Add('WorkLog',ftString,60,False);
-    end;
-    with IndexDefs do
-    begin
-      Clear;
-      Add('','ID',[ixPrimary]);
-    end;
-    if not Exists then
-      CreateTable;
-  end;
-end;
 
 
 procedure TDatWay.CreatePassword;
@@ -618,34 +587,7 @@ begin
     end;
 end;
 
-procedure TDatWay.SaveWorkLog(var WorkLog : TWorkLog);
-begin
-  with FWorkLog do
-  begin
-    DatabaseName:= FConfigPath;
-    TableName:= FWorkLogName;
 
-    if Active then Close;
-    Open;
-
-    First;
-    Append;
-    FieldByName('EnvironmentName').AsString := WorkLog.EnvironmentName;
-    FieldByName('BeginDate').AsDateTime := WorkLog.BeginDate;
-    FieldByName('EndDate').AsDateTime := WorkLog.EndDate;
-    FieldByName('WorkDay').AsInteger := WorkLog.WorkDay;
-    FieldByName('WorkLog').AsString := WorkLog.WorkLog;    
-    Post;
-    Close;
-  end;
-end;
-
-
-
-function TDatWay.LoadWorkLog : TWorkLog;
-begin
-    
-end;
 
 
 end.

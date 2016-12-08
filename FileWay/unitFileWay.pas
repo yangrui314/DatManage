@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls,
-  Dialogs,StdCtrls,unitTable,unitMenu,unitWorkLog,unitHistory;
+  Dialogs,StdCtrls,unitTable,unitMenu,unitHistory;
 
 
 type
@@ -16,13 +16,11 @@ type
     FSystemConfigName : String;
     FHistoryName : String;
     FMenuName : String;
-    FWorkLogName : String;
     FPasswordName : String;
 
     FSystemConfigFilePath : String;
     FHistoryFilePath : String;
     FMenuFilePath : String;
-    FWorkLogFilePath : String;
     FPasswordFilePath : String;    
 
     FExt : String;
@@ -31,7 +29,6 @@ type
     procedure CreateSystemConfig;virtual;abstract;
     procedure CreateHistory; virtual;abstract;
     procedure CreateMenu; virtual;abstract;
-    procedure CreateWorkLog; virtual;abstract;
     procedure CreatePassword; virtual;abstract;         
     procedure NotFileCreateFile;
   public
@@ -46,8 +43,6 @@ type
     procedure LoadMenu; virtual;abstract;
     procedure SaveMenu; virtual;abstract;
     procedure ClearHistorys;virtual;abstract;
-    procedure SaveWorkLog(var WorkLog : TWorkLog);virtual;abstract;
-    function LoadWorkLog : TWorkLog;virtual;abstract;
     function LoadPasswords : TStringList; virtual;abstract;
   end;
 
@@ -61,7 +56,6 @@ begin
   FSystemConfigName := 'SystemConfig';
   FHistoryName := 'History';
   FMenuName := 'Menu';
-  FWorkLogName := 'WorkLog';
   FPasswordName := 'Password';  
   FExt := '';
   InitData;
@@ -87,11 +81,6 @@ begin
       CreateMenu;  
     end;
 
-    if not FileExists(FWorkLogFilePath) then
-    begin
-      CreateWorkLog;  
-    end;
-
     if  not FileExists(FPasswordFilePath) then
     begin
       CreatePassword;
@@ -105,7 +94,6 @@ begin
   FSystemConfigFilePath := FConfigPath + '\' + FSystemConfigName + FExt;
   FHistoryFilePath := FConfigPath + '\' + FHistoryName + FExt;
   FMenuFilePath := FConfigPath + '\' + FMenuName + FExt;
-  FWorkLogFilePath := FConfigPath + '\' + FWorkLogName + FExt;
   FPasswordFilePath := FConfigPath + '\' + FPasswordName + FExt;  
   NotFileCreateFile;
 end;

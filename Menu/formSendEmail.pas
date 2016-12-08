@@ -23,11 +23,9 @@ type
     lcMainItem6: TdxLayoutItem;
     lcMainItem1: TdxLayoutItem;
     edtPathName: TcxComboBox;
-    procedure btnSaveLogAndSendEmailClick(Sender: TObject);
   private
     { Private declarations }
   public
-    function CreateWorkLogFile : Boolean;
     procedure SendEmail;
   end;
 
@@ -38,24 +36,12 @@ implementation
 
 {$R *.dfm}
 
-function TfmSendEmail.CreateWorkLogFile : Boolean;
-begin
-  Result := True;    
-end;
+
 
 
 procedure TfmSendEmail.SendEmail;
 begin
 
-end;
-
-procedure TfmSendEmail.btnSaveLogAndSendEmailClick(Sender: TObject);
-begin
-  inherited;
-  if  CreateWorkLogFile then
-  begin
-    SendEmail;
-  end;
 end;
 
 end.
