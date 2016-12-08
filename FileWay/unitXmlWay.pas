@@ -306,6 +306,7 @@ begin
   XMLRead := TXMLDocument.Create(comp);
   XMLRead.LoadFromFile(aFilePath);
 
+
   for I:=0 to aTable.TableFieldCount - 1 do
   begin
      aTable.TableFieldCaptionArray[I] :=  XMLRead.DocumentElement.ChildNodes[I].ChildNodes['Caption'].Text;

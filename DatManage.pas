@@ -77,7 +77,6 @@ type
     procedure edtPathNamePropertiesValidate(Sender: TObject; var DisplayValue: Variant; var ErrorText: TCaption; var Error: Boolean);
     procedure btnSaveParameterClick(Sender: TObject);
     procedure btnResultClick(Sender: TObject);
-    procedure btnConditionClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure btnImportExcelClick(Sender: TObject);
     procedure btnExportClick(Sender: TObject);
@@ -130,7 +129,7 @@ implementation
 uses
   FileCtrl, StrUtils, unitStandardHandle, formTableProperty, unitExcelHandle,
   formExport, formAbout, formImport, unitConfig, unitHistory, formSavePath,
-  formSet,formSelectAll,frmMain,unitStrHelper,unitSystemHelper;
+  formSet,formSelectAll,frmMain,unitStrHelper,unitSystemHelper,cnDebug;
 
 
 {$R *.dfm}
@@ -554,12 +553,8 @@ begin
 end;
 
 procedure TfmMain.btnResultClick(Sender: TObject);
-begin
-  inherited;
-  WorkRun;
-end;
-
-procedure TfmMain.btnConditionClick(Sender: TObject);
+var
+  AHelpFilePath : String;
 begin
   inherited;
   WorkRun;

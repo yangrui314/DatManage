@@ -47,7 +47,7 @@ begin
   FLoadTable := False;
   FParameter := aParameter;
   FOwner := AOwner;
-  FLogPath := ExtractFilePath(ParamStr(0)) + 'Log.txt';
+  FLogPath := ExtractFilePath(ParamStr(0)) + 'log\' + FormatDateTime('yyyymmdd', Now) +  '.txt';
   InitData;
 end;
 
@@ -131,8 +131,6 @@ var
 
 begin
   FSQLSuccess:= aIsSuccess;
-  //由于日志保存影响了速度，暂时屏蔽日志。yr 2016-06-12
-  Exit;
 
   aLogFile := TStandardHandle.Create;
   try
