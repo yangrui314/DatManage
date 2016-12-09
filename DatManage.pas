@@ -398,7 +398,6 @@ begin
 //  edtCreatePath.Properties.Items.Add(Config.LastFolderPath);
 //  edtPathName.EditValue := '最后一条记录';
   FParameter := Config.LastFolderPath;
-  UpdateConfigSystem;
   FInitConnectWay := Config.ConnectWay;
 
   for I := 0 to Config.Historys.Count - 1 do
@@ -411,7 +410,7 @@ begin
   end;
 
   edtPathName.EditValue := Config.GetHistoryName(FParameter);
-
+  UpdateConfigSystem;
   dMainItem4.Visible := Config.ShowName;
   dMainItem15.Visible := Config.ShowName;
 
