@@ -37,16 +37,10 @@ object MainForm: TMainForm
       Caption = 'DataB'#65306
     end
     object edtDataA: TcxTextEdit
-      Left = 170
+      Left = 219
       Top = 12
       TabOrder = 0
-      Width = 649
-    end
-    object edtDataB: TcxTextEdit
-      Left = 170
-      Top = 40
-      TabOrder = 1
-      Width = 649
+      Width = 600
     end
     object btn2: TcxButton
       Left = 818
@@ -54,7 +48,7 @@ object MainForm: TMainForm
       Width = 24
       Height = 20
       Caption = '...'
-      TabOrder = 2
+      TabOrder = 1
       OnClick = btn2Click
     end
     object btnStart: TcxButton
@@ -63,20 +57,36 @@ object MainForm: TMainForm
       Width = 73
       Height = 25
       Caption = #24320#22987#23545#27604
-      TabOrder = 3
+      TabOrder = 2
       OnClick = btnStartClick
     end
     object pbMain: TcxProgressBar
       Left = 160
       Top = 86
-      TabOrder = 4
+      TabOrder = 3
       Width = 649
     end
     object edtDataACaption: TcxTextEdit
       Left = 82
       Top = 12
+      TabOrder = 4
+      Width = 120
+    end
+    object edtDataBCaption: TcxComboBox
+      Left = 82
+      Top = 40
+      Properties.ImmediatePost = True
+      Properties.OnValidate = edtDataBCaptionPropertiesValidate
       TabOrder = 5
-      Width = 79
+      Width = 120
+    end
+    object edtDataB: TcxComboBox
+      Left = 219
+      Top = 40
+      Properties.ImmediatePost = True
+      Properties.OnValidate = edtDataBPropertiesValidate
+      TabOrder = 6
+      Width = 600
     end
   end
   object gd1: TcxGrid

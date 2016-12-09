@@ -8,7 +8,8 @@ uses
   Menus, cxLookAndFeelPainters, cxButtons, cxStyles, cxCustomData,
   cxGraphics, cxFilter, cxData, cxDataStorage, cxGridCustomView,
   cxGridCustomTableView, cxGridTableView, cxGridBandedTableView, cxClasses,
-  cxGridLevel, cxGrid, cxProgressBar, cxButtonEdit,formParent,formParentMenu;
+  cxGridLevel, cxGrid, cxProgressBar, cxButtonEdit,formParent,formParentMenu,
+  cxMaskEdit, cxDropDownEdit;
 
 type
   TMainForm = class(TfmParentMenu)
@@ -16,7 +17,6 @@ type
     lblDataA: TLabel;
     lblDataB: TLabel;
     edtDataA: TcxTextEdit;
-    edtDataB: TcxTextEdit;
     btn2: TcxButton;
     btnStart: TcxButton;
     gdl1: TcxGridLevel;
@@ -29,6 +29,8 @@ type
     pbDetail: TcxProgressBar;
     pbMain: TcxProgressBar;
     edtDataACaption: TcxTextEdit;
+    edtDataBCaption: TcxComboBox;
+    edtDataB: TcxComboBox;
     procedure btn2Click(Sender: TObject);
     procedure btnStartClick(Sender: TObject);
     procedure gdvResultCustomDrawCell(Sender: TcxCustomGridTableView;
@@ -37,6 +39,12 @@ type
     procedure colOpPropertiesButtonClick(Sender: TObject;
       AButtonIndex: Integer);
     procedure FormShow(Sender: TObject);
+    procedure edtDataBCaptionPropertiesValidate(Sender: TObject;
+      var DisplayValue: Variant; var ErrorText: TCaption;
+      var Error: Boolean);
+    procedure edtDataBPropertiesValidate(Sender: TObject;
+      var DisplayValue: Variant; var ErrorText: TCaption;
+      var Error: Boolean);
   private
     { Private declarations }
   public
@@ -54,7 +62,7 @@ implementation
 {$R *.dfm}
 
 uses
-  FileCtrl, UnitSys, UnitContrast, UnitShowDiff,unitConfig;
+  FileCtrl, UnitSys, UnitContrast, UnitShowDiff,unitConfig,unitHistory;
 
 procedure TMainForm.btn2Click(Sender: TObject);
 var
@@ -270,6 +278,8 @@ begin
 end;
 
 procedure TMainForm.FormShow(Sender: TObject);
+var
+  I : Integer;
 begin
   inherited;
   //A路径从主程序带出 yr 2016-12-09  
@@ -277,6 +287,33 @@ begin
   edtDataA.Properties.ReadOnly := True;
   edtDataACaption.Text := Config.SystemParameterCaption;
   edtDataACaption.Properties.ReadOnly := True;
+
+  //初始化B可选数据 yr 2016-12-09
+  for I := 0 to Config.Historys.Count - 1 do
+  begin
+    if THistory(Config.Historys[I]).ConnectWay = Config.ConnectWay then
+    begin
+      edtDataBCaption.Properties.Items.Add(THistory(Config.Historys[I]).Name);
+      edtDataB.Properties.Items.Add(THistory(Config.Historys[I]).Path);
+    end;
+  end;
+  //默认B的数据为空
+  edtDataBCaption.EditValue := '';
+  edtDataB.EditValue := '';
+end;
+
+procedure TMainForm.edtDataBCaptionPropertiesValidate(Sender: TObject;
+  var DisplayValue: Variant; var ErrorText: TCaption; var Error: Boolean);
+begin
+  inherited;
+  edtDataB.EditValue := Config.GetHistoryPath(DisplayValue);
+end;
+
+procedure TMainForm.edtDataBPropertiesValidate(Sender: TObject;
+  var DisplayValue: Variant; var ErrorText: TCaption; var Error: Boolean);
+begin
+  inherited;
+  edtDataBCaption.EditValue := Config.GetHistoryName(DisplayValue);
 end;
 
 initialization
