@@ -25,7 +25,7 @@ type
     procedure ClearColumn;
     procedure ClearData(const dgData : TcxGridTableView);
     procedure AddColumn(const Width: Integer; const Caption : String;const DataType : String);
-    function GetColumnLength(DataSize : Integer): Integer;
+    function GetColumnLength(aFieldType : TFieldType;aDataSize : Integer): Integer;
   public
     constructor Create(AOwner: TComponent);
     procedure Update(aTable : TTable; aFieldShowWay : String = '1');
@@ -78,15 +78,32 @@ begin
   end;
 end;
 
-function TShowResultFrame.GetColumnLength(DataSize : Integer): Integer;
+function TShowResultFrame.GetColumnLength(aFieldType : TFieldType;aDataSize : Integer): Integer;
 begin
-  if DataSize <= 30 then
+  if (aFieldType = ftSmallint) or (aFieldType = ftInteger) or
+    (aFieldType = ftFloat) or (aFieldType = ftAutoInc) then
+  begin
+    Result := 30;
+  end
+  else if aFieldType = ftDateTime then
+  begin
+    Result := 60;
+  end
+  else if aFieldType = ftMemo then
+  begin
+    Result := 255;
+  end
+  else if aDataSize <= 30 then
   begin
     Result := 75;
   end
+  else if aDataSize >= 250 then
+  begin
+    Result := 250;
+  end
   else
   begin
-    Result := 2 * DataSize;
+    Result := 2 * aDataSize;
   end;
     
 end;
@@ -116,11 +133,11 @@ begin
       begin
         if FFieldShowWay = '1'  then
         begin
-          AddColumn(GetColumnLength(FTable.TableFieldSizeArray[I]),FTable.TableFieldNameArray[I],FTable.TableFieldSQLTypeArray[I]);
+          AddColumn(GetColumnLength(FTable.TableFieldDataTypeArray[I],FTable.TableFieldSizeArray[I]),FTable.TableFieldNameArray[I],FTable.TableFieldSQLTypeArray[I]);
         end
         else
         begin
-          AddColumn(GetColumnLength(FTable.TableFieldSizeArray[I]),FTable.TableFieldCaptionArray[I],FTable.TableFieldSQLTypeArray[I]);
+          AddColumn(GetColumnLength(FTable.TableFieldDataTypeArray[I],FTable.TableFieldSizeArray[I]),FTable.TableFieldCaptionArray[I],FTable.TableFieldSQLTypeArray[I]);
         end;
       end;
     end;
