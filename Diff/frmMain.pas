@@ -17,7 +17,6 @@ type
     lblDataB: TLabel;
     edtDataA: TcxTextEdit;
     edtDataB: TcxTextEdit;
-    btn1: TcxButton;
     btn2: TcxButton;
     btnStart: TcxButton;
     gdl1: TcxGridLevel;
@@ -29,7 +28,7 @@ type
     colOp: TcxGridBandedColumn;
     pbDetail: TcxProgressBar;
     pbMain: TcxProgressBar;
-    procedure btn1Click(Sender: TObject);
+    edtDataACaption: TcxTextEdit;
     procedure btn2Click(Sender: TObject);
     procedure btnStartClick(Sender: TObject);
     procedure gdvResultCustomDrawCell(Sender: TcxCustomGridTableView;
@@ -37,6 +36,7 @@ type
       var ADone: Boolean);
     procedure colOpPropertiesButtonClick(Sender: TObject;
       AButtonIndex: Integer);
+    procedure FormShow(Sender: TObject);
   private
     { Private declarations }
   public
@@ -54,15 +54,7 @@ implementation
 {$R *.dfm}
 
 uses
-  FileCtrl, UnitSys, UnitContrast, UnitShowDiff;
-
-procedure TMainForm.btn1Click(Sender: TObject);
-var
-  DirectoryPath: string;
-begin
-  if SelectDirectory('请选择DataA路径', '', DirectoryPath) then
-    edtDataA.Text := DirectoryPath;
-end;
+  FileCtrl, UnitSys, UnitContrast, UnitShowDiff,unitConfig;
 
 procedure TMainForm.btn2Click(Sender: TObject);
 var
@@ -275,6 +267,16 @@ begin
     frmShowDiff.ShowData(ADataInfo);
     frmShowDiff.Show;
   end;
+end;
+
+procedure TMainForm.FormShow(Sender: TObject);
+begin
+  inherited;
+  //A路径从主程序带出 yr 2016-12-09  
+  edtDataA.Text := Config.SystemParameter;
+  edtDataA.Properties.ReadOnly := True;
+  edtDataACaption.Text := Config.SystemParameterCaption;
+  edtDataACaption.Properties.ReadOnly := True;
 end;
 
 initialization

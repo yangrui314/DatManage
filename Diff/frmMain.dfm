@@ -12,6 +12,7 @@ object MainForm: TMainForm
   Font.Style = []
   OldCreateOrder = False
   Position = poMainFormCenter
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
   object pnlDIC: TPanel
@@ -22,47 +23,38 @@ object MainForm: TMainForm
     Align = alTop
     TabOrder = 0
     object lblDataA: TLabel
-      Left = 64
+      Left = 32
       Top = 16
       Width = 42
       Height = 13
       Caption = 'DataA'#65306
     end
     object lblDataB: TLabel
-      Left = 64
+      Left = 32
       Top = 44
       Width = 42
       Height = 13
       Caption = 'DataB'#65306
     end
     object edtDataA: TcxTextEdit
-      Left = 160
+      Left = 170
       Top = 12
       TabOrder = 0
       Width = 649
     end
     object edtDataB: TcxTextEdit
-      Left = 160
+      Left = 170
       Top = 40
       TabOrder = 1
       Width = 649
     end
-    object btn1: TcxButton
-      Left = 808
-      Top = 13
-      Width = 24
-      Height = 20
-      Caption = '...'
-      TabOrder = 2
-      OnClick = btn1Click
-    end
     object btn2: TcxButton
-      Left = 808
+      Left = 818
       Top = 40
       Width = 24
       Height = 20
       Caption = '...'
-      TabOrder = 3
+      TabOrder = 2
       OnClick = btn2Click
     end
     object btnStart: TcxButton
@@ -71,14 +63,20 @@ object MainForm: TMainForm
       Width = 73
       Height = 25
       Caption = #24320#22987#23545#27604
-      TabOrder = 4
+      TabOrder = 3
       OnClick = btnStartClick
     end
     object pbMain: TcxProgressBar
       Left = 160
       Top = 86
-      TabOrder = 5
+      TabOrder = 4
       Width = 649
+    end
+    object edtDataACaption: TcxTextEdit
+      Left = 82
+      Top = 12
+      TabOrder = 5
+      Width = 79
     end
   end
   object gd1: TcxGrid
