@@ -9,7 +9,7 @@ uses
   cxGraphics, cxFilter, cxData, cxDataStorage, cxGridCustomView,
   cxGridCustomTableView, cxGridTableView, cxGridBandedTableView, cxClasses,
   cxGridLevel, cxGrid, cxProgressBar, cxButtonEdit,formParent,formParentMenu,
-  cxMaskEdit, cxDropDownEdit;
+  cxMaskEdit, cxDropDownEdit, cxLabel;
 
 type
   TMainForm = class(TfmParentMenu)
@@ -31,6 +31,7 @@ type
     edtDataACaption: TcxTextEdit;
     edtDataBCaption: TcxComboBox;
     edtDataB: TcxComboBox;
+    lblResult: TcxLabel;
     procedure btn2Click(Sender: TObject);
     procedure btnStartClick(Sender: TObject);
     procedure gdvResultCustomDrawCell(Sender: TcxCustomGridTableView;
@@ -74,6 +75,8 @@ end;
 
 procedure TMainForm.btnStartClick(Sender: TObject);
 begin
+  lblResult.Caption := '';
+  
   FFileDataA := Trim(edtDataA.Text);
   FFileDataB := Trim(edtDataB.Text);
   if (FFileDataA='') or (FFileDataB='') then
@@ -97,7 +100,8 @@ begin
     exit;
 
   ContrastDB;
-  ShowMessage('对比完成！');
+  lblResult.Caption := '对比完成！'+#13#10 + '标识号:' + IntToStr(Random(100));
+  lblResult.Style.TextColor := clBlue;  
 end;
 
 procedure TMainForm.ContrastDB;

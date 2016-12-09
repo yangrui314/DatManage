@@ -52,7 +52,7 @@ object MainForm: TMainForm
       OnClick = btn2Click
     end
     object btnStart: TcxButton
-      Left = 64
+      Left = 32
       Top = 76
       Width = 73
       Height = 25
@@ -61,7 +61,7 @@ object MainForm: TMainForm
       OnClick = btnStartClick
     end
     object pbMain: TcxProgressBar
-      Left = 160
+      Left = 130
       Top = 86
       TabOrder = 3
       Width = 649
@@ -87,6 +87,15 @@ object MainForm: TMainForm
       Properties.OnValidate = edtDataBPropertiesValidate
       TabOrder = 6
       Width = 600
+    end
+    object lblResult: TcxLabel
+      Left = 785
+      Top = 73
+      AutoSize = False
+      Properties.WordWrap = True
+      Transparent = True
+      Height = 32
+      Width = 96
     end
   end
   object gd1: TcxGrid
@@ -161,7 +170,7 @@ object MainForm: TMainForm
     end
   end
   object pbDetail: TcxProgressBar
-    Left = 160
+    Left = 130
     Top = 68
     TabOrder = 2
     Width = 649
