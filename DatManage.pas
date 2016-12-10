@@ -775,6 +775,7 @@ begin
   inherited;
   //每次仅执行一次 yr 2016-12-11
   WorkRun;
+  FResult.FocusedRow(Config.NowRow);
   IsTableRefreshTimer.Enabled := False;
 end;
 

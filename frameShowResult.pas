@@ -35,11 +35,12 @@ type
     procedure ExportExcel(aFilePath : String);
     procedure DeleteRow;
     procedure ClearGridField;
+    procedure FocusedRow(aRow : Integer);
   end;
 
 implementation
   uses
-    DatManage;
+    DatManage,unitConfig;
 
 {$R *.dfm}
 
@@ -244,6 +245,8 @@ begin
     Free;
   end;
 
+
+  Config.NowRow := aRow;
   if FIsTableRefresh then
   begin
     TfmMain(FParent).IsTableRefreshTimer.Enabled := True;
@@ -269,6 +272,11 @@ begin
   finally
     Free;
   end;
+end;
+
+procedure TShowResultFrame.FocusedRow(aRow : Integer);
+begin
+  dgField.Controller.FocusedRowIndex := aRow;
 end;
 
 end.
