@@ -15,6 +15,7 @@ uses
   cxLookAndFeels, RzStatus,formUpgradeProgress,unitDownLoadFile, cxLabel,
   unitSQLEnvironment,unitDbisamEnvironment,formParentMenu,unitLoadMenu;
 
+
 type
   TfmMain = class(TParentForm)
     dlgOpen: TOpenDialog;
@@ -70,6 +71,7 @@ type
     lblResult: TcxLabel;
     dMainItem1: TdxLayoutItem;
     dMainGroup3: TdxLayoutGroup;
+    IsTableRefreshTimer: TTimer;
     procedure FormShow(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure btnSelectParameterClick(Sender: TObject);
@@ -87,6 +89,7 @@ type
     procedure edtTablePropertiesChange(Sender: TObject);
     procedure btnDeleteClick(Sender: TObject);
     procedure PageSelectChange(Sender: TObject);
+    procedure IsTableRefreshTimerTimer(Sender: TObject);
   private
     FParameter: string;
     FTableName: string;
@@ -101,7 +104,6 @@ type
     procedure LoadTableName(aFilter : String = '');
     procedure AddTable(const aTableName: string);
     procedure LoadField(aSQL: string);
-    procedure WorkRun;
     function GetSQL: string;
     function SelectFile(aExt: string): string;
     function SaveFile: string;
@@ -119,6 +121,7 @@ type
     procedure ClearRubbish;
     procedure DelFiles(const aFilePath : String;const aExt : String);
   public
+    procedure WorkRun;
     class function CreateInstance(var AForm: TfmParentMenu; AFormClassName: String = ''): TfmParentMenu;overload;
   end;
 
@@ -229,7 +232,6 @@ begin
   end else
     Result := nil;
 end;
-
 
 
 procedure TfmMain.WorkRun;
@@ -375,7 +377,9 @@ begin
   edtKeyword.Properties.Items.Clear;
   edtKeyword.Properties.Items.Add('包含');
   edtKeyword.Properties.Items.Add('等于');
-  edtKeyword.Properties.Items.Add('不等于');  
+  edtKeyword.Properties.Items.Add('不等于');
+  
+  IsTableRefreshTimer.Enabled := False;;  
 end;
 
 
@@ -764,6 +768,14 @@ begin
   or (aFieldType = 'bigint') or (aFieldType = 'money')
   or (aFieldType = 'smallmoney') or (aFieldType = 'float')
   or (aFieldType = 'bit') or (aFieldType = 'datatime') ;
+end;
+
+procedure TfmMain.IsTableRefreshTimerTimer(Sender: TObject);
+begin
+  inherited;
+  //每次仅执行一次 yr 2016-12-11
+  WorkRun;
+  IsTableRefreshTimer.Enabled := False;
 end;
 
 end.

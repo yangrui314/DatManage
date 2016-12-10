@@ -34,6 +34,7 @@ type
     FUpdateValue : TStringList;
     FKeyValue : String;
     FKeyConditon : string;
+    FIsTableRefresh : Boolean;
     procedure InitData;
     function GetValue(aName : String;aType :TFieldType) : String; overload;
     function GetValue(aValue: Variant;aType :TFieldType) : String; overload;
@@ -44,6 +45,7 @@ type
       var Error: Boolean );
 
   public
+    property IsTableRefresh : Boolean read  FIsTableRefresh write FIsTableRefresh;
     constructor Create(AOwner: TComponent;aTable : TTable; aEditMode: TEditMode = emInsert;aRow : Integer = 0 );
     procedure DeleteRow;
   end;
@@ -58,6 +60,7 @@ implementation
 constructor TfmInsert.Create(AOwner: TComponent;aTable : TTable; aEditMode: TEditMode = emInsert;aRow : Integer= 0);
 begin
   inherited Create(AOwner);
+  FIsTableRefresh := False;
   FTable := aTable;
   FEditMode := aEditMode;
   FRow := aRow;
@@ -330,6 +333,7 @@ begin
   aSQL := aPrefixSQL + aPostfixSQL;
 
   FTable.Environment.SetSQL(aSQL);
+  FIsTableRefresh := True;
 //  ShowMessage('执行成功！SQL执行脚本:'+ aSQL);
   Close;
 end;

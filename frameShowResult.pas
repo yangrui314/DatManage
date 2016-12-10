@@ -21,26 +21,33 @@ type
     { Private declarations }
     FTable : TTable;
     FFieldShowWay : String;
+    FIsTableRefresh : Boolean;
+    FParent : TComponent;
     procedure LoadData;
     procedure ClearColumn;
     procedure ClearData(const dgData : TcxGridTableView);
     procedure AddColumn(const Width: Integer; const Caption : String;const DataType : String);
     function GetColumnLength(aFieldType : TFieldType;aDataSize : Integer): Integer;
   public
+    property IsTableRefresh : Boolean read  FIsTableRefresh write FIsTableRefresh;
     constructor Create(AOwner: TComponent);
     procedure Update(aTable : TTable; aFieldShowWay : String = '1');
     procedure ExportExcel(aFilePath : String);
     procedure DeleteRow;
-    procedure ClearGridField;    
+    procedure ClearGridField;
   end;
 
 implementation
+  uses
+    DatManage;
 
 {$R *.dfm}
 
 constructor TShowResultFrame.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
+  FParent := AOwner;
+  FIsTableRefresh := False;
 end;
 
 procedure TShowResultFrame.ClearGridField;
@@ -232,8 +239,14 @@ begin
   with fmInsert do
   try
     ShowModal;
+    FIsTableRefresh := fmInsert.IsTableRefresh;
   finally
     Free;
+  end;
+
+  if FIsTableRefresh then
+  begin
+    TfmMain(FParent).IsTableRefreshTimer.Enabled := True;
   end;
 end;
 

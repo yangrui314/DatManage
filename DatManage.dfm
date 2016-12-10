@@ -438,4 +438,11 @@ object fmMain: TfmMain
     Left = 353
     Top = 41
   end
+  object IsTableRefreshTimer: TTimer
+    Enabled = False
+    Interval = 100
+    OnTimer = IsTableRefreshTimerTimer
+    Left = 656
+    Top = 288
+  end
 end
