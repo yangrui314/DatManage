@@ -42,12 +42,19 @@ implementation
 
 
 constructor TEnvironment.Create(AOwner: TComponent;aParameter : String);
+var
+  aDirPath : String;
 begin
   FSQLSuccess := False;
   FLoadTable := False;
   FParameter := aParameter;
   FOwner := AOwner;
-  FLogPath := ExtractFilePath(ParamStr(0)) + 'log\' + FormatDateTime('yyyymmdd', Now) +  '.txt';
+  aDirPath := ExtractFilePath(ParamStr(0)) + 'log\';
+  if not DirectoryExists(aDirPath) then
+  begin
+    CreateDir(aDirPath);
+  end;
+  FLogPath := aDirPath + FormatDateTime('yyyymmdd', Now) +  '.txt';
   InitData;
 end;
 
