@@ -72,6 +72,8 @@ type
     dMainItem1: TdxLayoutItem;
     dMainGroup3: TdxLayoutGroup;
     IsTableRefreshTimer: TTimer;
+    btnDelParameter: TcxButton;
+    dMainItem3: TdxLayoutItem;
     procedure FormShow(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure btnSelectParameterClick(Sender: TObject);
@@ -117,6 +119,8 @@ type
     procedure UpdateConfigSystem;
     function GetFieldType : String;
     function IsQuotation(const aFieldType : String) : Boolean;
+    //设置系统环境 yr 2016-12-12
+    procedure UpdateEnvironment(aParameter : String);
   protected
     procedure ClearRubbish;
     procedure DelFiles(const aFilePath : String;const aExt : String);
@@ -554,25 +558,23 @@ begin
 end;
 
 procedure TfmMain.edtCreatePathPropertiesValidate(Sender: TObject; var DisplayValue: Variant; var ErrorText: TCaption; var Error: Boolean);
+var
+  aParameter : String;
 begin
   inherited;
   edtPathName.EditValue := Config.GetHistoryName(DisplayValue);
-  FParameter := DisplayValue;
-  UpdateConfigSystem;
-  Config.SystemEnvironment.SetEnvironment(FParameter);
-  LoadTableName;
-  FResult.ClearGridField;
+  aParameter := DisplayValue;
+  UpdateEnvironment(aParameter);
 end;
 
 procedure TfmMain.edtPathNamePropertiesValidate(Sender: TObject; var DisplayValue: Variant; var ErrorText: TCaption; var Error: Boolean);
+var
+  aParameter : String;
 begin
   inherited;
   edtParameter.EditValue := Config.GetHistoryPath(DisplayValue);
-  FParameter := edtParameter.EditValue;
-  UpdateConfigSystem; 
-  Config.SystemEnvironment.SetEnvironment(FParameter);
-  LoadTableName;
-  FResult.ClearGridField;  
+  aParameter := edtParameter.EditValue;
+  UpdateEnvironment(aParameter);
 end;
 
 procedure TfmMain.btnSaveParameterClick(Sender: TObject);
@@ -586,7 +588,16 @@ begin
   fmSavePath := TfmSavePath.Create(Self, aName, aPath);
   try
     if fmSavePath.ShowModal = mrOk then
-      FConfigFile.SaveHistory(Config.ConnectWay,fmSavePath.PathName, fmSavePath.Path);
+    begin
+      aName := fmSavePath.PathName;
+      aPath := fmSavePath.Path;
+      FConfigFile.SaveHistory(Config.ConnectWay,aName, aPath);
+      edtPathName.Properties.Items.Add(aName);
+      edtParameter.Properties.Items.Add(aPath);
+      edtPathName.EditValue := aName;
+      edtParameter.EditValue := aPath;
+      UpdateEnvironment(aPath);
+    end;
   finally
     fmSavePath.Free;
   end;
@@ -769,6 +780,17 @@ begin
   or (aFieldType = 'smallmoney') or (aFieldType = 'float')
   or (aFieldType = 'bit') or (aFieldType = 'datatime') ;
 end;
+
+procedure TfmMain.UpdateEnvironment(aParameter : String);
+begin
+  FParameter := aParameter;
+  UpdateConfigSystem;
+  Config.SystemEnvironment.SetEnvironment(FParameter);
+  LoadTableName;
+  FResult.ClearGridField;
+  lblResult.Caption := '';
+end;
+
 
 procedure TfmMain.IsTableRefreshTimerTimer(Sender: TObject);
 begin

@@ -44,7 +44,7 @@ object fmMain: TfmMain
       TabStop = False
       AutoContentSizes = [acsWidth, acsHeight]
       object btnSelectParameter: TcxButton
-        Left = 680
+        Left = 599
         Top = 28
         Width = 75
         Height = 25
@@ -70,7 +70,7 @@ object fmMain: TfmMain
         Width = 125
       end
       object btnSaveParameter: TcxButton
-        Left = 761
+        Left = 680
         Top = 28
         Width = 75
         Height = 25
@@ -87,7 +87,7 @@ object fmMain: TfmMain
         ActivePage = SheetTable
         ParentShowHint = False
         ShowHint = False
-        TabOrder = 4
+        TabOrder = 5
         OnChange = PageSelectChange
         ClientRectBottom = 98
         ClientRectRight = 663
@@ -207,7 +207,7 @@ object fmMain: TfmMain
         Width = 75
         Height = 98
         Caption = #26597#35810
-        TabOrder = 5
+        TabOrder = 6
         OnClick = btnResultClick
         LookAndFeel.Kind = lfOffice11
       end
@@ -219,6 +219,14 @@ object fmMain: TfmMain
         Properties.WordWrap = True
         Transparent = True
         Width = 69
+      end
+      object btnDelParameter: TcxButton
+        Left = 761
+        Top = 28
+        Width = 75
+        Height = 25
+        Caption = #21024#38500#29615#22659
+        TabOrder = 4
       end
       object dxLayoutGroup2: TdxLayoutGroup
         ShowCaption = False
@@ -253,6 +261,14 @@ object fmMain: TfmMain
             AlignHorz = ahRight
             ShowCaption = False
             Control = btnSaveParameter
+            ControlOptions.ShowBorder = False
+          end
+          object dMainItem3: TdxLayoutItem
+            AutoAligns = [aaVertical]
+            AlignHorz = ahRight
+            Caption = 'cxButton1'
+            ShowCaption = False
+            Control = btnDelParameter
             ControlOptions.ShowBorder = False
           end
         end
