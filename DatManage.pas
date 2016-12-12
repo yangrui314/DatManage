@@ -806,13 +806,22 @@ procedure TfmMain.btnDelParameterClick(Sender: TObject);
 var
   aName: string;
   aPath: string;
+  aNameIndex : Integer;
+  aPathIndex : Integer;
 begin
   inherited;
   aName := edtPathName.EditValue;
   aPath := edtParameter.EditValue;
+  aNameIndex := edtPathName.Properties.Items.IndexOf(aName);
+  aPathIndex := edtParameter.Properties.Items.IndexOf(aPath);
   FConfigFile.DelHistory(Config.ConnectWay,aName, aPath);
-  edtPathName.EditValue := '';
-  edtParameter.EditValue := '';
+  if THistory(Config.Historys[0]) = nil then Exit;
+
+  edtPathName.Properties.Items.Delete(aNameIndex);
+  edtParameter.Properties.Items.Delete(aPathIndex);
+
+  edtPathName.EditValue := THistory(Config.Historys[0]).Name;
+  edtParameter.EditValue := THistory(Config.Historys[0]).Path;
 end;
 
 end.
