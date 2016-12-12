@@ -95,8 +95,6 @@ type
     procedure btnDelParameterClick(Sender: TObject);
   private
     FResult: TShowResultFrame;
-    FPatchVersion : String;
-    FNowVersion : string;
 
     procedure LoadTableName(aFilter : String = '');
     procedure AddTable(const aTableName: string);
