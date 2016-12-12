@@ -20,6 +20,7 @@ type
     FShowName: Boolean;
     FShowPath: Boolean;
     FSelectShowWay: string;
+    FInitConnectWay : String;
     FConnectWay: string;
     FFileWay: string;
     FSystemParameterCaption: string;
@@ -51,6 +52,7 @@ type
     property ShowName: Boolean read FShowName write FShowName;
     property ShowPath: Boolean read FShowPath write FShowPath;
     property SelectShowWay: string read FSelectShowWay write FSelectShowWay;
+    property InitConnectWay: string read FInitConnectWay write FInitConnectWay;
     property ConnectWay: string read FConnectWay write FConnectWay;
     property FileWay: string read FFileWay write FFileWay;
     property Password: TStringList read FPassword write FPassword;

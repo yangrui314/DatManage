@@ -94,22 +94,15 @@ type
     procedure IsTableRefreshTimerTimer(Sender: TObject);
     procedure btnDelParameterClick(Sender: TObject);
   private
-    FParameter: string;
-    FTableName: string;
-//    FEnvironment: TEnvironment;
     FResult: TShowResultFrame;
-//    FTable: TTable;
     FPatchVersion : String;
     FNowVersion : string;
-    FInitConnectWay : String;
 
     procedure LoadTableName(aFilter : String = '');
     procedure AddTable(const aTableName: string);
     procedure LoadField(aSQL: string);
-    function GetSQL: string;
     function SelectFile(aExt: string): string;
     function SaveFile: string;
-    procedure CheckState;
     procedure ShowResult(bShow: Boolean); overload;
     procedure ShowResult; overload;
     procedure LoadConfig;
@@ -117,13 +110,9 @@ type
     procedure ChangeConnect;
     procedure ClearCondition;
     procedure UpdateConfigSystem;
-    function GetFieldType : String;
-    function IsQuotation(const aFieldType : String) : Boolean;
     //设置系统环境 yr 2016-12-12
     procedure UpdateEnvironment(aParameter : String);
   protected
-    procedure ClearRubbish;
-    procedure DelFiles(const aFilePath : String;const aExt : String);
   public
     procedure WorkRun;
     class function CreateInstance(var AForm: TfmParentMenu; AFormClassName: String = ''): TfmParentMenu;overload;
@@ -144,75 +133,6 @@ uses
 {$R *.dfm}
 
 
-function TfmMain.GetSQL: string;
-var
-  aFieldType : string;
-begin
-  if PageSelect.ActivePageIndex = 0 then
-  begin
-    if FTableName = '' then FTableName := edtTable.EditText;
-    if FTableName = '' then
-    begin
-      Result := '';
-      ShowMessage('请输入表格名称');
-      Exit;
-    end
-    else
-    begin
-      Result := Config.SystemEnvironment.GetBaseTableSQL(FTableName);
-      aFieldType := GetFieldType;
-      if  (edtFieldName.Text <> '') and  (edtKeyword.Text <> '') and (edtCondition.Text <> '') then
-      begin
-        if edtKeyword.Text = '包含' then
-        begin
-          if IsQuotation(aFieldType)   then
-          begin
-            ShowMessage('该字段不能使用''包含''查询。');
-            Result := '';
-          end
-          else
-          begin
-            Result := Result + ' where ' + Config.SystemTable.HandleSpecialStr(edtFieldName.Text) + ' like ' + '''%'+  edtCondition.Text + '%''';
-          end;
-        end
-        else if edtKeyword.Text = '等于' then
-        begin
-          if IsQuotation(aFieldType)   then
-          begin
-            Result := Result + ' where ' + Config.SystemTable.HandleSpecialStr(edtFieldName.Text)  + ' = ' +  edtCondition.Text ;
-          end
-          else
-          begin
-            Result := Result + ' where ' + Config.SystemTable.HandleSpecialStr(edtFieldName.Text)  + ' = ' + ''''+  edtCondition.Text + '''';
-          end;
-        end
-        else if edtKeyword.Text = '不等于' then
-        begin
-          if IsQuotation(aFieldType) then
-          begin
-            Result := Result + ' where ' + Config.SystemTable.HandleSpecialStr(edtFieldName.Text)  + ' <> ' +  edtCondition.Text ;
-          end
-          else
-          begin
-            Result := Result + ' where ' + Config.SystemTable.HandleSpecialStr(edtFieldName.Text)  + ' <> ' + ''''+  edtCondition.Text + '''';          
-          end;
-        end;
-      end;
-      if  (edtFieldName.Text = '') and  (edtKeyword.Text = '') and (edtCondition.Text <> '') then
-      begin
-        Result := Result + ' where ' + edtCondition.Text ;     
-      end;
-    end;
-  end
-  else
-  begin
-    FTableName := '';
-    if edtSQL.SelText = '' then
-      Result := edtSQL.Text
-    else
-      Result := edtSQL.SelText;
-  end;
-end;
 
 class function TfmMain.CreateInstance(var AForm: TfmParentMenu; AFormClassName: String = ''): TfmParentMenu;
 var
@@ -244,7 +164,8 @@ var
 begin
   lblResult.Caption := '查询中...';
   try
-    aSQL := GetSQL;
+    aSQL := ConfigHelper.GetSQL(edtTable.EditText,edtFieldName.Text,edtKeyword.Text,
+              edtCondition.Text,edtSQL.SelText,edtSQL.Text);
     if aSQL = '' then
       Exit;
     LoadField(aSQL);
@@ -260,49 +181,8 @@ var
   I : Integer;
   aHint : String;
 begin
-  Config.SystemTable := TTable.Create(Config.SystemEnvironment, aSQL, FTableName);
-  if  PageSelect.ActivePageIndex = 0  then
-  begin
-    aHint := '打开'+ FTableName;
-  end
-  else
-  begin
-    if (Pos('update',aSQL) <> 0 ) then
-    begin
-      aHint := '更新';
-      aHint := aHint + Trim(StrHelper.GetMidStr(aSQL,'update','set'))
-    end
-    else if (Pos('delete',aSQL) <> 0) then
-    begin
-      aHint := '删除';
-      if (Pos('where',aSQL) <> 0) then
-      begin
-        aHint := aHint + Trim(StrHelper.GetMidStr(aSQL,'from','where'))
-      end
-      else
-      begin
-        aHint := aHint + Trim(StrHelper.GetMidStr(aSQL,'from'))
-      end;      
-    end
-    else if (Pos('insert',aSQL) <> 0) then
-    begin
-      aHint := '插入';
-      aHint := aHint + Trim(StrHelper.GetMidStr(aSQL,'into','('));
-    end
-    else
-    begin
-      aHint := '查询';
-      if (Pos('where',aSQL) <> 0) then
-      begin
-        aHint := aHint + Trim(StrHelper.GetMidStr(aSQL,'from','where'))
-      end
-      else
-      begin
-        aHint := aHint + Trim(StrHelper.GetMidStr(aSQL,'from'))
-      end;       
-    end;
-  end;
-
+  ConfigHelper.RunSQL(aSQL,aHint);
+  
   if Config.SystemEnvironment.SQLSuccess then
   begin
     lblResult.Caption := aHint +#13#10 +  '执行成功' +#13#10 + '标识号:' + IntToStr(Random(100))  ;
@@ -330,7 +210,7 @@ var
   aTables : TStringList;
   I : Integer;
 begin
-  if (Config.SystemEnvironment = nil) or (FParameter = '') then Exit;
+  if (Config.SystemEnvironment = nil) or (Config.SystemParameter = '') then Exit;
   edtTable.Properties.Items.Clear;
   aTables := TStringList.Create;
   aTables := Config.SystemEnvironment.LoadTableName(aFilter);
@@ -357,14 +237,14 @@ procedure TfmMain.FormShow(Sender: TObject);
 begin
   inherited;
   LoadConfig;
-  edtParameter.Text := FParameter;
+  edtParameter.Text := Config.SystemParameter;
   if Config.ConnectWay = '1' then
   begin
-    Config.SystemEnvironment := TDbisamEnvironment.Create(Self, FParameter);
+    Config.SystemEnvironment := TDbisamEnvironment.Create(Self, Config.SystemParameter);
   end
   else
   begin
-    Config.SystemEnvironment := TSQLEnvironment.Create(Self, FParameter);  
+    Config.SystemEnvironment := TSQLEnvironment.Create(Self, Config.SystemParameter);  
   end;
   ChangeConnect;
   Config.SystemTable := TTable.Create(Config.SystemEnvironment, '', '');
@@ -372,7 +252,6 @@ begin
   FResult := TShowResultFrame.Create(Self);
   FResult.Parent := pnlResult;
   FResult.Align := alClient;
-  CheckState;
   Config.GetTable := False;
   dMain.Height := 248;
   InitMenu;
@@ -404,8 +283,8 @@ begin
 //  edtPathName.Properties.Items.Add('最后一条记录');
 //  edtCreatePath.Properties.Items.Add(Config.LastFolderPath);
 //  edtPathName.EditValue := '最后一条记录';
-  FParameter := Config.LastFolderPath;
-  FInitConnectWay := Config.ConnectWay;
+  Config.SystemParameter := Config.LastFolderPath;
+  Config.InitConnectWay := Config.ConnectWay;
 
   for I := 0 to Config.Historys.Count - 1 do
   begin
@@ -416,7 +295,7 @@ begin
     end;
   end;
 
-  edtPathName.EditValue := Config.GetHistoryName(FParameter);
+  edtPathName.EditValue := Config.GetHistoryName(Config.SystemParameter);
   UpdateConfigSystem;
   dMainItem4.Visible := Config.ShowName;
   dMainItem15.Visible := Config.ShowName;
@@ -454,61 +333,25 @@ begin
   end;
 end;
 
-procedure TfmMain.DelFiles(const aFilePath : String;const aExt : String);
-var
-  TmpFiles :TStringList;
-  TmpPath : String;
-  TempExt : String;
-  I : Integer;
-begin
-  TempExt := aExt;
-  if LeftStr(TempExt,1) <> '.' then
-    TempExt := '.' + TempExt;
-    
-  TmpFiles := FileHelper.GetFilesByPathAndExt(aFilePath,TempExt);
-  for I := 0 to TmpFiles.Count - 1 do
-  begin
-    TmpPath := ExtractFileDir(ParamStr(0)) + '\' + TmpFiles[I] + TempExt;
-    if FileExists(TmpPath) then
-      DeleteFile(TmpPath);
-  end;
-end;
-
-
-procedure TfmMain.ClearRubbish;
-var
-  aSoftPath : String;
-begin
-  //清除软件目录的不需要的文件 yr 2016-12-08
-  aSoftPath := ExtractFileDir(ParamStr(0)) + '\';
-  DelFiles(aSoftPath,'dat');
-  DelFiles(aSoftPath,'idx');
-  DelFiles(aSoftPath,'blb');
-end;
 
 procedure TfmMain.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
-  if (FInitConnectWay <> Config.ConnectWay) then
+  if (Config.InitConnectWay <> Config.ConnectWay) then
   begin
     Config.LastFolderPath := '';
   end
   else
   begin
-    Config.LastFolderPath := FParameter;
-  end; 
+    Config.LastFolderPath := Config.SystemParameter;
+  end;
   Config.SystemTable.Destroy;
-  Config.SystemEnvironment.Destroy;
-  ClearRubbish;
+  Config.SystemEnvironment.Destroy;  
+  ConfigHelper.ClearRubbish;
   inherited;
 end;
 
 
 
-
-procedure TfmMain.CheckState;
-begin
-
-end;
 
 procedure TfmMain.ShowResult;
 begin
@@ -544,14 +387,14 @@ end;
 
 procedure TfmMain.btnSelectParameterClick(Sender: TObject);
 begin
-  FParameter := Config.SystemEnvironment.CreateParameter;
+  Config.SystemParameter := Config.SystemEnvironment.CreateParameter;
   edtPathName.EditValue := '';
-  if FParameter = '' then
+  if Config.SystemParameter = '' then
   begin
     Exit;
   end;
-  edtParameter.Text := FParameter;
-  Config.SystemEnvironment.SetEnvironment(FParameter);
+  edtParameter.Text := Config.SystemParameter;
+  Config.SystemEnvironment.SetEnvironment(Config.SystemParameter);
   LoadTableName;
 end;
 
@@ -610,45 +453,13 @@ begin
 end;
 
 procedure TfmMain.btnImportExcelClick(Sender: TObject);
-var
-  fmImport: TfmImport;
 begin
-  if not Config.GetTable then
-  begin
-    ShowMessage('未选择对应表。无法导入Excel。');
-    Exit;
-  end;
-
-  fmImport := TfmImport.Create(self, Config.SystemTable);
-  try
-    fmImport.ShowModal;
-  finally
-    fmImport.Free;
-  end;
+  ConfigHelper.ImportTable;
 end;
 
 procedure TfmMain.btnExportClick(Sender: TObject);
-var
-  fmExport: TfmExport;
 begin
-  if not Config.GetTable  then
-  begin
-    ShowMessage('未选择对应表。无法导入Excel。');
-    Exit;
-  end;
-
-  if not Config.SystemTable.ContainData then
-  begin
-    ShowMessage('无数据，无法导出。');
-    Exit;  
-  end;
-
-  fmExport := TfmExport.Create(self, Config.SystemTable);
-  try
-    fmExport.ShowModal;
-  finally
-    fmExport.Free;
-  end;
+  ConfigHelper.ExportTable;
 end;
 
 procedure TfmMain.btnAddClick(Sender: TObject);
@@ -663,22 +474,8 @@ begin
 end;
 
 procedure TfmMain.btnPropertyClick(Sender: TObject);
-var
-  fmTableProperty: TfmTableProperty;
 begin
-  if not Config.GetTable then
-  begin
-    ShowMessage('未选择对应表。无属性。');
-    Exit;
-  end;
-
-  fmTableProperty := TfmTableProperty.Create(Self, Config.SystemTable);
-  with fmTableProperty do
-  try
-    ShowModal;
-  finally
-    Free;
-  end;
+  ConfigHelper.TableProperty;
 end;
 
 procedure TfmMain.edtTablePropertiesValidate(Sender: TObject;
@@ -686,7 +483,7 @@ procedure TfmMain.edtTablePropertiesValidate(Sender: TObject;
 begin
   inherited;
   ClearCondition;
-  FTableName := DisplayValue;
+  Config.SystemTableName := DisplayValue;
   UpdateConfigSystem;  
   WorkRun;
 end;
@@ -741,7 +538,6 @@ end;
 
 procedure TfmMain.UpdateConfigSystem;
 begin
-  Config.SystemParameter := FParameter;
   Config.SystemParameterCaption := edtPathName.Text;
   Config.SystemActivePageIndex := PageSelect.ActivePageIndex;
   Config.SystemTableName := edtTable.Text;    
@@ -754,36 +550,15 @@ begin
   UpdateConfigSystem;
 end;
 
-function TfmMain.GetFieldType : String;
-var
-  I : Integer;
-begin
-  Result := '';
-  for I := 0 to   Config.SystemTable.TableFieldCount - 1 do
-  begin
-    if (Config.SystemTable.TableFieldNameArray[I] = edtFieldName.Text) then
-    begin
-      Result := Config.SystemTable.TableFieldSQLTypeArray[I];
-      Exit;
-    end;
-  end;
-end;
 
-function TfmMain.IsQuotation(const aFieldType : String) : Boolean;
-begin
-  Result := False;
-  Result := ( aFieldType= 'integer') or (aFieldType = 'AutoInt')
-  or (aFieldType = 'tinyint') or (aFieldType = 'smallint')
-  or (aFieldType = 'bigint') or (aFieldType = 'money')
-  or (aFieldType = 'smallmoney') or (aFieldType = 'float')
-  or (aFieldType = 'bit') or (aFieldType = 'datatime') ;
-end;
+
+
 
 procedure TfmMain.UpdateEnvironment(aParameter : String);
 begin
-  FParameter := aParameter;
+  Config.SystemParameter := aParameter;
   UpdateConfigSystem;
-  Config.SystemEnvironment.SetEnvironment(FParameter);
+  Config.SystemEnvironment.SetEnvironment(Config.SystemParameter);
   LoadTableName;
   FResult.ClearGridField;
   lblResult.Caption := '';

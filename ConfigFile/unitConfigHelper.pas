@@ -33,6 +33,25 @@ type
     procedure ClearHistorys;
     procedure DelHistory(const aConnectWay : string;const aName : String;const aPath : String);overload;
     procedure DelHistory(const aHistory : THistory);overload;
+    //清除软件目录的不需要的文件 yr 2016-12-08
+    procedure ClearRubbish;
+    //删除指定目录指定后缀的文件 yr 2916-12-12
+    procedure DelFiles(const aFilePath : String;const aExt : String);
+    //是否是特殊类型 针对SQL查询 yr 2016-12-12
+    function IsQuotation(const aFieldType : String) : Boolean;
+    //获取SQL类型 yr 2016-12-12
+    function GetFieldType(aFieldName : String) : String;
+    //获取sql yr 2016-12-12
+    function GetSQL(aTable : String;aFieldName : String;aKeyword : String;
+      aCondition : String;aSelSQL : String; aSQL : String): string;
+    //执行SQL yr 2016-12-12
+    procedure RunSQL(aSQL : String;var aMsg : String);
+    //导入 yr 2016-12-12
+    procedure ImportTable;
+    //导出 yr 2016-12-12
+    procedure ExportTable;
+    //表格属性 yr 2016-12-12
+    procedure TableProperty;
   end;
 
 var
@@ -40,6 +59,9 @@ var
 
 
 implementation
+  uses
+    StrUtils,unitStrHelper,unitSystemHelper,cnDebug,unitFileHelper,unitTable,
+    formImport,formExport,formTableProperty;
 
 
 
@@ -186,6 +208,245 @@ begin
   SaveWayStr;
   FHandleFileWay.Free;
 end;
+
+procedure TConfigHelper.DelFiles(const aFilePath : String;const aExt : String);
+var
+  TmpFiles :TStringList;
+  TmpPath : String;
+  TempExt : String;
+  I : Integer;
+begin
+  TempExt := aExt;
+  if LeftStr(TempExt,1) <> '.' then
+    TempExt := '.' + TempExt;
+    
+  TmpFiles := FileHelper.GetFilesByPathAndExt(aFilePath,TempExt);
+  for I := 0 to TmpFiles.Count - 1 do
+  begin
+    TmpPath := ExtractFileDir(ParamStr(0)) + '\' + TmpFiles[I] + TempExt;
+    if FileExists(TmpPath) then
+      DeleteFile(TmpPath);
+  end;
+end;
+
+
+procedure TConfigHelper.ClearRubbish;
+var
+  aSoftPath : String;
+begin
+  aSoftPath := ExtractFileDir(ParamStr(0)) + '\';
+  DelFiles(aSoftPath,'dat');
+  DelFiles(aSoftPath,'idx');
+  DelFiles(aSoftPath,'blb');
+end;
+
+function TConfigHelper.IsQuotation(const aFieldType : String) : Boolean;
+begin
+  Result := False;
+  Result := ( aFieldType= 'integer') or (aFieldType = 'AutoInt')
+  or (aFieldType = 'tinyint') or (aFieldType = 'smallint')
+  or (aFieldType = 'bigint') or (aFieldType = 'money')
+  or (aFieldType = 'smallmoney') or (aFieldType = 'float')
+  or (aFieldType = 'bit') or (aFieldType = 'datatime') ;
+end;
+
+function TConfigHelper.GetFieldType(aFieldName : String) : String;
+var
+  I : Integer;
+begin
+  Result := '';
+  for I := 0 to  Config.SystemTable.TableFieldCount - 1 do
+  begin
+    if (Config.SystemTable.TableFieldNameArray[I] = aFieldName) then
+    begin
+      Result := Config.SystemTable.TableFieldSQLTypeArray[I];
+      Exit;
+    end;
+  end;
+end;
+
+function TConfigHelper.GetSQL(aTable : String;aFieldName : String;aKeyword : String;
+      aCondition : String;aSelSQL : String; aSQL : String): string;
+var
+  aFieldType : string;
+begin
+  if Config.SystemActivePageIndex = 0 then
+  begin
+    if Config.SystemTableName = '' then Config.SystemTableName := aTable;
+    if Config.SystemTableName = '' then
+    begin
+      Result := '';
+      ShowMessage('请输入表格名称');
+      Exit;
+    end
+    else
+    begin
+      Result := Config.SystemEnvironment.GetBaseTableSQL(Config.SystemTableName);
+      aFieldType := ConfigHelper.GetFieldType(aFieldName);
+      if  (aFieldName <> '') and  (aKeyword <> '') and (aCondition <> '') then
+      begin
+        if aKeyword = '包含' then
+        begin
+          if ConfigHelper.IsQuotation(aFieldType)   then
+          begin
+            ShowMessage('该字段不能使用''包含''查询。');
+            Result := '';
+          end
+          else
+          begin
+            Result := Result + ' where ' + Config.SystemTable.HandleSpecialStr(aFieldName) + ' like ' + '''%'+  aCondition + '%''';
+          end;
+        end
+        else if aKeyword = '等于' then
+        begin
+          if ConfigHelper.IsQuotation(aFieldType)   then
+          begin
+            Result := Result + ' where ' + Config.SystemTable.HandleSpecialStr(aFieldName)  + ' = ' +  aCondition ;
+          end
+          else
+          begin
+            Result := Result + ' where ' + Config.SystemTable.HandleSpecialStr(aFieldName)  + ' = ' + ''''+  aCondition + '''';
+          end;
+        end
+        else if aKeyword = '不等于' then
+        begin
+          if ConfigHelper.IsQuotation(aFieldType) then
+          begin
+            Result := Result + ' where ' + Config.SystemTable.HandleSpecialStr(aFieldName)  + ' <> ' +  aCondition ;
+          end
+          else
+          begin
+            Result := Result + ' where ' + Config.SystemTable.HandleSpecialStr(aFieldName)  + ' <> ' + ''''+  aCondition + '''';          
+          end;
+        end;
+      end;
+      if  (aFieldName = '') and  (aKeyword = '') and (aCondition <> '') then
+      begin
+        Result := Result + ' where ' + aCondition;     
+      end;
+    end;
+  end
+  else
+  begin
+    Config.SystemTableName := '';
+    if aSelSQL = '' then
+      Result := aSQL
+    else
+      Result := aSelSQL;
+  end;
+end;
+
+
+procedure TConfigHelper.RunSQL(aSQL : String;var aMsg : String);
+var
+  aHint : String;
+begin
+  Config.SystemTable := TTable.Create(Config.SystemEnvironment, aSQL, Config.SystemTableName);
+  if  Config.SystemActivePageIndex = 0  then
+  begin
+    aHint := '打开'+ Config.SystemTableName;
+  end
+  else
+  begin
+    if (Pos('update',aSQL) <> 0 ) then
+    begin
+      aHint := '更新';
+      aHint := aHint + Trim(StrHelper.GetMidStr(aSQL,'update','set'))
+    end
+    else if (Pos('delete',aSQL) <> 0) then
+    begin
+      aHint := '删除';
+      if (Pos('where',aSQL) <> 0) then
+      begin
+        aHint := aHint + Trim(StrHelper.GetMidStr(aSQL,'from','where'))
+      end
+      else
+      begin
+        aHint := aHint + Trim(StrHelper.GetMidStr(aSQL,'from'))
+      end;      
+    end
+    else if (Pos('insert',aSQL) <> 0) then
+    begin
+      aHint := '插入';
+      aHint := aHint + Trim(StrHelper.GetMidStr(aSQL,'into','('));
+    end
+    else
+    begin
+      aHint := '查询';
+      if (Pos('where',aSQL) <> 0) then
+      begin
+        aHint := aHint + Trim(StrHelper.GetMidStr(aSQL,'from','where'))
+      end
+      else
+      begin
+        aHint := aHint + Trim(StrHelper.GetMidStr(aSQL,'from'))
+      end;       
+    end;
+  end;
+  aMsg := aHint;
+end;
+
+procedure TConfigHelper.ImportTable;
+var
+  fmImport: TfmImport;
+begin
+  if not Config.GetTable then
+  begin
+    ShowMessage('未选择对应表。无法导入Excel。');
+    Exit;
+  end;
+
+  fmImport := TfmImport.Create(nil, Config.SystemTable);
+  try
+    fmImport.ShowModal;
+  finally
+    fmImport.Free;
+  end;
+end;
+
+procedure TConfigHelper.ExportTable;
+var
+  fmExport: TfmExport;
+begin
+  if not Config.GetTable  then
+  begin
+    ShowMessage('未选择对应表。无法导入Excel。');
+    Exit;
+  end;
+
+  if not Config.SystemTable.ContainData then
+  begin
+    ShowMessage('无数据，无法导出。');
+    Exit;  
+  end;
+
+  fmExport := TfmExport.Create(nil, Config.SystemTable);
+  try
+    fmExport.ShowModal;
+  finally
+    fmExport.Free;
+  end;
+end;
+
+procedure TConfigHelper.TableProperty;
+var
+  fmTableProperty: TfmTableProperty;
+begin
+  if not Config.GetTable then
+  begin
+    ShowMessage('未选择对应表。无属性。');
+    Exit;
+  end;
+
+  fmTableProperty := TfmTableProperty.Create(nil, Config.SystemTable);
+  with fmTableProperty do
+  try
+    ShowModal;
+  finally
+    Free;
+  end;
+end;
+
 
 initialization
   ConfigHelper := TConfigHelper.Create;
