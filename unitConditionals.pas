@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls,
-  Dialogs,StdCtrls,StrUtils,unitConfig;
+  Dialogs,StdCtrls,StrUtils,unitConfig,unitConfigHelper;
 
 type
   TConditionals = class
@@ -210,7 +210,7 @@ var
 begin
   Result := '';
   aSelectStr := StrHelper.GetMidStr(aOutputDir,'client','bin');
-  Result := Config.GetHistoryName(aSelectStr,True);
+  Result := ConfigHelper.GetHistoryName(aSelectStr,True);
 end;
 
 procedure TConditionals.FileReplace(FileName  : String;SrcWord : String; ModifyWord : String;CaseFlag : Boolean);

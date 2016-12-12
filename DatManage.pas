@@ -113,7 +113,6 @@ type
   protected
   public
     procedure WorkRun;
-    class function CreateInstance(var AForm: TfmParentMenu; AFormClassName: String = ''): TfmParentMenu;overload;
   end;
 
 var
@@ -132,28 +131,6 @@ uses
 
 
 
-class function TfmMain.CreateInstance(var AForm: TfmParentMenu; AFormClassName: String = ''): TfmParentMenu;
-var
-  FormClassName: String;
-  FormClass: TPersistentClass;
-begin
-  FormClass := nil;
-
-  if Trim(AFormClassName) <> '' then
-    FormClass := GetClass(AFormClassName);
-
-  if (FormClass = nil) and (FormClassName <> ClassName) then
-    FormClass := FindClass(ClassName);
-
-  if FormClass = nil then
-    FormClass := TfmParentMenu;
-
-  if FormClass <> nil then begin
-    Application.CreateForm(TComponentClass(FormClass), AForm);
-    Result := TfmParentMenu(AForm);
-  end else
-    Result := nil;
-end;
 
 
 procedure TfmMain.WorkRun;
@@ -293,7 +270,7 @@ begin
     end;
   end;
 
-  edtPathName.EditValue := Config.GetHistoryName(Config.SystemParameter);
+  edtPathName.EditValue := ConfigHelper.GetHistoryName(Config.SystemParameter);
   UpdateConfigSystem;
   dMainItem4.Visible := Config.ShowName;
   dMainItem15.Visible := Config.ShowName;
@@ -401,7 +378,7 @@ var
   aParameter : String;
 begin
   inherited;
-  edtPathName.EditValue := Config.GetHistoryName(DisplayValue);
+  edtPathName.EditValue := ConfigHelper.GetHistoryName(DisplayValue);
   aParameter := DisplayValue;
   UpdateEnvironment(aParameter);
 end;
@@ -411,7 +388,7 @@ var
   aParameter : String;
 begin
   inherited;
-  edtParameter.EditValue := Config.GetHistoryPath(DisplayValue);
+  edtParameter.EditValue := ConfigHelper.GetHistoryPath(DisplayValue);
   aParameter := edtParameter.EditValue;
   UpdateEnvironment(aParameter);
 end;

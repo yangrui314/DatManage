@@ -63,7 +63,7 @@ implementation
 {$R *.dfm}
 
 uses
-  FileCtrl, UnitSys, UnitContrast, UnitShowDiff,unitConfig,unitHistory;
+  FileCtrl, UnitSys, UnitContrast, UnitShowDiff,unitConfigHelper,unitConfig,unitHistory;
 
 procedure TMainForm.btn2Click(Sender: TObject);
 var
@@ -310,14 +310,14 @@ procedure TMainForm.edtDataBCaptionPropertiesValidate(Sender: TObject;
   var DisplayValue: Variant; var ErrorText: TCaption; var Error: Boolean);
 begin
   inherited;
-  edtDataB.EditValue := Config.GetHistoryPath(DisplayValue);
+  edtDataB.EditValue := ConfigHelper.GetHistoryPath(DisplayValue);
 end;
 
 procedure TMainForm.edtDataBPropertiesValidate(Sender: TObject;
   var DisplayValue: Variant; var ErrorText: TCaption; var Error: Boolean);
 begin
   inherited;
-  edtDataBCaption.EditValue := Config.GetHistoryName(DisplayValue);
+  edtDataBCaption.EditValue := ConfigHelper.GetHistoryName(DisplayValue);
 end;
 
 initialization

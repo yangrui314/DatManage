@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls,
-  Dialogs,StdCtrls,StrUtils,unitConfig,Menus,formParentMenu;
+  Dialogs,StdCtrls,StrUtils,unitConfigHelper,unitConfig,Menus,formParentMenu;
 
 type
   TLoadMenu = class
@@ -31,8 +31,8 @@ procedure TLoadMenu.LoadMenu(aMenuName : String;aHint : String = '';aShow : Bool
 var
   aMenu : TfmParentMenu;
 begin
-  Config.CreateInstance(aMenu,aMenuName);
-  aMenu.Caption := Config.GetMenuCaption(aMenuName);
+  ConfigHelper.CreateInstance(aMenu,aMenuName);
+  aMenu.Caption := ConfigHelper.GetMenuCaption(aMenuName);
   try
     if not aMenu.CheckIsShow then
     begin
