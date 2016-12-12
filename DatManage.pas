@@ -584,6 +584,10 @@ begin
   inherited;
   aName := edtPathName.EditValue;
   aPath := edtParameter.EditValue;
+  if Application.MessageBox(Pchar('您确定删除'+'"'+aName+'"'+'环境吗？'), '警告', MB_ICONQUESTION or MB_OKCANCEL) <> IDOK then
+  begin
+    Exit;
+  end;
   aNameIndex := edtPathName.Properties.Items.IndexOf(aName);
   aPathIndex := edtParameter.Properties.Items.IndexOf(aPath);
   ConfigHelper.DelHistory(Config.ConnectWay,aName, aPath);
