@@ -22,8 +22,9 @@ type
     FHistoryFilePath : String;
     FMenuFilePath : String;
     FPasswordFilePath : String;    
-
     FExt : String;
+
+    FIsNotFileCreateFile : Boolean;
     procedure ForceCreateConfigPath;
     procedure InitData; virtual;
     procedure CreateSystemConfig;virtual;abstract;
@@ -60,12 +61,15 @@ begin
   FMenuName := 'Menu';
   FPasswordName := 'Password';  
   FExt := '';
+  FIsNotFileCreateFile := True;
   InitData;
 end;
 
 
 procedure TFileWay.NotFileCreateFile;
 begin
+  if not FIsNotFileCreateFile then Exit;
+
   if FExt <> '' then
   begin
     if  not FileExists(FSystemConfigFilePath) then

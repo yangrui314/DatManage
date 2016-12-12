@@ -68,10 +68,14 @@ end;
 procedure TXmlWay.InitData;
 begin
   FExt := '.xml';
+  FIsNotFileCreateFile := False;
   inherited;
-  FSystemConfigXML.LoadFromFile(FSystemConfigFilePath);
-  FHistoryXML.LoadFromFile(FHistoryFilePath);
-  FMenuXML.LoadFromFile(FMenuFilePath);
+  if FIsNotFileCreateFile then
+  begin
+    FSystemConfigXML.LoadFromFile(FSystemConfigFilePath);
+    FHistoryXML.LoadFromFile(FHistoryFilePath);
+    FMenuXML.LoadFromFile(FMenuFilePath);  
+  end;
 end;
 
 
