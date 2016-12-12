@@ -10,7 +10,7 @@ uses
   cxGridCustomTableView, cxGridTableView, cxGridDBTableView, cxGrid, cxCheckBox,
   ExtCtrls, cxMemo, cxVGrid, cxDBVGrid, cxInplaceContainer, unitEnvironment,
   frameShowResult, dxLayoutControl, cxDropDownEdit, cxRadioGroup, unitTable,
-  Menus, cxLookAndFeelPainters, cxButtons, cxGridExportLink, unitConfigFile,
+  Menus, cxLookAndFeelPainters, cxButtons, cxGridExportLink, unitConfigHelper,
    formParent, cxPC, ShellAPI, WinSkinData, dxBar,
   cxLookAndFeels, RzStatus,formUpgradeProgress,unitDownLoadFile, cxLabel,
   unitSQLEnvironment,unitDbisamEnvironment,formParentMenu,unitLoadMenu;
@@ -99,7 +99,6 @@ type
 //    FEnvironment: TEnvironment;
     FResult: TShowResultFrame;
 //    FTable: TTable;
-    FConfigFile: TConfigFile;
     FPatchVersion : String;
     FNowVersion : string;
     FInitConnectWay : String;
@@ -402,7 +401,6 @@ var
   I: Integer;
   aTest: string;
 begin
-  FConfigFile := TConfigFile.Create;
 //  edtPathName.Properties.Items.Add('最后一条记录');
 //  edtCreatePath.Properties.Items.Add(Config.LastFolderPath);
 //  edtPathName.EditValue := '最后一条记录';
@@ -500,7 +498,6 @@ begin
   end; 
   Config.SystemTable.Destroy;
   Config.SystemEnvironment.Destroy;
-  FConfigFile.Destroy;
   ClearRubbish;
   inherited;
 end;
@@ -592,7 +589,7 @@ begin
     begin
       aName := fmSavePath.PathName;
       aPath := fmSavePath.Path;
-      FConfigFile.SaveHistory(Config.ConnectWay,aName, aPath);
+      ConfigHelper.SaveHistory(Config.ConnectWay,aName, aPath);
       edtPathName.Properties.Items.Add(aName);
       edtParameter.Properties.Items.Add(aPath);
       edtPathName.EditValue := aName;
@@ -814,7 +811,7 @@ begin
   aPath := edtParameter.EditValue;
   aNameIndex := edtPathName.Properties.Items.IndexOf(aName);
   aPathIndex := edtParameter.Properties.Items.IndexOf(aPath);
-  FConfigFile.DelHistory(Config.ConnectWay,aName, aPath);
+  ConfigHelper.DelHistory(Config.ConnectWay,aName, aPath);
   if THistory(Config.Historys[0]) = nil then Exit;
 
   edtPathName.Properties.Items.Delete(aNameIndex);

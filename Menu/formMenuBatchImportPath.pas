@@ -71,7 +71,7 @@ var
 implementation
 
   uses
-    FileCtrl,StrUtils,unitConditionals,unitConfigFile,unitHistory,unitConfig;
+    FileCtrl,StrUtils,unitConditionals,unitConfigHelper,unitHistory,unitConfig;
 
 {$R *.dfm}
 
@@ -258,7 +258,7 @@ procedure TfmMenuBatchImportPath.SaveData;
 var
   I,J: Integer;
   TotalCount : Integer;
-  aConfigFile : TConfigFile;
+  aConfigHelper : TConfigHelper;
   aHistory : THistory;
   aTotalCount : Integer;
 begin

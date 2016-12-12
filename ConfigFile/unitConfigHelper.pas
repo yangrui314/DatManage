@@ -1,4 +1,10 @@
-unit unitConfigFile;
+{***************************************************
+功能模块:数据操作类,不存储数据.
+开发人员：yr
+开发日期：2016-12-12 星期一
+修改日期：2016-12-12 星期一
+***************************************************}
+unit unitConfigHelper;
 
 interface
 
@@ -8,7 +14,7 @@ uses
 
 
 type
-  TConfigFile = class
+  TConfigHelper = class
   private
     FHandleFileWay : THandleFileWay;
     FWayStrPath : string;
@@ -29,12 +35,15 @@ type
     procedure DelHistory(const aHistory : THistory);overload;
   end;
 
+var
+  ConfigHelper: TConfigHelper;
+
 
 implementation
 
 
 
-constructor TConfigFile.Create;
+constructor TConfigHelper.Create;
 begin
   FWayStrPath := ExtractFilePath(ParamStr(0)) + 'FileWay.ini';
   Config.FileWay := GetWayStr;
@@ -43,7 +52,7 @@ begin
 end;
 
 
-procedure TConfigFile.LoadFile;
+procedure TConfigHelper.LoadFile;
 var
   aHistorys : TList;
 begin
@@ -58,7 +67,7 @@ begin
   FHandleFileWay.LoadMenu;
 end;
 
-procedure TConfigFile.SaveFile;
+procedure TConfigHelper.SaveFile;
 begin
   FHandleFileWay := THandleFileWay.Create(Config.FileWay);
   FHandleFileWay.SaveSystemConfig('LastFolderPath',Config.LastFolderPath);
@@ -69,7 +78,7 @@ begin
   FHandleFileWay.SaveMenu;
 end;
 
-procedure TConfigFile.SaveSystemConfigToBoolean(aName : String;aValue : Boolean);
+procedure TConfigHelper.SaveSystemConfigToBoolean(aName : String;aValue : Boolean);
 begin
   if aValue then
   begin
@@ -81,12 +90,12 @@ begin
   end;
 end;
 
-procedure TConfigFile.SaveHistory(const aHistory : THistory);
+procedure TConfigHelper.SaveHistory(const aHistory : THistory);
 begin
   FHandleFileWay.SaveHistory(aHistory);
 end;
 
-procedure TConfigFile.SaveHistory(const aConnectWay : string;const aName : String;const aPath : String);
+procedure TConfigHelper.SaveHistory(const aConnectWay : string;const aName : String;const aPath : String);
 var
   aHistory : THistory;
 begin
@@ -101,7 +110,7 @@ begin
   end;
 end;
 
-procedure TConfigFile.SaveHistory;
+procedure TConfigHelper.SaveHistory;
 var
   I : Integer;
 begin
@@ -112,12 +121,12 @@ begin
   end;
 end;
 
-procedure TConfigFile.DelHistory(const aHistory : THistory);
+procedure TConfigHelper.DelHistory(const aHistory : THistory);
 begin
   FHandleFileWay.DelHistory(aHistory);    
 end;
 
-procedure TConfigFile.DelHistory(const aConnectWay : string;const aName : String;const aPath : String);
+procedure TConfigHelper.DelHistory(const aConnectWay : string;const aName : String;const aPath : String);
 var
   aHistory : THistory;
 begin
@@ -133,12 +142,12 @@ begin
 end;
 
 
-procedure TConfigFile.ClearHistorys;
+procedure TConfigHelper.ClearHistorys;
 begin
   FHandleFileWay.ClearHistorys;
 end;
 
-function TConfigFile.GetWayStr : String;
+function TConfigHelper.GetWayStr : String;
 var
   aFile : Textfile;
 begin
@@ -156,7 +165,7 @@ begin
   end;
 end;
 
-procedure TConfigFile.SaveWayStr;
+procedure TConfigHelper.SaveWayStr;
 var
   aFile: TextFile;
   aStr : String;
@@ -171,11 +180,17 @@ begin
 end;
 
 
-destructor TConfigFile.Destroy; 
+destructor TConfigHelper.Destroy; 
 begin
   SaveFile;
   SaveWayStr;
   FHandleFileWay.Free;
 end;
+
+initialization
+  ConfigHelper := TConfigHelper.Create;
+
+finalization
+  ConfigHelper.Destroy;
 
 end.

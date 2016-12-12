@@ -15,7 +15,7 @@ uses
   frameProgressBar in 'frameProgressBar.pas' {frmProgressBar: TFrame},
   formProgress in 'formProgress.pas' {fmProgress},
   unitConfig in 'unitConfig.pas',
-  unitConfigFile in 'ConfigFile\unitConfigFile.pas',
+  unitConfigHelper in 'ConfigFile\unitConfigHelper.pas',
   formParent in 'Parent\formParent.pas' {ParentForm},
   unitHistory in 'unitHistory.pas',
   formSavePath in 'formSavePath.pas' {fmSavePath},
