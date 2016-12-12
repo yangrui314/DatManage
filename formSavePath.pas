@@ -5,7 +5,8 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, formParent, dxLayoutControl, cxControls, cxContainer, cxEdit,
-  cxTextEdit, Menus, cxLookAndFeelPainters, StdCtrls, cxButtons;
+  cxTextEdit, Menus, cxLookAndFeelPainters, StdCtrls, cxButtons,
+  cxLookAndFeels;
 
 type
   TfmSavePath = class(TParentForm)

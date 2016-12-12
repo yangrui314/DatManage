@@ -35,6 +35,8 @@ type
     procedure SaveMenu; override;
     procedure ClearHistorys;override;
     function LoadPasswords : TStringList;override;
+    //É¾³ý±£´æµÄÅäÖÃ yr 2016-12-12
+    procedure DelHistory(const aHistory : THistory);override;    
   end;
 
 
@@ -380,6 +382,38 @@ begin
   end;
 
 end;
+
+procedure TDatWay.DelHistory(const aHistory : THistory);
+var
+  FHistory : TDBISAMTable;
+begin
+  inherited;
+  FHistory := TDBISAMTable.Create(nil);
+  try
+    with FHistory do
+    begin
+      DatabaseName:= FConfigPath;
+      TableName:= FHistoryName;
+
+      if Active then Close;
+      Open;
+    
+      if not Locate('Name',aHistory.Name,[]) then
+      begin
+        Exit;
+      end;
+      Edit;
+      Locate('Name',aHistory.Name,[]);
+      Delete;
+      Append;
+      Close;
+    end; 
+  finally
+    FHistory.Free;
+  end;
+
+end;
+
 
 function TDatWay.ReadFile(aFilePath : String;var aTable : TTable) : Boolean;
 var

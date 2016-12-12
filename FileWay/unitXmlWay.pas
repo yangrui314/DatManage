@@ -36,6 +36,7 @@ type
     procedure SaveMenu; override;
     procedure ClearHistorys;override;
     function LoadPasswords : TStringList;override;
+    procedure DelHistory(const aHistory : THistory);override;
   end;
 
 
@@ -276,6 +277,11 @@ begin
   finally
     FHistoryXML.SaveToFile(FHistoryFilePath);
   end;
+end;
+
+procedure TXmlWay.DelHistory(const aHistory : THistory);
+begin
+  inherited;
 end;
 
 function TXmlWay.ReadFile(aFilePath : String;var aTable : TTable) : Boolean;

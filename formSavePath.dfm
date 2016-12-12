@@ -6,7 +6,7 @@ inherited fmSavePath: TfmSavePath
   Caption = 'fmSavePath'
   PixelsPerInch = 96
   TextHeight = 13
-  object dxLayoutControl1: TdxLayoutControl
+  object dxLayoutControl1: TdxLayoutControl [0]
     Left = 0
     Top = 0
     Width = 508

@@ -227,6 +227,7 @@ object fmMain: TfmMain
         Height = 25
         Caption = #21024#38500#29615#22659
         TabOrder = 4
+        OnClick = btnDelParameterClick
       end
       object dxLayoutGroup2: TdxLayoutGroup
         ShowCaption = False

@@ -25,7 +25,8 @@ type
     procedure LoadMenu;
     procedure SaveMenu;
     procedure ClearHistorys;
-    function LoadPasswords : TStringList;   
+    function LoadPasswords : TStringList;
+    procedure DelHistory(const aHistory : THistory);
   end;
 
 
@@ -68,6 +69,12 @@ procedure THandleFileWay.SaveHistory(const aHistory : THistory);
 begin
   FFileWay.SaveHistory(aHistory);
 end;
+
+procedure THandleFileWay.DelHistory(const aHistory : THistory);
+begin
+  FFileWay.DelHistory(aHistory);
+end;
+
 
 procedure THandleFileWay.ClearHistorys;
 begin

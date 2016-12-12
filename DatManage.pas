@@ -92,6 +92,7 @@ type
     procedure btnDeleteClick(Sender: TObject);
     procedure PageSelectChange(Sender: TObject);
     procedure IsTableRefreshTimerTimer(Sender: TObject);
+    procedure btnDelParameterClick(Sender: TObject);
   private
     FParameter: string;
     FTableName: string;
@@ -799,6 +800,19 @@ begin
   WorkRun;
   FResult.FocusedRow(Config.NowRow);
   IsTableRefreshTimer.Enabled := False;
+end;
+
+procedure TfmMain.btnDelParameterClick(Sender: TObject);
+var
+  aName: string;
+  aPath: string;
+begin
+  inherited;
+  aName := edtPathName.EditValue;
+  aPath := edtParameter.EditValue;
+  FConfigFile.DelHistory(Config.ConnectWay,aName, aPath);
+  edtPathName.EditValue := '';
+  edtParameter.EditValue := '';
 end;
 
 end.

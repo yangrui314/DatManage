@@ -25,6 +25,8 @@ type
     procedure SaveHistory(const aHistory : THistory);overload;
     procedure SaveHistory;overload;
     procedure ClearHistorys;
+    procedure DelHistory(const aConnectWay : string;const aName : String;const aPath : String);overload;
+    procedure DelHistory(const aHistory : THistory);overload;
   end;
 
 
@@ -99,7 +101,6 @@ begin
   end;
 end;
 
-
 procedure TConfigFile.SaveHistory;
 var
   I : Integer;
@@ -110,6 +111,27 @@ begin
     SaveHistory(THistory(Config.Historys[I]));
   end;
 end;
+
+procedure TConfigFile.DelHistory(const aHistory : THistory);
+begin
+  FHandleFileWay.DelHistory(aHistory);    
+end;
+
+procedure TConfigFile.DelHistory(const aConnectWay : string;const aName : String;const aPath : String);
+var
+  aHistory : THistory;
+begin
+  aHistory := THistory.Create;
+  try
+    aHistory.ConnectWay :=aConnectWay;
+    aHistory.Name :=  aName;
+    aHistory.Path := aPath;
+    DelHistory(aHistory);
+  finally
+    aHistory.Free;
+  end;    
+end;
+
 
 procedure TConfigFile.ClearHistorys;
 begin

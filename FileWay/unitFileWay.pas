@@ -44,6 +44,8 @@ type
     procedure SaveMenu; virtual;abstract;
     procedure ClearHistorys;virtual;abstract;
     function LoadPasswords : TStringList; virtual;abstract;
+    //É¾³ı±£´æµÄÅäÖÃ yr 2016-12-12
+    procedure DelHistory(const aHistory : THistory);virtual;abstract;
   end;
 
 implementation
