@@ -51,7 +51,6 @@ uses
   formMenuBatchImportPath in 'Menu\formMenuBatchImportPath.pas' {fmMenuBatchImportPath},
   unitParentHelper in 'Helper\unitParentHelper.pas',
   unitStrHelper in 'Helper\unitStrHelper.pas',
-  unitSystemHelper in 'Helper\unitSystemHelper.pas',
   formMenuBatchReName in 'Menu\formMenuBatchReName.pas' {fmMenuBatchReName},
   unitFileHelper in 'Helper\unitFileHelper.pas';
 

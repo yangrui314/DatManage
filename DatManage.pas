@@ -126,7 +126,7 @@ implementation
 uses
   FileCtrl, StrUtils, unitStandardHandle, formTableProperty, unitExcelHandle,
   formExport, formAbout, formImport, unitConfig, unitHistory, formSavePath,
-  formSet,formSelectAll,frmMain,unitStrHelper,unitSystemHelper,cnDebug,
+  formSet,formSelectAll,frmMain,unitStrHelper,cnDebug,
   unitFileHelper;
 
 
