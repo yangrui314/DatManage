@@ -10,17 +10,17 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls,
-  Dialogs,StdCtrls,unitConfig,unitXmlWay,unitHandleFileWay,unitHistory;
+  Dialogs,StdCtrls,unitConfig,unitXmlWay,unitDatWay,unitFileWay,unitHistory;
 
 
 type
   TConfigHelper = class
   private
-    FHandleFileWay : THandleFileWay;
     FWayStrPath : string;
     procedure LoadFile;
     procedure SaveFile;
   protected
+    FFileWay : TFileWay;  
     procedure SaveSystemConfigToBoolean(aName : String;aValue : Boolean);
     function GetWayStr : String;
     procedure SaveWayStr;    
@@ -69,7 +69,14 @@ constructor TConfigHelper.Create;
 begin
   FWayStrPath := ExtractFilePath(ParamStr(0)) + 'FileWay.ini';
   Config.FileWay := GetWayStr;
-  FHandleFileWay := THandleFileWay.Create(Config.FileWay);
+  if Config.FileWay = 'xml' then
+  begin
+    FFileWay := TXmlWay.Create;
+  end
+  else
+  begin
+    FFileWay := TDatWay.Create;
+  end;
   LoadFile;
 end;
 
@@ -78,43 +85,50 @@ procedure TConfigHelper.LoadFile;
 var
   aHistorys : TList;
 begin
-  Config.LastFolderPath := FHandleFileWay.GetSystemConfig('LastFolderPath');
-  Config.ShowName := (FHandleFileWay.GetSystemConfig('ShowName') = '1');
-  Config.ShowPath := (FHandleFileWay.GetSystemConfig('ShowPath') = '1');
-  Config.SelectShowWay := FHandleFileWay.GetSystemConfig('SelectShowWay');
-  Config.ConnectWay := FHandleFileWay.GetSystemConfig('ConnectWay');
-  aHistorys := FHandleFileWay.LoadHistorys;
+  Config.LastFolderPath := FFileWay.GetSystemConfig('LastFolderPath');
+  Config.ShowName := (FFileWay.GetSystemConfig('ShowName') = '1');
+  Config.ShowPath := (FFileWay.GetSystemConfig('ShowPath') = '1');
+  Config.SelectShowWay := FFileWay.GetSystemConfig('SelectShowWay');
+  Config.ConnectWay := FFileWay.GetSystemConfig('ConnectWay');
+  aHistorys := FFileWay.LoadHistorys;
   Config.Historys := aHistorys;
-  Config.Password := FHandleFileWay.LoadPasswords;
-  FHandleFileWay.LoadMenu;
+  Config.Password := FFileWay.LoadPasswords;
+  FFileWay.LoadMenu;
 end;
 
 procedure TConfigHelper.SaveFile;
 begin
-  FHandleFileWay := THandleFileWay.Create(Config.FileWay);
-  FHandleFileWay.SaveSystemConfig('LastFolderPath',Config.LastFolderPath);
+  if Config.FileWay = 'xml' then
+  begin
+    FFileWay := TXmlWay.Create;
+  end
+  else
+  begin
+    FFileWay := TDatWay.Create;
+  end;
+  FFileWay.SaveSystemConfig('LastFolderPath',Config.LastFolderPath);
   SaveSystemConfigToBoolean('ShowName',Config.ShowName);
   SaveSystemConfigToBoolean('ShowPath',Config.ShowPath);
-  FHandleFileWay.SaveSystemConfig('SelectShowWay',Config.SelectShowWay);
-  FHandleFileWay.SaveSystemConfig('ConnectWay',Config.ConnectWay);
-  FHandleFileWay.SaveMenu;
+  FFileWay.SaveSystemConfig('SelectShowWay',Config.SelectShowWay);
+  FFileWay.SaveSystemConfig('ConnectWay',Config.ConnectWay);
+  FFileWay.SaveMenu;
 end;
 
 procedure TConfigHelper.SaveSystemConfigToBoolean(aName : String;aValue : Boolean);
 begin
   if aValue then
   begin
-    FHandleFileWay.SaveSystemConfig(aName,'1');
+    FFileWay.SaveSystemConfig(aName,'1');
   end
   else
   begin
-    FHandleFileWay.SaveSystemConfig(aName,'0');
+    FFileWay.SaveSystemConfig(aName,'0');
   end;
 end;
 
 procedure TConfigHelper.SaveHistory(const aHistory : THistory);
 begin
-  FHandleFileWay.SaveHistory(aHistory);
+  FFileWay.SaveHistory(aHistory);
 end;
 
 procedure TConfigHelper.SaveHistory(const aConnectWay : string;const aName : String;const aPath : String);
@@ -136,7 +150,7 @@ procedure TConfigHelper.SaveHistory;
 var
   I : Integer;
 begin
-  FHandleFileWay.ClearHistorys;
+  FFileWay.ClearHistorys;
   for I := 0 to Config.Historys.Count - 1 do
   begin
     SaveHistory(THistory(Config.Historys[I]));
@@ -145,7 +159,7 @@ end;
 
 procedure TConfigHelper.DelHistory(const aHistory : THistory);
 begin
-  FHandleFileWay.DelHistory(aHistory);    
+  FFileWay.DelHistory(aHistory);    
 end;
 
 procedure TConfigHelper.DelHistory(const aConnectWay : string;const aName : String;const aPath : String);
@@ -166,7 +180,7 @@ end;
 
 procedure TConfigHelper.ClearHistorys;
 begin
-  FHandleFileWay.ClearHistorys;
+  FFileWay.ClearHistorys;
 end;
 
 function TConfigHelper.GetWayStr : String;
@@ -206,7 +220,7 @@ destructor TConfigHelper.Destroy;
 begin
   SaveFile;
   SaveWayStr;
-  FHandleFileWay.Free;
+  FFileWay.Free;
 end;
 
 procedure TConfigHelper.DelFiles(const aFilePath : String;const aExt : String);

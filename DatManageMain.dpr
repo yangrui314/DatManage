@@ -44,7 +44,6 @@ uses
   unitFileWay in 'FileWay\unitFileWay.pas',
   unitXmlWay in 'FileWay\unitXmlWay.pas',
   unitDatWay in 'FileWay\unitDatWay.pas',
-  unitHandleFileWay in 'unitHandleFileWay.pas',
   unitExcelHandle in 'FileWay\unitExcelHandle.pas',
   unitStandardHandle in 'FileWay\unitStandardHandle.pas',
   formBatchSQL in 'Menu\formBatchSQL.pas' {fmBatchSQL},
