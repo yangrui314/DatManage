@@ -45,13 +45,13 @@ uses
   unitXmlWay in 'FileWay\unitXmlWay.pas',
   unitDatWay in 'FileWay\unitDatWay.pas',
   unitExcelHandle in 'FileWay\unitExcelHandle.pas',
-  unitStandardHandle in 'FileWay\unitStandardHandle.pas',
   formBatchSQL in 'Menu\formBatchSQL.pas' {fmBatchSQL},
   formMenuBatchImportPath in 'Menu\formMenuBatchImportPath.pas' {fmMenuBatchImportPath},
   unitParentHelper in 'Helper\unitParentHelper.pas',
   unitStrHelper in 'Helper\unitStrHelper.pas',
   formMenuBatchReName in 'Menu\formMenuBatchReName.pas' {fmMenuBatchReName},
-  unitFileHelper in 'Helper\unitFileHelper.pas';
+  unitFileHelper in 'Helper\unitFileHelper.pas',
+  unitSQLHelper in 'Helper\unitSQLHelper.pas';
 
 {$R *.res}
 

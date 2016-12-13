@@ -75,7 +75,7 @@ type
 implementation
 
 uses
-  formInsert,unitStandardHandle,unitXmlWay,unitConfigHelper;
+  formInsert,unitXmlWay,unitConfigHelper,unitSQLHelper;
 
 constructor TTable.Create(aEnvironment : TEnvironment ; aSQL : String;aTableName : String;aShowError : Boolean = True);
 begin
@@ -119,10 +119,10 @@ begin
     FFieldSizeArray[I] :=  FEnvironment.MainData.Fields.Fields[I].Size;
     FFieldDataTypeArray[I] := FEnvironment.MainData.Fields.Fields[I].DataType;
     FFieldIsNullArray[I] := FEnvironment.MainData.Fields.Fields[I].IsNull;
-    FFieldSQLTypeArray[I] := ConfigHelper.GetSQLType(FFieldDataTypeArray[I]);
+    FFieldSQLTypeArray[I] := SQLHelper.GetSQLType(FFieldDataTypeArray[I]);
     FFieldVisibleArray[I] := True;
     FFieldCaptionArray[I] := '';
-    FFieldMainArray[I] := ConfigHelper.IsKeyNameAccordValue(FFieldNameArray[I],FKeyField);
+    FFieldMainArray[I] := SQLHelper.IsKeyNameAccordValue(FFieldNameArray[I],FKeyField);
   end;
   ConfigHelper.ReadTableEnvironment(Self);
 end;

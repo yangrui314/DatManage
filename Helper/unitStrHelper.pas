@@ -12,7 +12,8 @@ type
   protected
   public
     constructor Create;
-    function GetMidStr(aStr : String;aBeginStr : String; aEndStr : String = '') : String;    
+    function GetMidStr(aStr : String;aBeginStr : String; aEndStr : String = '') : String;
+    function StringListToString(const aInput : TStringList) : String;    
   end;
 
 var
@@ -47,11 +48,25 @@ begin
 
 end;
 
+function TStrHelper.StringListToString(const aInput : TStringList) : String;
+var
+  I : Integer;
+  aStr : String;
+begin
+   for I:=0 to  aInput.Count - 1 do
+  begin
+    aStr := aInput[I];
+    if Result = '' then
+    begin
+      Result := aStr ;      
+    end
+    else
+    begin
+      Result := Result +  #13#10 + aStr ;
+    end;
+  end;
+end;
 
-initialization
-  StrHelper := TStrHelper.Create;
 
-finalization
-  StrHelper.Free;;
 
 end.

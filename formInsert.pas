@@ -55,7 +55,7 @@ var
 
 implementation
   uses
-    unitConfigHelper;
+    unitConfigHelper,unitSQLHelper;
 
 {$R *.dfm}
 
@@ -190,7 +190,7 @@ begin
       if  aFieldName = 'RecordID_1' then
         row.Properties.Options.Editing := False;
 
-      if ((FEditMode = emUpdate) or (FEditMode = emDelete)) and  ConfigHelper.IsKeyNameAccordValue(aFieldName,FTable.TableKeyField) then
+      if ((FEditMode = emUpdate) or (FEditMode = emDelete)) and  SQLHelper.IsKeyNameAccordValue(aFieldName,FTable.TableKeyField) then
       begin
         row.Properties.EditProperties.ReadOnly := True;
         FKeyValue :=  GetValue(row.Properties.Value,FTable.TableFieldDataTypeArray[I]);
@@ -198,22 +198,22 @@ begin
         begin
           if aFieldName = 'RecordID_1' then
           begin
-            FKeyConditon :=  ConfigHelper.HandleSpecialStr('RecordID') + ' = ' + FKeyValue;
+            FKeyConditon :=  SQLHelper.HandleSpecialStr('RecordID') + ' = ' + FKeyValue;
           end
           else
           begin
-            FKeyConditon :=  ConfigHelper.HandleSpecialStr(aFieldName) + ' = ' + FKeyValue;          
+            FKeyConditon :=  SQLHelper.HandleSpecialStr(aFieldName) + ' = ' + FKeyValue;          
           end;
         end
         else
         begin
           if aFieldName = 'RecordID_1' then
           begin
-            FKeyConditon := FKeyConditon + ' and ' + ConfigHelper.HandleSpecialStr('RecordID') + ' = ' + FKeyValue;
+            FKeyConditon := FKeyConditon + ' and ' + SQLHelper.HandleSpecialStr('RecordID') + ' = ' + FKeyValue;
           end
           else
           begin
-            FKeyConditon := FKeyConditon + ' and ' + ConfigHelper.HandleSpecialStr(aFieldName) + ' = ' + FKeyValue;
+            FKeyConditon := FKeyConditon + ' and ' + SQLHelper.HandleSpecialStr(aFieldName) + ' = ' + FKeyValue;
           end;
 
         end;
@@ -240,8 +240,8 @@ begin
   for I:=0 to  FTable.TableFieldCount - 1 do
   begin
     if aField = ''
-    then aField := aField + ConfigHelper.HandleSpecialStr(FTable.TableFieldNameArray[I])
-    else aField := aField + ',' + ConfigHelper.HandleSpecialStr(FTable.TableFieldNameArray[I]);
+    then aField := aField + SQLHelper.HandleSpecialStr(FTable.TableFieldNameArray[I])
+    else aField := aField + ',' + SQLHelper.HandleSpecialStr(FTable.TableFieldNameArray[I]);
     aType := FTable.TableFieldDataTypeArray[I];
     if aValue = ''
     then aValue := aValue + GetValue(FTable.TableFieldNameArray[I],aType)
@@ -270,7 +270,7 @@ var
   I : Integer;  
 begin
     aName := gridInsert.FocusedRow.Name;
-    aOrder := ConfigHelper.GetOrderID(aName,FTable);
+    aOrder := SQLHelper.GetOrderID(aName,FTable);
     aField := FTable.TableFieldDataTypeArray[aOrder];
     if aField = ftBoolean then
     begin
@@ -323,8 +323,8 @@ begin
   for I:=0 to  FUpdateField.Count - 1 do
   begin
     if aTotal =''
-    then aTotal := aTotal + ConfigHelper.HandleSpecialStr(FUpdateField[I]) + ' = '  + FUpdateValue[I]
-    else aTotal := aTotal + ',' + ConfigHelper.HandleSpecialStr(FUpdateField[I])  + ' = '  + FUpdateValue[I];;
+    then aTotal := aTotal + SQLHelper.HandleSpecialStr(FUpdateField[I]) + ' = '  + FUpdateValue[I]
+    else aTotal := aTotal + ',' + SQLHelper.HandleSpecialStr(FUpdateField[I])  + ' = '  + FUpdateValue[I];;
   end;
 
   aPrefixSQL := 'update ' + FTable.TableName + ' set ' + aTotal;

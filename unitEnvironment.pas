@@ -36,7 +36,7 @@ type
 
 implementation
   uses
-    unitStandardHandle,unitConfig;
+    unitConfig;
 
 
 constructor TEnvironment.Create(AOwner: TComponent;aParameter : String);

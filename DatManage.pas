@@ -121,10 +121,10 @@ var
 implementation
 
 uses
-  FileCtrl, StrUtils, unitStandardHandle, formTableProperty, unitExcelHandle,
+  FileCtrl, StrUtils, formTableProperty, unitExcelHandle,
   formExport, formAbout, formImport, unitConfig, unitHistory, formSavePath,
   formSet,formSelectAll,frmMain,unitStrHelper,cnDebug,
-  unitFileHelper;
+  unitFileHelper,unitSQLHelper;
 
 
 {$R *.dfm}
@@ -139,7 +139,7 @@ var
 begin
   lblResult.Caption := '≤È—Ø÷–...';
   try
-    aSQL := ConfigHelper.GetSQL(edtTable.EditText,edtFieldName.Text,edtKeyword.Text,
+    aSQL := SQLHelper.GetSQL(edtTable.EditText,edtFieldName.Text,edtKeyword.Text,
               edtCondition.Text,edtSQL.SelText,edtSQL.Text);
     if aSQL = '' then
       Exit;
@@ -156,7 +156,7 @@ var
   I : Integer;
   aHint : String;
 begin
-  ConfigHelper.RunSQL(aSQL,aHint);
+  SQLHelper.RunSQL(aSQL,aHint);
   
   if Config.SystemEnvironment.SQLSuccess then
   begin

@@ -81,7 +81,7 @@ var
 
 implementation
   uses
-    unitConfigHelper;
+    unitConfigHelper,unitSQLHelper;
 
 {$R *.dfm}
 
@@ -269,7 +269,7 @@ begin
     if FNotTableName
     then FTable.TableName := edtExportTableName.EditValue;
 
-    ConfigHelper.SaveSQLFile(FFilePath,cbContainDelSQL.Checked,edtDelKeyField.EditText,FTable);
+    SQLHelper.SaveSQLFile(FFilePath,cbContainDelSQL.Checked,edtDelKeyField.EditText,FTable);
 
     if FNotTableName
     then FTable.TableName := '';

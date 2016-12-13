@@ -7,7 +7,7 @@ uses
   Dialogs, cxPC, cxControls, cxGraphics, dxLayoutControl, cxContainer,
   cxEdit, cxTextEdit, cxMaskEdit, cxDropDownEdit, cxImageComboBox, Menus,
   cxLookAndFeelPainters, StdCtrls, cxButtons, ExtCtrls,unitTable,frameTableProperty,frameShowResult,
-  cxButtonEdit,unitExcelHandle, cxCheckBox,unitStandardHandle,formParent;
+  cxButtonEdit,unitExcelHandle, cxCheckBox,formParent;
 
 type
   TfmImport = class(TParentForm)
@@ -105,7 +105,6 @@ end;
 
 procedure TfmImport.LoadFile(aFilePath : String);
 var
-  aFile : TStandardHandle;
   I : Integer;
 begin
 //  aFile := TStandardHandle.Create;

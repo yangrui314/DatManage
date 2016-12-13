@@ -4,8 +4,8 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls,
-  Dialogs,StdCtrls,StrUtils,Forms,RzStatus,unitStandardHandle,formUpgradeProgress,
-  unitDownLoadFile;
+  Dialogs,StdCtrls,StrUtils,Forms,RzStatus,formUpgradeProgress,
+  unitDownLoadFile,unitFileHelper;
 
 type
   TUpgrade = class
@@ -70,9 +70,9 @@ function TUpgrade.ReadWebVersion : String;
 var
   aConfigPath : string;
   I : Integer;
-  aReadConfig : TStandardHandle;
   aStr : string;
   aNum : Integer;
+  aStrList : TStringList;
 begin
   Result := '';
   FPatchVersion := '';
@@ -81,29 +81,25 @@ begin
   begin
     Exit;
   end;
-  aReadConfig := TStandardHandle.Create;
-  try
-    aReadConfig.ReadFile(aConfigPath);
-    for I := 0 to aReadConfig.FileData.Count - 1 do
-    begin
-      aStr := aReadConfig.FileData[I];
-      if Pos('Patch',aStr) <> 0 then
-      begin
-        aNum := Pos('=',aStr);
-        aStr := Copy(aStr,aNum + 1,Length(aStr)-aNum);
-        FPatchVersion := aStr;
-      end;
 
-      if Pos('Version',aStr) <> 0 then
-      begin
-        aNum := Pos('=',aStr);
-        aStr := Copy(aStr,aNum + 1,Length(aStr)-aNum);
-        Result := aStr;
-        Exit;
-      end;
+  aStrList := FileHelper.ReadFile(aConfigPath);
+  for I := 0 to aStrList.Count - 1 do
+  begin
+    aStr := aStrList[I];
+    if Pos('Patch',aStr) <> 0 then
+    begin
+      aNum := Pos('=',aStr);
+      aStr := Copy(aStr,aNum + 1,Length(aStr)-aNum);
+      FPatchVersion := aStr;
     end;
-  finally
-    aReadConfig.Free;
+
+    if Pos('Version',aStr) <> 0 then
+    begin
+      aNum := Pos('=',aStr);
+      aStr := Copy(aStr,aNum + 1,Length(aStr)-aNum);
+      Result := aStr;
+      Exit;
+    end;
   end;
 end;
 
@@ -228,17 +224,11 @@ end;
 procedure TUpgrade.CreateBat;
 var
   aBatText : string;
-  aFile : TStandardHandle;
   aPath : String;  
 begin
   aPath := ExtractFilePath(ParamStr(0))  + 'Patch\';
   aBatText := aPath + 'xdelta.exe' + ' patch ' +  aPath+'Patch.xdt '+ aPath + 'Old.exe '+ aPath +'New.exe';
-  aFile := TStandardHandle.Create;
-  try
-    aFile.SaveFile(ExtractFilePath(ParamStr(0))  + 'Patch\' + 'Patch.bat',aBatText);
-  finally
-    aFile.Free;
-  end;
+  FileHelper.SaveFile(ExtractFilePath(ParamStr(0))  + 'Patch\' + 'Patch.bat',aBatText);
 end;
 
 procedure TUpgrade.UpdateSelf(AOwner : TComponent);

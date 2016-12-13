@@ -3,7 +3,7 @@ unit unitExcelHandle;
 interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls,
-  Dialogs,StdCtrls,ComObj,unitTable,unitStandardHandle,formProgress,unitFileWay;
+  Dialogs,StdCtrls,ComObj,unitTable,formProgress,unitFileWay;
 
 type
   TExcelHandle = class(TFileWay)
@@ -32,7 +32,7 @@ type
 
 implementation
   uses
-    unitConfigHelper;
+    unitConfigHelper,unitFileHelper,unitSQLHelper;
 
 
 constructor TExcelHandle.Create(aTable : TTable);
@@ -106,7 +106,7 @@ begin
   end;
 
 
-  ConfigHelper.SaveFile(FSQLSavePath,DelSQL + #13#10 + s);
+  FileHelper.SaveFile(FSQLSavePath,DelSQL + #13#10 + s);
   ShowMessage('导出'+FSQLSavePath+'成功');
 end;
 
@@ -148,7 +148,7 @@ function TExcelHandle.LoadInsertSQL(RowNum : Integer): String;
     for I := 1 to FSheetColumn do
     begin
       aFieldName :=  Sheet.Cells[1,I].Value;
-      TableFieldOrderID := ConfigHelper.GetOrderID(aFieldName,FTable);
+      TableFieldOrderID := SQLHelper.GetOrderID(aFieldName,FTable);
       if TableFieldOrderID = -1 then Continue;
 
 //      if (not FTable.TableFieldIsNullArray[TableFieldOrderID]) and (Sheet.Cells[RowNum ,I].Value = '') then
@@ -164,16 +164,16 @@ function TExcelHandle.LoadInsertSQL(RowNum : Integer): String;
 
 
       if aFirst
-      then aValue := ConfigHelper.ConvertString(Sheet.Cells[RowNum ,I].Value,FTable.TableFieldDataTypeArray[TableFieldOrderID])
-      else aValue := aValue + ',' + ConfigHelper.ConvertString(Sheet.Cells[RowNum ,I].Value,FTable.TableFieldDataTypeArray[TableFieldOrderID]);
+      then aValue := SQLHelper.ConvertString(Sheet.Cells[RowNum ,I].Value,FTable.TableFieldDataTypeArray[TableFieldOrderID])
+      else aValue := aValue + ',' + SQLHelper.ConvertString(Sheet.Cells[RowNum ,I].Value,FTable.TableFieldDataTypeArray[TableFieldOrderID]);
 
 
       //获取删除语句的条件。
       if aFieldName = FDelKeyField then
       begin
         if FDelCondition = ''
-        then FDelCondition := ConfigHelper.ConvertString(Sheet.Cells[RowNum ,I].Value,FTable.TableFieldDataTypeArray[TableFieldOrderID])
-        else FDelCondition := FDelCondition + ',' + ConfigHelper.ConvertString(Sheet.Cells[RowNum ,I].Value,FTable.TableFieldDataTypeArray[TableFieldOrderID]); 
+        then FDelCondition := SQLHelper.ConvertString(Sheet.Cells[RowNum ,I].Value,FTable.TableFieldDataTypeArray[TableFieldOrderID])
+        else FDelCondition := FDelCondition + ',' + SQLHelper.ConvertString(Sheet.Cells[RowNum ,I].Value,FTable.TableFieldDataTypeArray[TableFieldOrderID]); 
       end;
       aFirst := False;
     end;

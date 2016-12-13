@@ -49,10 +49,8 @@ var
   fmSelectAll: TfmSelectAll;
 
 implementation
-
-
   uses
-    StrUtils,formProgress,unitConfigHelper;
+    StrUtils,formProgress,unitConfigHelper,unitSQLHelper;
 
 {$R *.dfm}
 
@@ -171,7 +169,7 @@ begin
   for I := 0 to   FTableField.TableFieldCount - 1 do
   begin
     if (FTableField.TableFieldDataTypeArray[I]  <> ftString) then Continue;
-    aStr := ConfigHelper.HandleSpecialStr(FTableField.TableFieldNameArray[I]);
+    aStr := SQLHelper.HandleSpecialStr(FTableField.TableFieldNameArray[I]);
     aSQL := 'select * from ' + aTableName + ' where ' + aStr + ' like '
            + ''''  + '%'  + edtSelectStr.EditValue + '%' + '''' ;
     FTableSQL := TTable.Create(FEnvironment, aSQL, aTableName,False);
