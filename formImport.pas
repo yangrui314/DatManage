@@ -143,7 +143,7 @@ begin
   try
     aExcel.ReadFile(FFilePath,FContainDelSQL,FDelKeyField,aSQLSavePath);
   finally
-    aExcel.Destroy;
+    aExcel.Free;
   end;
 end;
 

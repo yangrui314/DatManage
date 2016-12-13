@@ -143,11 +143,6 @@ begin
   SetLength(FMenuList, 0);
 end;
 
-initialization
-  Config := TConfig.Create;
-
-finalization
-  Config.Destroy;
 
 end.
 

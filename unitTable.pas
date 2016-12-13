@@ -61,8 +61,6 @@ type
     function ConvertString(aValue : Variant;aType :TFieldType):String;
     function GetOrderID(aName : String) : Integer;
     function IsKeyNameAccordValue(aFieldName : String) : Boolean;
-    function HandleSpecialStr(aFieldName : String) : String;
-    function IsSpecial(aStr : String) : Boolean;
     procedure  SaveFile(aFilePath : String;aData : String);
 
     property TableField: TStringList read FField write FField;
@@ -87,7 +85,7 @@ type
 implementation
 
 uses
-  formInsert,unitStandardHandle,unitXmlWay;
+  formInsert,unitStandardHandle,unitXmlWay,unitConfigHelper;
 
 constructor TTable.Create(aEnvironment : TEnvironment ; aSQL : String;aTableName : String;aShowError : Boolean = True);
 begin
@@ -407,24 +405,6 @@ begin
 end;
 
 
-function TTable.HandleSpecialStr(aFieldName : String) : String;
-begin
-  if IsSpecial(aFieldName) then
-  begin
-    Result :=   '['+ aFieldName + ']';
-  end
-  else
-  begin
-    Result :=  aFieldName;
-  end;
-end;
-
-
-function TTable.IsSpecial(aStr : String) : Boolean;
-begin
-  Result := False;
-  Result := (aStr = 'Sign');
-end;
 
 procedure TTable.SaveTableEnvironment;
 var
@@ -487,8 +467,8 @@ begin
     if  (aDataType = ftAutoInc ) then Continue;
 
     if aFieldName = ''
-    then aFieldName := aFieldName + HandleSpecialStr(TableFieldNameArray[I])
-    else aFieldName := aFieldName + ',' + HandleSpecialStr(TableFieldNameArray[I]);
+    then aFieldName := aFieldName + ConfigHelper.HandleSpecialStr(TableFieldNameArray[I])
+    else aFieldName := aFieldName + ',' + ConfigHelper.HandleSpecialStr(TableFieldNameArray[I]);
 
   end;
 

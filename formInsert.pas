@@ -54,6 +54,8 @@ var
   fmInsert: TfmInsert;
 
 implementation
+  uses
+    unitConfigHelper;
 
 {$R *.dfm}
 
@@ -196,22 +198,22 @@ begin
         begin
           if aFieldName = 'RecordID_1' then
           begin
-            FKeyConditon :=  FTable.HandleSpecialStr('RecordID') + ' = ' + FKeyValue;
+            FKeyConditon :=  ConfigHelper.HandleSpecialStr('RecordID') + ' = ' + FKeyValue;
           end
           else
           begin
-            FKeyConditon :=  FTable.HandleSpecialStr(aFieldName) + ' = ' + FKeyValue;          
+            FKeyConditon :=  ConfigHelper.HandleSpecialStr(aFieldName) + ' = ' + FKeyValue;          
           end;
         end
         else
         begin
           if aFieldName = 'RecordID_1' then
           begin
-            FKeyConditon := FKeyConditon + ' and ' + FTable.HandleSpecialStr('RecordID') + ' = ' + FKeyValue;
+            FKeyConditon := FKeyConditon + ' and ' + ConfigHelper.HandleSpecialStr('RecordID') + ' = ' + FKeyValue;
           end
           else
           begin
-            FKeyConditon := FKeyConditon + ' and ' + FTable.HandleSpecialStr(aFieldName) + ' = ' + FKeyValue;
+            FKeyConditon := FKeyConditon + ' and ' + ConfigHelper.HandleSpecialStr(aFieldName) + ' = ' + FKeyValue;
           end;
 
         end;
@@ -238,8 +240,8 @@ begin
   for I:=0 to  FTable.TableFieldCount - 1 do
   begin
     if aField = ''
-    then aField := aField + FTable.HandleSpecialStr(FTable.TableFieldNameArray[I])
-    else aField := aField + ',' + FTable.HandleSpecialStr(FTable.TableFieldNameArray[I]);
+    then aField := aField + ConfigHelper.HandleSpecialStr(FTable.TableFieldNameArray[I])
+    else aField := aField + ',' + ConfigHelper.HandleSpecialStr(FTable.TableFieldNameArray[I]);
     aType := FTable.TableFieldDataTypeArray[I];
     if aValue = ''
     then aValue := aValue + GetValue(FTable.TableFieldNameArray[I],aType)
@@ -321,8 +323,8 @@ begin
   for I:=0 to  FUpdateField.Count - 1 do
   begin
     if aTotal =''
-    then aTotal := aTotal + FTable.HandleSpecialStr(FUpdateField[I]) + ' = '  + FUpdateValue[I]
-    else aTotal := aTotal + ',' + FTable.HandleSpecialStr(FUpdateField[I])  + ' = '  + FUpdateValue[I];;
+    then aTotal := aTotal + ConfigHelper.HandleSpecialStr(FUpdateField[I]) + ' = '  + FUpdateValue[I]
+    else aTotal := aTotal + ',' + ConfigHelper.HandleSpecialStr(FUpdateField[I])  + ' = '  + FUpdateValue[I];;
   end;
 
   aPrefixSQL := 'update ' + FTable.TableName + ' set ' + aTotal;

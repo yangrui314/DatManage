@@ -52,7 +52,7 @@ implementation
 
 
   uses
-    StrUtils,formProgress;
+    StrUtils,formProgress,unitConfigHelper;
 
 {$R *.dfm}
 
@@ -171,7 +171,7 @@ begin
   for I := 0 to   FTableField.TableFieldCount - 1 do
   begin
     if (FTableField.TableFieldDataTypeArray[I]  <> ftString) then Continue;
-    aStr := FTableField.HandleSpecialStr(FTableField.TableFieldNameArray[I]);
+    aStr := ConfigHelper.HandleSpecialStr(FTableField.TableFieldNameArray[I]);
     aSQL := 'select * from ' + aTableName + ' where ' + aStr + ' like '
            + ''''  + '%'  + edtSelectStr.EditValue + '%' + '''' ;
     FTableSQL := TTable.Create(FEnvironment, aSQL, aTableName,False);

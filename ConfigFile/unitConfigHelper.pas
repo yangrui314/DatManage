@@ -56,6 +56,9 @@ type
     function GetHistoryName(aPath: string; aInclude: Boolean = False): string;
     function GetHistoryPath(aName: string; aInclude: Boolean = False): string;
     function GetMenuCaption(const aClassName: string): string;
+
+    function HandleSpecialStr(aFieldName : String) : String;
+    function IsSpecial(aStr : String) : Boolean;
     class function CreateInstance(var AForm: TfmParentMenu; AFormClassName: string = ''): TfmParentMenu; overload;
   end;
 
@@ -337,29 +340,29 @@ begin
           end
           else
           begin
-            Result := Result + ' where ' + Config.SystemTable.HandleSpecialStr(aFieldName) + ' like ' + '''%'+  aCondition + '%''';
+            Result := Result + ' where ' + HandleSpecialStr(aFieldName) + ' like ' + '''%'+  aCondition + '%''';
           end;
         end
         else if aKeyword = '等于' then
         begin
           if ConfigHelper.IsQuotation(aFieldType)   then
           begin
-            Result := Result + ' where ' + Config.SystemTable.HandleSpecialStr(aFieldName)  + ' = ' +  aCondition ;
+            Result := Result + ' where ' + HandleSpecialStr(aFieldName)  + ' = ' +  aCondition ;
           end
           else
           begin
-            Result := Result + ' where ' + Config.SystemTable.HandleSpecialStr(aFieldName)  + ' = ' + ''''+  aCondition + '''';
+            Result := Result + ' where ' + HandleSpecialStr(aFieldName)  + ' = ' + ''''+  aCondition + '''';
           end;
         end
         else if aKeyword = '不等于' then
         begin
           if ConfigHelper.IsQuotation(aFieldType) then
           begin
-            Result := Result + ' where ' + Config.SystemTable.HandleSpecialStr(aFieldName)  + ' <> ' +  aCondition ;
+            Result := Result + ' where ' + HandleSpecialStr(aFieldName)  + ' <> ' +  aCondition ;
           end
           else
           begin
-            Result := Result + ' where ' + Config.SystemTable.HandleSpecialStr(aFieldName)  + ' <> ' + ''''+  aCondition + '''';          
+            Result := Result + ' where ' + HandleSpecialStr(aFieldName)  + ' <> ' + ''''+  aCondition + '''';          
           end;
         end;
       end;
@@ -569,10 +572,31 @@ begin
 end;
 
 
+function TConfigHelper.HandleSpecialStr(aFieldName : String) : String;
+begin
+  if IsSpecial(aFieldName) then
+  begin
+    Result :=   '['+ aFieldName + ']';
+  end
+  else
+  begin
+    Result :=  aFieldName;
+  end;
+end;
+
+
+function TConfigHelper.IsSpecial(aStr : String) : Boolean;
+begin
+  Result := False;
+  Result := (aStr = 'Sign');
+end;
+
 initialization
+  Config := TConfig.Create;
   ConfigHelper := TConfigHelper.Create;
 
 finalization
-  ConfigHelper.Destroy;
+  Config.Free;
+  ConfigHelper.Free;
 
 end.

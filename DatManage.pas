@@ -319,8 +319,8 @@ begin
   begin
     Config.LastFolderPath := Config.SystemParameter;
   end;
-  Config.SystemTable.Destroy;
-  Config.SystemEnvironment.Destroy;  
+  Config.SystemTable.Free;
+  Config.SystemEnvironment.Free;  
   ConfigHelper.ClearRubbish;
   inherited;
 end;

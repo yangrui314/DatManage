@@ -141,8 +141,8 @@ begin
   try
     aTable.Environment.SetSQL(aSQL);
   finally
-    aTable.Destroy;
-    aEnvironment.Destroy;
+    aTable.Free;
+    aEnvironment.Free;
   end;
 end;
 
