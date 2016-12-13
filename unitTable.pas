@@ -60,7 +60,6 @@ type
 
     function ConvertString(aValue : Variant;aType :TFieldType):String;
     function GetOrderID(aName : String) : Integer;
-    function IsKeyNameAccordValue(aFieldName : String) : Boolean;
     procedure  SaveFile(aFilePath : String;aData : String);
 
     property TableField: TStringList read FField write FField;
@@ -253,7 +252,7 @@ begin
     FFieldSQLTypeArray[I] := GetSQLType(FFieldDataTypeArray[I]);
     FFieldVisibleArray[I] := True;
     FFieldCaptionArray[I] := '';
-    FFieldMainArray[I] := IsKeyNameAccordValue(FFieldNameArray[I]);
+    FFieldMainArray[I] := ConfigHelper.IsKeyNameAccordValue(FFieldNameArray[I],FKeyField);
   end;
   ReadTableEnvironment;
 end;
@@ -384,25 +383,6 @@ begin
   end;    
 end;
 
-function TTable.IsKeyNameAccordValue(aFieldName : String) : Boolean;
-begin
-  Result := False;
-  if Pos(';',FKeyField) <> 0 then
-  begin
-    Result := (Pos(aFieldName,FKeyField) <> 0);
-  end
-  else
-  begin
-    if FKeyField =  'RecordID' then
-    begin
-      Result := (aFieldName ='RecordID_1');
-    end
-    else
-    begin
-      Result := (aFieldName = FKeyField)
-    end;
-  end;
-end;
 
 
 

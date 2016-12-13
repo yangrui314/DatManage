@@ -190,7 +190,7 @@ begin
       if  aFieldName = 'RecordID_1' then
         row.Properties.Options.Editing := False;
 
-      if ((FEditMode = emUpdate) or (FEditMode = emDelete)) and  FTable.IsKeyNameAccordValue(aFieldName) then
+      if ((FEditMode = emUpdate) or (FEditMode = emDelete)) and  ConfigHelper.IsKeyNameAccordValue(aFieldName,FTable.TableKeyField) then
       begin
         row.Properties.EditProperties.ReadOnly := True;
         FKeyValue :=  GetValue(row.Properties.Value,FTable.TableFieldDataTypeArray[I]);

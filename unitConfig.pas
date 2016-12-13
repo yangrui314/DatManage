@@ -13,7 +13,7 @@ uses
   Dialogs, unitEnvironment, unitTable;
 
 type
-  TConfig = class
+  TConfig = class(TObject)
   private
     FInitFolderPath: string;
     FLastFolderPath: string;
@@ -35,19 +35,18 @@ type
     //FConfigFile: TConfigFile;
     //frameShowResult当前定位的行数 默认为0 yr 2016-12-11
     FNowRow: Integer;
-    constructor Create;
+
     procedure InitData;
     procedure SetHistorys(aHistorys: TList);
     procedure FreeHistorys;
     procedure FreeMenuList;
-    destructor Destroy;
   protected
   public
     FMenuList: array of TMenu;
-
     //Main
     SystemEnvironment: TEnvironment;
     SystemTable: TTable;
+
     property InitFolderPath: string read FInitFolderPath;
     property LastFolderPath: string read FLastFolderPath write FLastFolderPath;
     property ShowName: Boolean read FShowName write FShowName;
@@ -66,6 +65,9 @@ type
     property NowRow: Integer read FNowRow write FNowRow;
     property GetTable: Boolean read FGetTable write FGetTable;
     property Historys: TList read FHistorys write FHistorys;
+
+    constructor Create;
+    destructor Destroy;override;    
   end;
 
 var
@@ -75,6 +77,7 @@ implementation
 
 constructor TConfig.Create;
 begin
+  inherited;
   InitData;
 end;
 
@@ -141,6 +144,7 @@ begin
   FreeAndNil(FHistorys);
   FreeMenuList;
   SetLength(FMenuList, 0);
+  inherited;  
 end;
 
 

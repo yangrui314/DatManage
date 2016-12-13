@@ -15,7 +15,7 @@ uses
 
 
 type
-  TConfigHelper = class
+  TConfigHelper = class(TObject)
   private
     FWayStrPath : string;
     procedure LoadFile;
@@ -26,8 +26,8 @@ type
     function GetWayStr : String;
     procedure SaveWayStr;    
   public
-    constructor Create; virtual;
-    destructor Destroy; virtual;
+    constructor Create;
+    destructor Destroy; override;
     procedure SaveHistory(const aConnectWay : string;const aName : String;const aPath : String);overload;
     procedure SaveHistory(const aHistory : THistory);overload;
     procedure SaveHistory;overload;
@@ -59,6 +59,7 @@ type
 
     function HandleSpecialStr(aFieldName : String) : String;
     function IsSpecial(aStr : String) : Boolean;
+    function IsKeyNameAccordValue(aFieldName : String;aKeyField : String) : Boolean;    
     class function CreateInstance(var AForm: TfmParentMenu; AFormClassName: string = ''): TfmParentMenu; overload;
   end;
 
@@ -75,6 +76,7 @@ implementation
 
 constructor TConfigHelper.Create;
 begin
+  inherited;
   FWayStrPath := ExtractFilePath(ParamStr(0)) + 'FileWay.ini';
   Config.FileWay := GetWayStr;
   if Config.FileWay = 'xml' then
@@ -253,6 +255,7 @@ begin
   SaveFile;
   SaveWayStr;
   FFileWay.Free;
+  inherited;
 end;
 
 procedure TConfigHelper.DelFiles(const aFilePath : String;const aExt : String);
@@ -591,12 +594,34 @@ begin
   Result := (aStr = 'Sign');
 end;
 
+function TConfigHelper.IsKeyNameAccordValue(aFieldName : String;aKeyField : String) : Boolean;
+begin
+  Result := False;
+  if Pos(';',aKeyField) <> 0 then
+  begin
+    Result := (Pos(aFieldName,aKeyField) <> 0);
+  end
+  else
+  begin
+    if aKeyField =  'RecordID' then
+    begin
+      Result := (aFieldName ='RecordID_1');
+    end
+    else
+    begin
+      Result := (aFieldName = aKeyField)
+    end;
+  end;
+end;
+
+
 initialization
   Config := TConfig.Create;
   ConfigHelper := TConfigHelper.Create;
 
 finalization
-  Config.Free;
   ConfigHelper.Free;
+  Config.Free;
+
 
 end.
