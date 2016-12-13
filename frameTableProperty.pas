@@ -39,6 +39,8 @@ type
   end;
 
 implementation
+  uses
+    unitXmlWay,unitConfigHelper;
 
 {$R *.dfm}
 
@@ -93,7 +95,7 @@ begin
       dgProperty.EndUpdate;
     end;
   end;
-  FTable.SaveTableEnvironment;
+  ConfigHelper.SaveTableEnvironment(FTable);
 end;
 
 
@@ -140,5 +142,9 @@ procedure TfrmTableProperty.dgPropertyCaptionPropertiesValidate(
 begin
   FUpdateCaption := True;
 end;
+
+
+
+
 
 end.

@@ -445,7 +445,7 @@ begin
     ShowMessage('未选择对应表。无属性。');
     Exit;
   end;
-  Config.SystemTable.Add(Self);
+  ConfigHelper.Add(Self,Config.SystemTable);
 end;
 
 procedure TfmMain.btnPropertyClick(Sender: TObject);

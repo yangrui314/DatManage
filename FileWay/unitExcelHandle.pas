@@ -31,6 +31,8 @@ type
 
 
 implementation
+  uses
+    unitConfigHelper;
 
 
 constructor TExcelHandle.Create(aTable : TTable);
@@ -104,7 +106,7 @@ begin
   end;
 
 
-  FTable.SaveFile(FSQLSavePath,DelSQL + #13#10 + s);
+  ConfigHelper.SaveFile(FSQLSavePath,DelSQL + #13#10 + s);
   ShowMessage('导出'+FSQLSavePath+'成功');
 end;
 
@@ -146,7 +148,7 @@ function TExcelHandle.LoadInsertSQL(RowNum : Integer): String;
     for I := 1 to FSheetColumn do
     begin
       aFieldName :=  Sheet.Cells[1,I].Value;
-      TableFieldOrderID := FTable.GetOrderID(aFieldName);
+      TableFieldOrderID := ConfigHelper.GetOrderID(aFieldName,FTable);
       if TableFieldOrderID = -1 then Continue;
 
 //      if (not FTable.TableFieldIsNullArray[TableFieldOrderID]) and (Sheet.Cells[RowNum ,I].Value = '') then
@@ -162,16 +164,16 @@ function TExcelHandle.LoadInsertSQL(RowNum : Integer): String;
 
 
       if aFirst
-      then aValue := FTable.ConvertString(Sheet.Cells[RowNum ,I].Value,FTable.TableFieldDataTypeArray[TableFieldOrderID])
-      else aValue := aValue + ',' + FTable.ConvertString(Sheet.Cells[RowNum ,I].Value,FTable.TableFieldDataTypeArray[TableFieldOrderID]);
+      then aValue := ConfigHelper.ConvertString(Sheet.Cells[RowNum ,I].Value,FTable.TableFieldDataTypeArray[TableFieldOrderID])
+      else aValue := aValue + ',' + ConfigHelper.ConvertString(Sheet.Cells[RowNum ,I].Value,FTable.TableFieldDataTypeArray[TableFieldOrderID]);
 
 
       //获取删除语句的条件。
       if aFieldName = FDelKeyField then
       begin
         if FDelCondition = ''
-        then FDelCondition := FTable.ConvertString(Sheet.Cells[RowNum ,I].Value,FTable.TableFieldDataTypeArray[TableFieldOrderID])
-        else FDelCondition := FDelCondition + ',' + FTable.ConvertString(Sheet.Cells[RowNum ,I].Value,FTable.TableFieldDataTypeArray[TableFieldOrderID]); 
+        then FDelCondition := ConfigHelper.ConvertString(Sheet.Cells[RowNum ,I].Value,FTable.TableFieldDataTypeArray[TableFieldOrderID])
+        else FDelCondition := FDelCondition + ',' + ConfigHelper.ConvertString(Sheet.Cells[RowNum ,I].Value,FTable.TableFieldDataTypeArray[TableFieldOrderID]); 
       end;
       aFirst := False;
     end;

@@ -80,6 +80,8 @@ var
   fmExport: TfmExport;
 
 implementation
+  uses
+    unitConfigHelper;
 
 {$R *.dfm}
 
@@ -267,7 +269,7 @@ begin
     if FNotTableName
     then FTable.TableName := edtExportTableName.EditValue;
 
-    FTable.SaveSQLFile(FFilePath,cbContainDelSQL.Checked,edtDelKeyField.EditText);
+    ConfigHelper.SaveSQLFile(FFilePath,cbContainDelSQL.Checked,edtDelKeyField.EditText,FTable);
 
     if FNotTableName
     then FTable.TableName := '';

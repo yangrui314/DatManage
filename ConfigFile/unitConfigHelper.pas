@@ -11,7 +11,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls,
   Dialogs,StdCtrls,unitConfig,unitXmlWay,unitDatWay,unitFileWay,unitHistory,
-  formParentMenu, Forms;
+  formParentMenu, Forms,DB, dbisamtb,unitTable;
 
 
 type
@@ -19,7 +19,7 @@ type
   private
     FWayStrPath : string;
     procedure LoadFile;
-    procedure SaveFile;
+    procedure SaveFile;overload;
   protected
     FFileWay : TFileWay;  
     procedure SaveSystemConfigToBoolean(aName : String;aValue : Boolean);
@@ -60,6 +60,18 @@ type
     function HandleSpecialStr(aFieldName : String) : String;
     function IsSpecial(aStr : String) : Boolean;
     function IsKeyNameAccordValue(aFieldName : String;aKeyField : String) : Boolean;    
+    function ConvertString(aValue : Variant;aType :TFieldType):String;
+
+    procedure SaveTableEnvironment(var aTable : TTable);
+    procedure ReadTableEnvironment(var aTable : TTable);
+
+    function GetSQLType(aFieldType : TFieldType) : String;
+    procedure Add(AOwner: TComponent;var aTable : TTable);
+    procedure  SaveFile(aFilePath : String;aData : String);overload;
+    function GetOrderID(aName : String;var aTable : TTable) : Integer;
+    procedure SaveSQLFile(aFilePath : String;aContainDelSQL : Boolean;
+            aDelKeyField : String;var aTable : TTable);
+
     class function CreateInstance(var AForm: TfmParentMenu; AFormClassName: string = ''): TfmParentMenu; overload;
   end;
 
@@ -69,8 +81,8 @@ var
 
 implementation
   uses
-    StrUtils,unitStrHelper,cnDebug,unitFileHelper,unitTable,
-    formImport,formExport,formTableProperty;
+    StrUtils,unitStrHelper,cnDebug,unitFileHelper,
+    formImport,formExport,formTableProperty,formInsert,unitStandardHandle;
 
 
 
@@ -612,6 +624,312 @@ begin
       Result := (aFieldName = aKeyField)
     end;
   end;
+end;
+
+
+function TConfigHelper.ConvertString(aValue : Variant;aType :TFieldType):String;
+begin
+  if aType = ftInteger then
+  begin
+    Result := IntToStr(aValue) ;
+  end
+  else if aType = ftFloat  then
+  begin
+    Result := FloatToStr(aValue);
+  end
+  else if aType = ftBoolean  then
+  begin
+    if aValue
+    then  Result := '1'
+    else  Result := '0' ;
+  end
+  else if aType = ftDateTime  then
+  begin
+    Result :=  ' ''' +  FormatDateTime('yyyy-mm-dd', aValue) + ''' ' ;
+  end
+  else
+  begin
+    Result := ' ''' + VarToStr(aValue) + ''' ' ;
+  end;    
+end;
+
+
+procedure TConfigHelper.SaveTableEnvironment(var aTable : TTable);
+var
+  aConfig : TXmlWay;
+  aFilePath : String;
+begin
+  if aTable.TableName = '' then
+  begin
+    Exit;
+  end;
+  aConfig := TXmlWay.Create;
+  try
+    aFilePath := ExtractFileDir(ParamStr(0)) + '\Template\' + aTable.TableName + '.xml';
+    aConfig.SaveFile(aFilePath,aTable);
+  finally
+    aConfig.Free;
+  end;
+end;
+
+procedure TConfigHelper.ReadTableEnvironment(var aTable : TTable);
+var
+  aConfig : TXmlWay;
+  aFilePath : String;  
+begin
+  if aTable.TableName  = '' then
+  begin
+    Exit;
+  end;
+
+  aConfig := TXmlWay.Create;
+  try
+    aFilePath := ExtractFileDir(ParamStr(0)) + '\Template\' + aTable.TableName  + '.xml';
+    aConfig.ReadFile(aFilePath,aTable);
+  finally
+    aConfig.Free;
+  end;
+end;
+
+
+function TConfigHelper.GetSQLType(aFieldType : TFieldType): String;
+begin
+  if aFieldType = ftAutoInc then
+  begin
+    Result := 'AutoInt';
+  end
+  else if aFieldType = ftInteger then
+  begin
+    Result := 'integer';
+  end
+  else if aFieldType = ftWord then
+  begin
+    Result := 'tinyint';
+  end
+  else if aFieldType = ftSmallint then
+  begin
+    Result := 'smallint';
+  end
+  else if aFieldType = ftLargeint then
+  begin
+    Result := 'bigint';
+  end
+  else if aFieldType = ftBCD then
+  begin
+    Result := 'money';
+  end
+  else if aFieldType = ftBCD then
+  begin
+    Result := 'smallmoney';
+  end
+  else if aFieldType = ftBCD then
+  begin
+    Result := 'decimal';
+  end
+  else if aFieldType = ftBCD then
+  begin
+    Result := 'numeric';
+  end
+  else if aFieldType = ftFloat then
+  begin
+    Result := 'real';
+  end
+  else if aFieldType = ftFloat then
+  begin
+    Result := 'float';
+  end
+  else if aFieldType = ftBoolean then
+  begin
+    Result := 'bit';
+  end
+  else if aFieldType = ftDateTime then
+  begin
+    Result := 'datetime';
+  end
+  else if aFieldType = ftDateTime then
+  begin
+    Result := 'smalldatetime';
+  end
+  else if aFieldType = ftString then
+  begin
+    Result := 'String';
+  end
+  else if aFieldType = ftWideString then
+  begin
+    Result := 'String';
+  end
+  else if aFieldType = ftMemo then
+  begin
+    Result := 'text';
+  end
+  else if aFieldType = ftBlob then
+  begin
+    Result := 'image';
+  end
+  else if aFieldType = ftBytes then
+  begin
+    Result := 'binnary';
+  end
+  else if aFieldType = ftVarBytes then
+  begin
+    Result := 'varbinary';
+  end
+  else if aFieldType = ftVariant then
+  begin
+    Result := 'sql_variant';
+  end
+  else if aFieldType = ftGuid then
+  begin
+    Result := 'uniqueidentifier';
+  end
+  else if aFieldType = ftBytes then
+  begin
+    Result := 'timestamp';
+  end;
+end;
+
+
+procedure TConfigHelper.Add(AOwner: TComponent;var aTable : TTable);
+var
+  fmInsert : TfmInsert;
+begin
+  fmInsert := TfmInsert.Create(AOwner,aTable);
+  with fmInsert do
+  try
+    ShowModal;
+  finally
+    Free;
+  end;
+end;
+
+
+procedure  TConfigHelper.SaveFile(aFilePath : String;aData : String);
+var
+  aFile : TStandardHandle;
+begin
+  aFile := TStandardHandle.Create;
+  try
+    aFile.SaveFile(aFilePath,aData);
+  finally
+    aFile.Free;
+  end;
+
+end;
+
+function TConfigHelper.GetOrderID(aName : String;var aTable : TTable ) : Integer;
+var
+  I : Integer;
+begin
+  Result := -1;
+  for I:=0 to  aTable.TableFieldCount - 1 do
+  begin
+    if aName = aTable.TableFieldNameArray[I] then
+    begin
+      Result := I;
+      Exit;
+    end;  
+  end;    
+end;
+
+
+procedure TConfigHelper.SaveSQLFile(aFilePath : String;aContainDelSQL : Boolean;
+    aDelKeyField : String;var aTable : TTable);
+var
+  aSQL : String;
+  aPrefixSQL : String;
+  aPostfixSQL : String;
+  aType : TFieldType;
+  aValue : String;
+  aFieldName : String;
+  I : Integer;
+  aDataType : TFieldType;
+  aFirst : Boolean;
+  aDelCondition : String;
+  DelSQL : String;
+begin
+  for I:=0 to  aTable.TableFieldCount - 1 do
+  begin
+    if not aTable.TableFieldVisibleArray[I] then Continue;
+    aDataType := aTable.TableFieldDataTypeArray[I];
+
+    if  (aDataType = ftAutoInc ) then Continue;
+
+    if aFieldName = ''
+    then aFieldName := aFieldName + ConfigHelper.HandleSpecialStr(aTable.TableFieldNameArray[I])
+    else aFieldName := aFieldName + ',' + ConfigHelper.HandleSpecialStr(aTable.TableFieldNameArray[I]);
+
+  end;
+
+  aPrefixSQL := 'INSERT INTO ' + aTable.TableName + ' (' +aFieldName + ' ) ';
+
+  aTable.TableData.First;
+  while not aTable.TableData.Eof do
+  begin
+
+    aPostfixSQL := ' VALUES ( ';
+    aFirst := True;
+    for i:=0 to aTable.TableData.Fields.Count - 1 do
+    begin
+      if not aTable.TableFieldVisibleArray[I] then Continue;
+      aFieldName := aTable.TableData.Fields.Fields[I].FieldName;
+      aDataType := aTable.TableFieldDataTypeArray[I];
+
+      if  (aDataType = ftAutoInc ) then Continue;
+
+
+      if aDataType = ftString then
+      begin
+        aValue :=  ''''+ aTable.TableData.FieldByName(aFieldName).AsString + '''';
+      end
+      else if  (aDataType = ftInteger) or (aDataType = ftSmallint)  then
+      begin
+        aValue := IntToStr(aTable.TableData.FieldByName(aFieldName).AsInteger);
+      end
+      else if  aDataType = ftFloat  then
+      begin
+        aValue := FloatToStr(aTable.TableData.FieldByName(aFieldName).AsFloat);
+      end
+      else if  aDataType = ftBoolean      then
+      begin
+        if  aTable.TableData.FieldByName(aFieldName).AsBoolean
+        then aValue := '1'
+        else aValue := '0';
+      end
+      else if  aDataType = ftDateTime  then
+      begin
+        aValue :=  ' ''' +  FormatDateTime('yyyy-mm-dd', aTable.TableData.FieldByName(aFieldName).AsDateTime) + ''' ' ;;
+      end
+      else if aDataType = ftLargeint then
+      begin
+        if  aTable.TableData.FieldByName(aFieldName).AsString = ''
+        then aValue := 'null'
+        else aValue := IntToStr(aTable.TableData.FieldByName(aFieldName).AsInteger);
+      end
+      else
+      begin
+        aValue :=  ''''+ aTable.TableData.FieldByName(aFieldName).AsString + '''';
+      end;
+      if aFirst
+      then aPostfixSQL := aPostfixSQL + aValue
+      else aPostfixSQL := aPostfixSQL + ','+ aValue ;
+      aFirst := False;
+      if aDelKeyField =aFieldName then
+        aDelCondition := aValue;
+    end;
+    aPostfixSQL :=  aPostfixSQL + ')';
+
+    if aContainDelSQL and (aTable.TableName <> '') and (aDelKeyField <> '') then
+    begin
+      DelSQL := 'Delete from ' + aTable.TableName +
+      ' where '+ aDelKeyField + ' = ' + aDelCondition +' ' + ';';
+    end;
+
+    if aSQL = ''
+    then aSQL := DelSQL + #13#10+ aPrefixSQL + aPostfixSQL + ';'
+    else aSQL := aSQL +#13#10  + DelSQL + #13#10 + aPrefixSQL + aPostfixSQL + ';' ;
+    aTable.TableData.Next;
+  end;
+  SaveFile(aFilePath,aSQL);
 end;
 
 

@@ -270,7 +270,7 @@ var
   I : Integer;  
 begin
     aName := gridInsert.FocusedRow.Name;
-    aOrder := FTable.GetOrderID(aName);
+    aOrder := ConfigHelper.GetOrderID(aName,FTable);
     aField := FTable.TableFieldDataTypeArray[aOrder];
     if aField = ftBoolean then
     begin
