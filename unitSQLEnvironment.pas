@@ -26,6 +26,8 @@ type
   end;
 
 implementation
+  uses
+    unitConfigHelper;
 
 
 constructor TSQLEnvironment.Create(AOwner: TComponent;aParameter : String);
@@ -75,7 +77,8 @@ begin
   except
     on E: Exception do
     begin
-      SaveLog(False,aSQL);
+      FSQLSuccess:= False;
+      ConfigHelper.SaveLog(FSQLSuccess,aSQL);
       FLoadTable := False;
       if aShowError then
       begin
@@ -89,7 +92,8 @@ begin
       Exit;
      end;
   end;
-  SaveLog(True,aSQL);  
+  FSQLSuccess := True;
+  ConfigHelper.SaveLog(FSQLSuccess,aSQL);
 end;
 
 
@@ -191,7 +195,8 @@ begin
   except
     on E: Exception do
     begin
-      SaveLog(False,aSQL);
+      FSQLSuccess := False;
+      ConfigHelper.SaveLog(FSQLSuccess,aSQL);
       showmessage('执行语句共'+ IntToStr(Len) + '条,'+'执行SQL失败'
        + #13#10 +
       '异常类名称:' + E.ClassName
@@ -199,7 +204,8 @@ begin
       Exit;
     end;
   end;
-  SaveLog(True,aSQL);      
+  FSQLSuccess := True;
+  ConfigHelper.SaveLog(FSQLSuccess,aSQL);
 end;
 
 function TSQLEnvironment.LoadTableName(aFilter : String = '') : TStringList;
