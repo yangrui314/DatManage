@@ -21,7 +21,7 @@ type
     procedure SetEnvironment(aParameter : String);virtual;
     procedure SetSQL(const aSQL : String ; aShowError : Boolean = True);virtual;abstract;
     procedure ExecSQLs(const aSQLs :  array of String);virtual;abstract;
-    destructor Destroy;virtual;
+    destructor Destroy;override;
     constructor Create(AOwner: TComponent;aParameter : String); virtual;
     property MainData: TDataSet read aMain write aMain;
     property InitOwner: TComponent read FOwner write FOwner;

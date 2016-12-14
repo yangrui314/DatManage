@@ -69,10 +69,9 @@ type
     procedure InitField;
     procedure LoadPreview;
     procedure InitPreview;
-    procedure CheckWay;
     procedure SetState;
   public
-    constructor Create(AOwner: TComponent;aTable: TTable);
+    constructor Create(AOwner: TComponent;aTable: TTable);Reintroduce;overload;
     property ActivePage: Integer read GetActivePage write SetActivePage ;
   end;
 
@@ -125,7 +124,7 @@ end;
 procedure TfmExport.LoadPreview;
 begin
   FField.RefreshTableFieldVisible;
-  FPreview.Update(FTable);
+  FPreview.UpdateResult(FTable);
 end;
 
 
@@ -139,10 +138,7 @@ begin
   PageExport.ActivePageIndex := Value;
 end;
 
-procedure TfmExport.CheckWay;
-begin
 
-end;
 
 
 procedure TfmExport.NavigateChange(aPageIndex: Integer);

@@ -31,7 +31,6 @@ type
     FPath : string;
     FTableList : TStringList;
     FEnvironment: TEnvironment;
-    FOwner : TComponent;    
     FTableField: TTable;
     FTableSQL : TTable;
     procedure InitData;
@@ -42,7 +41,7 @@ type
     function SingleTableSelect(const aTableName : String) : String;
     function SingleTableSelectField(const aTableName : String) : String;
   public
-    destructor Destroy;
+    destructor Destroy;override;
   end;
 
 var
@@ -68,7 +67,6 @@ var
   I : Integer;
 begin
   if (FEnvironment = nil) or (FPath = '') then Exit;
-  aTables := TStringList.Create;
   aTables := FEnvironment.LoadTableName('');
   try
     for I := 0 to aTables.Count - 1 do
@@ -197,7 +195,6 @@ function TfmSelectAll.SingleTableSelectField(const aTableName : String) : String
 var
   I : Integer;
   aSQL : string;
-  aStr : string;
 begin
   Result := '';
   try

@@ -414,7 +414,7 @@ begin
   Result := '';
   for I := 0 to Length(Config.FMenuList) - 1 do
   begin
-    if Config.FMenuList[I].ClassName = aClassName then
+    if Config.FMenuList[I].MenuClassName = aClassName then
     begin
       Result := Config.FMenuList[I].Caption;
       Exit;
@@ -537,7 +537,6 @@ procedure TConfigHelper.SaveSQLFile(aFilePath : String;aContainDelSQL : Boolean;
     aDelKeyField : String;var aTable : TTable);
 var
   aSQL : String;
-  DelSQL : String;
 begin
   aSQL := aTable.GetExportSQL(aDelKeyField,aContainDelSQL);
   FileHelper.SaveFile(aFilePath,aSQL);

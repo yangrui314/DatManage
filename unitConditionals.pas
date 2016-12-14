@@ -19,7 +19,7 @@ type
   protected
   public
     procedure View(aParameter : String);
-    procedure Update(aParameter : String);
+    procedure UpdateConditionals(aParameter : String);
     function GetStrNum(const aFilePath : String;const aSelectStr : String) : Integer;
     function GetFileMidStr(aFilePath : String;aBeginStr : String; aEndStr : String = '') : String;
     function AnalysisStr(const aStr : String;var aName : String; var aOutputDir : String; var aConditionals : String) : Boolean;
@@ -54,7 +54,7 @@ begin
 end;
 
 
-procedure TConditionals.Update(aParameter : String);
+procedure TConditionals.UpdateConditionals(aParameter : String);
 var
   aSelectStr : String;
   aSoftwareScrPath : String;
@@ -124,7 +124,6 @@ function TConditionals.GetFileMidStr(aFilePath : String;aBeginStr : String; aEnd
 var
   aFile : TStringList;
   aStr : String;
-  aNum : Integer;
 begin
   Result := '';
   aFile := TStringList.Create();
@@ -146,7 +145,6 @@ function TConditionals.AnalysisStr(const aStr : String;var aName : String; var a
 var
   aNameEndNum : Integer;
 begin
-  Result := False;
   aNameEndNum :=  Pos(#13,WideString(aStr));
   aName := LeftStr(aStr,aNameEndNum-1);
   aOutputDir := ConfigHelper.GetMidStr(aStr,'±àÒëÊä³öÄ¿Â¼£º',#13);

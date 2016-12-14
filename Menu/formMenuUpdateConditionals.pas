@@ -31,7 +31,7 @@ begin
   inherited;
   aCdn := TConditionals.Create;
   try
-    aCdn.Update(FParameter);
+    aCdn.UpdateConditionals(FParameter);
   finally
     aCdn.Free;
   end;

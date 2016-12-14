@@ -6,27 +6,25 @@ uses
   Dialogs,StdCtrls,ComObj,unitTable,formProgress,unitFileWay;
 
 type
-  TExcelHandle = class(TFileWay)
+  TExcelHandle = class
   private
     Excel,Sheet:Variant;
     aInsertSQLs:  array of String;
     FSheetRow : Integer;
     FSheetColumn : Integer;
-    FExcelName : String;
     FContainDelSQL : Boolean;
     FDelKeyField : String;
     FDelCondition : String;
     FSQLSavePath : String;
     FTable : TTable;
     function OpenExcel(AFileName : String): Variant;
-    procedure AddInsertSQL(RowNum : Integer);
     function LoadInsertSQL(RowNum : Integer): String;
     procedure ExecSQL;
   protected
   public
     destructor Destroy; override;
-    constructor Create(aTable : TTable);
-    function ReadFile(aFilePath : String;aContainDelSQL : Boolean;aDelKeyField : String;aSQLSavePath : String) : Boolean;        
+    constructor Create(aTable : TTable);Reintroduce;overload;
+    function ReadFile(aFilePath : String;aContainDelSQL : Boolean;aDelKeyField : String;aSQLSavePath : String) : Boolean;Reintroduce;overload;        
   end;
 
 
@@ -48,6 +46,7 @@ var
   I : Integer;
   aProgress : TfmProgress;
 begin
+  Result := False;
   FContainDelSQL := aContainDelSQL;
   FDelKeyField := aDelKeyField;
   FSQLSavePath := aSQLSavePath;
@@ -111,11 +110,6 @@ begin
 end;
 
 
-procedure TExcelHandle.AddInsertSQL(RowNum : Integer);
-begin
-//  TestSQL := LoadInsertSQL(RowNum);
-//  aInsertSQLs.Add(LoadInsertSQL(RowNum));
-end;
 
 
 function TExcelHandle.OpenExcel(AFileName : String): Variant;

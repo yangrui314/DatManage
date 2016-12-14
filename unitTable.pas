@@ -24,7 +24,6 @@ type
     FData: TDataSet;
     FTableName : String;
     FKeyField : String;
-    FKeyValue : String;
     FFieldNameArray: array of String;
     FFieldSizeArray: array of Integer;
     FFieldDataTypeArray: array of TFieldType;
@@ -55,7 +54,7 @@ type
 
   protected
   public
-    destructor Destroy;
+    destructor Destroy;override;
     constructor Create(aEnvironment : TEnvironment ; aSQL : String;aTableName : String;aShowError : Boolean = True);
 
 
@@ -268,7 +267,6 @@ function TTable.GetExportSQL(aDelKeyField : String;aContainDelSQL : Boolean) : S
 var
   aPrefixSQL : String;
   aPostfixSQL : String;
-  aType : TFieldType;
   aValue : String;
   aFieldName : String;
   I : Integer;

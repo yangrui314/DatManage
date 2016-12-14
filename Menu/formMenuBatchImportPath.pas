@@ -2,6 +2,9 @@ unit formMenuBatchImportPath;
 
 interface
 
+{$WARN UNIT_PLATFORM OFF} 
+{$WARN SYMBOL_PLATFORM OFF} 
+
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, formParentMenu, cxLookAndFeels, cxStyles, cxCustomData,
@@ -175,14 +178,13 @@ procedure TfmMenuBatchImportPath.LoadPreview;
 var
   I,J: Integer;
   aSelectStr : String;
-  aAllStr,aHandleStr , aRemainStr : String;
+  aHandleStr : String;
   aName,aOutputDir,aConditionals : String;
   aCdn : TConditionals;
   aReadMeFilePath : String;
   ANewRecId : Integer;
   TotalCount : Integer;
   aNum : Integer;
-  aIsLoad : Boolean; 
 begin
   TotalCount := dgParameter.DataController.RowCount;
   if TotalCount <> 0 then
@@ -204,7 +206,6 @@ begin
   try
     aSelectStr := IntToStr(I) + '¡¢';
     aNum := aCdn.GetStrNum(aReadMeFilePath,aSelectStr);
-    aIsLoad := False;
     while aNum <> 0  do
     begin
 //      if (aNum <> 1) and (not aIsLoad) then
@@ -258,7 +259,6 @@ procedure TfmMenuBatchImportPath.SaveData;
 var
   I,J: Integer;
   TotalCount : Integer;
-  aConfigHelper : TConfigHelper;
   aHistory : THistory;
   aTotalCount : Integer;
 begin

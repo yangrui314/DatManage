@@ -34,7 +34,7 @@ type
     procedure NotFileCreateFile;
   public
     constructor Create; virtual;
-    destructor Destroy; virtual;
+    destructor Destroy; override;
     function GetSystemConfig(aName : String) : String; virtual;abstract;
     procedure SaveSystemConfig(aName : String;aValue : String); virtual;abstract;
     function LoadHistorys : TList; virtual;abstract;

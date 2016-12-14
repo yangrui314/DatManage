@@ -34,7 +34,7 @@ type
   public
     procedure RefreshTableFieldVisible;
     procedure RefreshTableFieldCaption;
-    constructor Create(AOwner: TComponent;aTable : TTable;aSelect:Boolean);
+    constructor Create(AOwner: TComponent;aTable : TTable;aSelect:Boolean);Reintroduce;overload;
     destructor Destroy; override;
   end;
 

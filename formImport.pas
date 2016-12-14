@@ -51,10 +51,9 @@ type
     FDelKeyField : String;
     procedure InitField;
     procedure ImportExcel;
-    procedure LoadFile(aFilePath : String);
     procedure SetState;
   public
-    constructor Create(AOwner: TComponent;aTable: TTable);
+    constructor Create(AOwner: TComponent;aTable: TTable);Reintroduce;overload;
   end;
 
 var
@@ -103,27 +102,11 @@ begin
   end;
 end;
 
-procedure TfmImport.LoadFile(aFilePath : String);
-var
-  I : Integer;
-begin
-//  aFile := TStandardHandle.Create;
-//  try
-//    edtSQL.Clear;
-//    aFile.ReadFile(aFilePath);
-//    for I := 0 to aFile.FileData.Count - 1 do
-//    begin
-//      edtSQL.Lines.Add(aFile.FileData[I]);
-//    end;
-//  finally
-//    aFile.Destroy;
-//  end;
-end;
+
 
 procedure TfmImport.ImportExcel;
 var
   aExcel : TExcelHandle;
-  I : Integer;
   aSQLSavePath : String;
 begin
   if FTable.TableName = '' then

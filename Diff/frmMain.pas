@@ -2,6 +2,9 @@ unit frmMain;
 
 interface
 
+{$WARN UNIT_PLATFORM OFF} 
+{$WARN SYMBOL_PLATFORM OFF} 
+
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, cxControls, cxContainer, cxEdit, cxTextEdit, StdCtrls, ExtCtrls,

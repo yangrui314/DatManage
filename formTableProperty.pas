@@ -16,7 +16,7 @@ type
     FTable : TTable;
     FShowProperty: TfrmTableProperty;
   public
-    constructor Create(AOwner: TComponent;aTable : TTable);
+    constructor Create(AOwner: TComponent;aTable : TTable);Reintroduce;overload;
   end;
 
 var

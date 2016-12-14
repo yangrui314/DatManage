@@ -27,7 +27,7 @@ type
     FName : String;
     FPath : String;
   public
-    constructor Create(AOwner: TComponent;aName: String;aPath: String );
+    constructor Create(AOwner: TComponent;aName: String;aPath: String );Reintroduce;overload;
     property PathName: String read FName write FName;
     property Path: String read FPath write FPath;
   end;

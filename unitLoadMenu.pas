@@ -72,25 +72,25 @@ begin
       Continue;
       
     MenuItem:=TMenuItem.Create(MainMenu);
-    if Config.FMenuList[I].ClassName = '' then
+    if Config.FMenuList[I].MenuClassName = '' then
     begin
       MenuItem.Name := 'Unit' + IntToStr(Random(100));
     end
     else
     begin
-      if Config.FMenuList[I].ClassType = 'Class' then
+      if Config.FMenuList[I].MenuClassType = 'Class' then
       begin
-        MenuItem.Name := 'Unit' + Config.FMenuList[I].ClassName;
+        MenuItem.Name := 'Unit' + Config.FMenuList[I].MenuClassName;
       end
       else
       begin
-        MenuItem.Name := 'Form' + Config.FMenuList[I].ClassName;
+        MenuItem.Name := 'Form' + Config.FMenuList[I].MenuClassName;
       end;    
     end;
     MenuItem.Caption:= Config.FMenuList[I].Caption;
     MenuItem.Hint := Config.FMenuList[I].NotShowFormHint;
     MenuItem.Visible := Config.FMenuList[I].Visible;
-    if Config.FMenuList[I].ClassName <> '' then
+    if Config.FMenuList[I].MenuClassName <> '' then
       MenuItem.OnClick := MenuClick;
     MainMenu.Items.Add(MenuItem);
     for J := 0 to Length(Config.FMenuList) - 1 do
@@ -98,25 +98,25 @@ begin
       if (Config.FMenuList[I].Name = Config.FMenuList[J].ParentName)   then
       begin
         MenuSubItem:=TMenuItem.Create(MainMenu);
-        if Config.FMenuList[J].ClassName = '' then
+        if Config.FMenuList[J].MenuClassName = '' then
         begin
           MenuSubItem.Name := 'Unit' + IntToStr(Random(100));
         end
         else
         begin
-          if Config.FMenuList[J].ClassType = 'Class' then
+          if Config.FMenuList[J].MenuClassType = 'Class' then
           begin
-            MenuSubItem.Name := 'Unit' + Config.FMenuList[J].ClassName;
+            MenuSubItem.Name := 'Unit' + Config.FMenuList[J].MenuClassName;
           end
           else
           begin
-            MenuSubItem.Name := 'Form' + Config.FMenuList[J].ClassName;
+            MenuSubItem.Name := 'Form' + Config.FMenuList[J].MenuClassName;
           end;
         end;
         MenuSubItem.Caption:= Config.FMenuList[J].Caption;
         MenuSubItem.Hint := Config.FMenuList[J].NotShowFormHint;
         MenuSubItem.Visible := Config.FMenuList[J].Visible;
-        if Config.FMenuList[J].ClassName <> '' then
+        if Config.FMenuList[J].MenuClassName <> '' then
           MenuSubItem.OnClick := MenuClick;
 
         MainMenu.Items[MenuNum].Add(MenuSubItem);

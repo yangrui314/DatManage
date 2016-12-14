@@ -36,7 +36,7 @@ type
     procedure ClearHistorys;override;
     function LoadPasswords : TStringList;override;
     //É¾³ý±£´æµÄÅäÖÃ yr 2016-12-12
-    procedure DelHistory(const aHistory : THistory);override;    
+    procedure DelHistory(const aHistory : THistory);override;
   end;
 
 
@@ -407,7 +407,7 @@ begin
       Delete;
       Append;
       Close;
-    end; 
+    end;
   finally
     FHistory.Free;
   end;
@@ -415,40 +415,6 @@ begin
 end;
 
 
-function TDatWay.ReadFile(aFilePath : String;var aTable : TTable) : Boolean;
-var
-  FSystemConfig : TDBISAMTable;
-  I : Integer;
-begin
-  Result := False;
-  FSystemConfig := TDBISAMTable.Create(nil);
-  try
-    with FSystemConfig do
-    begin
-      DatabaseName:= ExtractFilePath(aFilePath);
-      TableName:= ExtractFileName(aFilePath);
-
-      if Active then Close;
-      Open;
-      try
-        First;
-        I := 0;
-        while not Eof do
-        begin
-          aTable.TableFieldNameArray[I] := FieldByName('Name').AsString;
-          aTable.TableFieldCaptionArray[I] := FieldByName('Caption').AsString;
-          aTable.TableFieldSizeArray[I] :=  FieldByName('Size').AsInteger;
-          Next;
-        end;
-      finally
-        Close;
-      end;
-    end;  
-  finally
-    FSystemConfig.Free;
-  end;
-  Result := True;
-end;
 
 
 function TDatWay.SaveFile(aFilePath : String;var aTable : TTable) : Boolean;
@@ -486,7 +452,7 @@ begin
           Inc(I);
           Next;
         end;
-
+        Result := True;
       finally
         Close;
       end;
@@ -496,6 +462,41 @@ begin
   end;
 
 end;
+
+function TDatWay.ReadFile(aFilePath : String;var aTable : TTable) : Boolean;
+var
+  FSystemConfig : TDBISAMTable;
+  I : Integer;
+begin
+  FSystemConfig := TDBISAMTable.Create(nil);
+  try
+    with FSystemConfig do
+    begin
+      DatabaseName:= ExtractFilePath(aFilePath);
+      TableName:= ExtractFileName(aFilePath);
+
+      if Active then Close;
+      Open;
+      try
+        First;
+        I := 0;
+        while not Eof do
+        begin
+          aTable.TableFieldNameArray[I] := FieldByName('Name').AsString;
+          aTable.TableFieldCaptionArray[I] := FieldByName('Caption').AsString;
+          aTable.TableFieldSizeArray[I] :=  FieldByName('Size').AsInteger;
+          Next;
+        end;
+      finally
+        Close;
+      end;
+    end;  
+  finally
+    FSystemConfig.Free;
+  end;
+  Result := True;
+end;
+
 
 procedure TDatWay.LoadMenu;
 var
@@ -554,8 +555,8 @@ begin
         aMenu.Caption := FieldByName('Caption').AsString;
         aMenu.OrderID := FieldByName('OrderID').AsInteger;
         aMenu.Visible := FieldByName('Visible').AsBoolean;
-        aMenu.ClassType := FieldByName('ClassType').AsString;
-        aMenu.ClassName := FieldByName('ClassName').AsString;
+        aMenu.MenuClassType := FieldByName('ClassType').AsString;
+        aMenu.MenuClassName := FieldByName('ClassName').AsString;
         aMenu.NotShowFormHint := FieldByName('NotShowFormHint').AsString;
         aMenu.ParentName := FieldByName('ParentName').AsString;
         Config.FMenuList[N] := (aMenu);
@@ -602,7 +603,6 @@ begin
 
       for I := 0 to High(Config.FMenuList) - Low(Config.FMenuList) -1 do
       begin
-        aMenu := TMenu.Create;
         aMenu := Config.FMenuList[I];
         if FMenu.Locate('Name',aMenu.Name,[]) then
           Edit
@@ -611,8 +611,8 @@ begin
         FieldByName('Caption').AsString := aMenu.Caption;
         FieldByName('OrderID').AsInteger := aMenu.OrderID;
         FieldByName('Visible').AsBoolean := aMenu.Visible ;
-        FieldByName('ClassType').AsString := aMenu.ClassType ;
-        FieldByName('ClassName').AsString := aMenu.ClassName ;
+        FieldByName('ClassType').AsString := aMenu.MenuClassType ;
+        FieldByName('ClassName').AsString := aMenu.MenuClassName ;
         FieldByName('NotShowFormHint').AsString := aMenu.NotShowFormHint;
         FieldByName('ParentName').AsString := aMenu.ParentName;
         Post;

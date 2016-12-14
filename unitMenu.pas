@@ -13,8 +13,8 @@ type
     FCaption : String;
     FOrderID : Integer;
     FVisible : Boolean;
-    FClassType : String;
-    FClassName : String;
+    FMenuClassType : String;
+    FMenuClassName : String;
     FNotShowFormHint : String;
     FParentName : string;
   protected
@@ -24,8 +24,8 @@ type
     property Caption : String read  FCaption write FCaption;
     property OrderID : Integer read  FOrderID write FOrderID;
     property Visible : Boolean read  FVisible write FVisible;
-    property ClassType : String read  FClassType write FClassType;    
-    property ClassName : String read  FClassName write FClassName;
+    property MenuClassType : String read  FMenuClassType write FMenuClassType;
+    property MenuClassName : String read  FMenuClassName write FMenuClassName;
     property NotShowFormHint : String read  FNotShowFormHint write FNotShowFormHint;
     property ParentName : String read  FParentName write FParentName;    
   end;

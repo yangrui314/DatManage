@@ -25,7 +25,7 @@ type
     FFileName : String;
     function BytesToStr(iBytes: Integer): String;
   public
-    constructor Create(AOwner: TComponent;aUrl : String;aFilePath : String);
+    constructor Create(AOwner: TComponent;aUrl : String;aFilePath : String);Reintroduce;overload;
     procedure LoadData;
     function  UnZipfile(filename:String;Director:string;APassword: string = ''):boolean ;
   end;

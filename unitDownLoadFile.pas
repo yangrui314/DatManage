@@ -17,7 +17,7 @@ type
   protected
   public
     constructor Create(AOwner: TComponent;aUrl : String;aFilePath : String);
-    destructor Destroy;
+    destructor Destroy;override;
     procedure LoadData;    
   end;
 

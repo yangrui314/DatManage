@@ -49,7 +49,6 @@ var
   aNowVersion : string;
   aWebVersion : string;
 begin
-  Result := False;
   aNowVersion := ReadNowVersion;
   DownloadFile(VERSION_URL,'Version.ini',False);
   aWebVersion :=  ReadWebVersion;
@@ -96,8 +95,6 @@ end;
 
 procedure TUpgrade.DownloadFile(aURL : string;aFileName : String;aShowProgress : Boolean = True);
 var
-  aSrcFilePath : string;
-  aCreateFilePath : string;
   aProgress :  TfmUpgradeProgress;
   aSavePath : string;
   aDownLoad : TDownLoadFile;
@@ -127,8 +124,6 @@ end;
 
 function TUpgrade.GetNeedUpdateToVersion(aNowVersion : string;aWebVersion : string):Boolean;
 var
-  aNow : Integer;
-  aWeb : Integer;
   aNowRemain,aWebRemain : string;
   aNowNumStr,aWebNumStr : String;
   aNowPostNum,aWebPostNum : Integer;
@@ -190,12 +185,6 @@ end;
 
 
 procedure TUpgrade.UpdateSelf(AOwner : TComponent);
-var
-  Version : string;
-  aNum : Integer;
-  aRemainVersion : string;
-  aNumStr : string;
-  i,j,k,l : Integer;
 begin
   FOwner := AOwner;
   RzVersionInfo := TRzVersionInfo.Create(FOwner);

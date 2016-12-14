@@ -52,7 +52,6 @@ end;
 
 function TSQLHelper.NotQuotationMark(const aFieldType : String) : Boolean;
 begin
-  Result := False;
   Result := ( aFieldType= 'integer') or (aFieldType = 'AutoInt')
   or (aFieldType = 'tinyint') or (aFieldType = 'smallint')
   or (aFieldType = 'bigint') or (aFieldType = 'money')
@@ -78,13 +77,11 @@ end;
 
 function TSQLHelper.IsAddBracket(aFieldName : String) : Boolean;
 begin
-  Result := False;
   Result := (aFieldName = 'Sign');
 end;
 
 function TSQLHelper.IsKeyField(aAllKey : String;aFieldName : String) : Boolean;
 begin
-  Result := False;
   if Pos(';',aAllKey) <> 0 then
   begin
     Result := (Pos(aFieldName,aAllKey) <> 0);

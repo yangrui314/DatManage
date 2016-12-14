@@ -39,14 +39,14 @@ type
     function GetValue(aName : String;aType :TFieldType) : String; overload;
     function GetValue(aValue: Variant;aType :TFieldType) : String; overload;
     procedure Insert;
-    procedure Update;
+    procedure UpdateTable;
     procedure SaveUpdateValidate(Sender: TObject;
       var DisplayValue: Variant; var ErrorText: TCaption;
       var Error: Boolean );
 
   public
     property IsTableRefresh : Boolean read  FIsTableRefresh write FIsTableRefresh;
-    constructor Create(AOwner: TComponent;aTable : TTable; aEditMode: TEditMode = emInsert;aRow : Integer = 0 );
+    constructor Create(AOwner: TComponent;aTable : TTable; aEditMode: TEditMode = emInsert;aRow : Integer = 0 );Reintroduce;overload;
     procedure DeleteRow;
   end;
 
@@ -266,7 +266,6 @@ var
   aOrder : Integer;
   aField : TFieldType;
   aValue : String;
-  Row: TcxEditorRow;
   I : Integer;  
 begin
     aName := gridInsert.FocusedRow.Name;
@@ -303,14 +302,11 @@ begin
 end;
 
 
-procedure TfmInsert.Update;
+procedure TfmInsert.UpdateTable;
 var
   aSQL : String;
   aPrefixSQL : String;
   aPostfixSQL : String;
-  aType : TFieldType;
-  aValue : String;
-  aField :String;
   aTotal : String;
   I : Integer;
 begin
@@ -424,7 +420,7 @@ begin
   end
   else if  FEditMode = emUpdate then
   begin
-    Update;
+    UpdateTable;
   end
   else
   begin

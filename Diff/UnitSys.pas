@@ -30,7 +30,6 @@ implementation
 
 function TdmSys.OpenDataA(FileStr: string): Boolean;
 begin
-  Result := False;
   dbA.Close;
   dbA.Directory := FileStr;
   dbA.Open;
@@ -42,7 +41,6 @@ end;
 
 function TdmSys.OpenDataB(FileStr: string): Boolean;
 begin
-  Result := False;
   dbB.Close;
   dbB.Directory := FileStr;
   dbB.Open;

@@ -2,6 +2,9 @@ unit DatManage;
 
 interface
 
+{$WARN UNIT_PLATFORM OFF} 
+{$WARN SYMBOL_PLATFORM OFF} 
+
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, StdCtrls, DB, dbisamtb, cxControls, cxContainer, cxEdit, cxTextEdit,
@@ -99,8 +102,6 @@ type
     procedure LoadTableName(aFilter : String = '');
     procedure AddTable(const aTableName: string);
     procedure LoadField(aSQL: string);
-    function SelectFile(aExt: string): string;
-    function SaveFile: string;
     procedure ShowResult(bShow: Boolean); overload;
     procedure ShowResult; overload;
     procedure LoadConfig;
@@ -177,7 +178,7 @@ begin
   end;
 
   Config.GetTable := True;
-  FResult.Update(Config.SystemTable, Config.SelectShowWay);
+  FResult.UpdateResult(Config.SystemTable, Config.SelectShowWay);
 end;
 
 procedure TfmMain.LoadTableName(aFilter : String = '');
@@ -187,7 +188,6 @@ var
 begin
   if (Config.SystemEnvironment = nil) or (Config.SystemParameter = '') then Exit;
   edtTable.Properties.Items.Clear;
-  aTables := TStringList.Create;
   aTables := Config.SystemEnvironment.LoadTableName(aFilter);
   try
     for I := 0 to aTables.Count - 1 do
@@ -253,7 +253,6 @@ end;
 procedure TfmMain.LoadConfig;
 var
   I: Integer;
-  aTest: string;
 begin
 //  edtPathName.Properties.Items.Add('最后一条记录');
 //  edtCreatePath.Properties.Items.Add(Config.LastFolderPath);
@@ -279,34 +278,6 @@ begin
   dMainItem10.Visible := Config.ShowPath;
 end;
 
-function TfmMain.SelectFile(aExt: string): string;
-var
-  I: Integer;
-begin
-  Result := '';
-  dlgOpen.Filter := '相关文档(' + aExt + ')|' + '*.' + aExt;
-  if dlgOpen.Execute then
-  begin
-    for I := 0 to dlgOpen.Files.Count - 1 do
-    begin
-      Result := dlgOpen.Files.Strings[I];
-    end;
-  end;
-end;
-
-function TfmMain.SaveFile: string;
-var
-  I: Integer;
-begin
-  Result := '';
-  if dlgSave.Execute then
-  begin
-    for I := 0 to dlgSave.Files.Count - 1 do
-    begin
-      Result := dlgSave.Files.Strings[I];
-    end;
-  end;
-end;
 
 
 procedure TfmMain.FormClose(Sender: TObject; var Action: TCloseAction);
@@ -335,8 +306,6 @@ end;
 
 procedure TfmMain.ShowResult(bShow: Boolean);
 var
-  aScrHeight: Integer;
-  aResultHeight: Integer;
   aDefaultHeight: Integer;
 begin
   if fmMain.WindowState =  wsMaximized then
@@ -420,8 +389,6 @@ begin
 end;
 
 procedure TfmMain.btnResultClick(Sender: TObject);
-var
-  AHelpFilePath : String;
 begin
   inherited;
   WorkRun;

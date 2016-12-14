@@ -30,8 +30,8 @@ type
     function GetColumnLength(aFieldType : TFieldType;aDataSize : Integer): Integer;
   public
     property IsTableRefresh : Boolean read  FIsTableRefresh write FIsTableRefresh;
-    constructor Create(AOwner: TComponent);
-    procedure Update(aTable : TTable; aFieldShowWay : String = '1');
+    constructor Create(AOwner: TComponent);Reintroduce;overload;
+    procedure UpdateResult(aTable : TTable; aFieldShowWay : String = '1');
     procedure ExportExcel(aFilePath : String);
     procedure DeleteRow;
     procedure ClearGridField;
@@ -124,7 +124,6 @@ end;
 
 procedure TShowResultFrame.LoadData;
 var
-  sTest : String;
   sField : String;
   i : Integer;
   aDataType : TFieldType;
@@ -202,7 +201,7 @@ begin
   end;
 end;
 
-procedure TShowResultFrame.Update(aTable : TTable ; aFieldShowWay : String = '1');
+procedure TShowResultFrame.UpdateResult(aTable : TTable ; aFieldShowWay : String = '1');
 begin
   FTable := aTable;
   FFieldShowWay := aFieldShowWay;

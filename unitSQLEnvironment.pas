@@ -12,7 +12,7 @@ type
     aMainConn: TADOConnection;
     procedure aMainConnection;
   protected
-    procedure InitData;
+    procedure InitData;override;
   public
     procedure SetEnvironment(aParameter : String);override;
     procedure SetSQL(const aSQL : String; aShowError : Boolean = True);override;

@@ -9,12 +9,14 @@ var
   aFileName : string;
   aSrcFilePath : string;
   aCreateFilePath : string;
-  StartTime,EndTime : Integer;
+  StartTime : Integer;
+  NowTime : Integer;
 begin
+  NowTime := 0;
   StartTime := GetTickCount();
-  while (GetTickCount() - StartTime) < 100 do
+  while (NowTime - StartTime) < 100 do
   begin
-    
+    NowTime := GetTickCount();
   end;
 
   aFileName :=  'DatManageMain.exe';

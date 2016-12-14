@@ -37,7 +37,6 @@ type
     FNowRow: Integer;
 
     procedure InitData;
-    procedure SetHistorys(aHistorys: TList);
     procedure FreeHistorys;
     procedure FreeMenuList;
   protected
@@ -122,17 +121,6 @@ begin
   begin
     aMenu := FMenuList[I];
     FreeAndNil(aMenu);
-  end;
-end;
-
-procedure TConfig.SetHistorys(aHistorys: TList);
-var
-  I: Integer;
-begin
-  FreeHistorys;
-  for I := 0 to aHistorys.Count - 1 do
-  begin
-    FHistorys.Add(THistory(aHistorys.Items[I]));
   end;
 end;
 

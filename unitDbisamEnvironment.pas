@@ -3,6 +3,9 @@ unit unitDbisamEnvironment;
 
 interface
 
+{$WARN UNIT_PLATFORM OFF} 
+{$WARN SYMBOL_PLATFORM OFF} 
+
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls,
   Dialogs,StdCtrls,DB, dbisamtb,unitEnvironment,StrUtils,FileCtrl;
