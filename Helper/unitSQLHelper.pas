@@ -42,7 +42,7 @@ var
 
 implementation
   uses
-    unitStrHelper,unitFileHelper;
+    unitStrHelper;
 
 
 constructor TSQLHelper.Create;

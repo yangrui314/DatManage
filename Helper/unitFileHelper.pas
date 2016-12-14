@@ -9,12 +9,12 @@ uses
 type
   TFileHelper = class(TParentHelper)
   private
-  protected
-  public
-    constructor Create;
     //获取某种目录的某种后缀的文件名集合 yr 2016-12-08
     function GetFilesByPathAndExt(const aPath : String;const aExt : String;
       const aNameFilter : String = '') : TStringList;
+  protected
+  public
+    constructor Create;
     //删除指定目录指定后缀的文件 yr 2016-12-12
     procedure DelFiles(const aFilePath : String;const aExt : String);
     //保存日志 yr 2016-12-13

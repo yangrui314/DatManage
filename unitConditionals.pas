@@ -28,8 +28,6 @@ type
 
 implementation
 
-  uses
-    unitStrHelper;
 
 procedure TConditionals.View(aParameter : String);
 var
@@ -66,7 +64,7 @@ var
 begin
   inherited;
   FParameter := aParameter;
-  aSelectStr := '±‡“Î ‰≥ˆƒø¬º£∫..\..\deploy\client' + StrHelper.GetMidStr(FParameter,'client','data');
+  aSelectStr := '±‡“Î ‰≥ˆƒø¬º£∫..\..\deploy\client' + ConfigHelper.GetMidStr(FParameter,'client','data');
   aSoftwareScrPath :=LeftStr(FParameter,Pos('deploy',FParameter)-1) + 'src\delphi\';
   aIsGetAlter := GetOutputDirAndConditionalsAndPathName(aSoftwareScrPath + 'Readme.txt' ,'±‡“Î ‰≥ˆƒø¬º£∫',
                                 '±‡“Î÷∏¡Ó£∫',aAlterOutputDir,aAlterConditionals,aAlterPathName,aSelectStr);
@@ -112,7 +110,7 @@ begin
     aNum := 0;
     while (Pos(aSelectStr,aTempStr) <> 0)  do
     begin
-      aNotLeft := StrHelper.GetMidStr(aTempStr,aSelectStr);
+      aNotLeft := ConfigHelper.GetMidStr(aTempStr,aSelectStr);
       aTempStr := aNotLeft;
       Inc(aNum);
     end;
@@ -137,7 +135,7 @@ begin
     end;
     aFile.LoadFromFile(aFilePath);
     aStr := aFile.Text;
-    Result := StrHelper.GetMidStr(aStr,aBeginStr,aEndStr);
+    Result := ConfigHelper.GetMidStr(aStr,aBeginStr,aEndStr);
   finally
     aFile.Free;
   end;
@@ -151,12 +149,12 @@ begin
   Result := False;
   aNameEndNum :=  Pos(#13,WideString(aStr));
   aName := LeftStr(aStr,aNameEndNum-1);
-  aOutputDir := StrHelper.GetMidStr(aStr,'±‡“Î ‰≥ˆƒø¬º£∫',#13);
+  aOutputDir := ConfigHelper.GetMidStr(aStr,'±‡“Î ‰≥ˆƒø¬º£∫',#13);
   if (Pos('£∫',aOutputDir) <> 0) then
   begin
-    aOutputDir := StrHelper.GetMidStr(aOutputDir,'£∫');
+    aOutputDir := ConfigHelper.GetMidStr(aOutputDir,'£∫');
   end;
-  aConditionals := StrHelper.GetMidStr(aStr,'±‡“Î÷∏¡Ó£∫',#13);
+  aConditionals := ConfigHelper.GetMidStr(aStr,'±‡“Î÷∏¡Ó£∫',#13);
   Result := True;
 end;
 
@@ -166,7 +164,7 @@ begin
   // aOutputDir ..\..\deploy\client\dg-n-tax\bin
   // aBasePath D:\Project\new_omni\
   Result := '';
-  Result := aBasePath + 'trunk\engineering\' + StrHelper.GetMidStr(aOutputDir,'..\..\','bin') +'data';
+  Result := aBasePath + 'trunk\engineering\' + ConfigHelper.GetMidStr(aOutputDir,'..\..\','bin') +'data';
 end;
 
 function TConditionals.GetOutputDirAndConditionalsAndPathName(aFilePath : String;
@@ -191,8 +189,8 @@ begin
       aSelectNum := Pos(aSelectStr,aStr);
       aStr := Copy(aStr,aSelectNum ,Length(aStr)-aSelectNum+1);
     end;
-    aOutputDir := StrHelper.GetMidStr(aStr,aOutputDirKeyStr,#13);
-    aConditionals :=  StrHelper.GetMidStr(aStr,aConditionalsKeyStr,#13);
+    aOutputDir := ConfigHelper.GetMidStr(aStr,aOutputDirKeyStr,#13);
+    aConditionals :=  ConfigHelper.GetMidStr(aStr,aConditionalsKeyStr,#13);
     aPathName :=  GetPathName(aOutputDir);
     Result := True;
 
@@ -209,7 +207,7 @@ var
   aSelectStr : string;
 begin
   Result := '';
-  aSelectStr := StrHelper.GetMidStr(aOutputDir,'client','bin');
+  aSelectStr := ConfigHelper.GetMidStr(aOutputDir,'client','bin');
   Result := ConfigHelper.GetHistoryName(aSelectStr,True);
 end;
 

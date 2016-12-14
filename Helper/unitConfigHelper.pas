@@ -18,8 +18,8 @@ type
   TConfigHelper = class(TObject)
   private
     FWayStrPath : string;
-    procedure LoadFile;
-    procedure SaveFile;
+    procedure InitConfigFile;
+    procedure SaveConfigFile;
   protected
     FFileWay : TFileWay;  
     procedure SaveSystemConfigToBoolean(aName : String;aValue : Boolean);
@@ -63,6 +63,13 @@ type
     function IsKeyField(aAllKey : String;aFieldName : String) : Boolean;
     //数据类型转为字符串 yr 2016-12-14
     function GetSQLType(aFieldType : TFieldType) : String;
+    function GetMidStr(aStr : String;aBeginStr : String; aEndStr : String = '') : String;
+    //保存日志 yr 2016-12-13
+    procedure SaveLog(const aIsSuccess : Boolean;const aSQL : String;const aMessage: String = '');
+    //保存文件
+    function SaveFile(aFilePath : String;aData : String) : Boolean;
+    function ReadFileToStr(aFilePath : String) : String;
+    function ReadFile(aFilePath : String) : TStringList;
     class function CreateInstance(var AForm: TfmParentMenu; AFormClassName: string = ''): TfmParentMenu; overload;
   end;
 
@@ -90,7 +97,7 @@ begin
   begin
     FFileWay := TDatWay.Create;
   end;
-  LoadFile;
+  InitConfigFile;
 end;
 
 class function TConfigHelper.CreateInstance(var AForm: TfmParentMenu; AFormClassName: string = ''): TfmParentMenu;
@@ -118,7 +125,7 @@ begin
     Result := nil;
 end;
 
-procedure TConfigHelper.LoadFile;
+procedure TConfigHelper.InitConfigFile;
 var
   aHistorys : TList;
 begin
@@ -133,7 +140,7 @@ begin
   FFileWay.LoadMenu;
 end;
 
-procedure TConfigHelper.SaveFile;
+procedure TConfigHelper.SaveConfigFile;
 begin
   if Config.FileWay = 'xml' then
   begin
@@ -254,7 +261,7 @@ end;
 
 destructor TConfigHelper.Destroy; 
 begin
-  SaveFile;
+  SaveConfigFile;
   SaveWayStr;
   FFileWay.Free;
   inherited;
@@ -554,6 +561,31 @@ end;
 function TConfigHelper.GetSQLType(aFieldType : TFieldType) : String;
 begin
   Result := SQLHelper.GetSQLType(aFieldType);    
+end;
+
+function TConfigHelper.GetMidStr(aStr : String;aBeginStr : String; aEndStr : String = '') : String;
+begin
+  Result := StrHelper.GetMidStr(aStr,aBeginStr,aEndStr);
+end;
+
+procedure TConfigHelper.SaveLog(const aIsSuccess : Boolean;const aSQL : String;const aMessage: String = '');
+begin
+  FileHelper.SaveLog(aIsSuccess,aSQL,aMessage);
+end;
+
+function TConfigHelper.SaveFile(aFilePath : String;aData : String) : Boolean;
+begin
+  Result := FileHelper.SaveFile(aFilePath,aData);
+end;
+
+function TConfigHelper.ReadFileToStr(aFilePath : String) : String;
+begin
+ Result := FileHelper.ReadFileToStr(aFilePath);
+end;
+
+function TConfigHelper.ReadFile(aFilePath : String) : TStringList;
+begin
+  Result := FileHelper.ReadFile(aFilePath);
 end;
 
 initialization

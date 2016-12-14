@@ -5,7 +5,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls,
   Dialogs,StdCtrls,StrUtils,Forms,RzStatus,formUpgradeProgress,
-  unitDownLoadFile,unitFileHelper;
+  unitDownLoadFile;
 
 type
   TUpgrade = class
@@ -29,6 +29,9 @@ type
   end;
 
 implementation
+  uses
+    unitConfigHelper;
+
 
 
 const
@@ -82,7 +85,7 @@ begin
     Exit;
   end;
 
-  aStrList := FileHelper.ReadFile(aConfigPath);
+  aStrList := ConfigHelper.ReadFile(aConfigPath);
   for I := 0 to aStrList.Count - 1 do
   begin
     aStr := aStrList[I];
@@ -228,7 +231,7 @@ var
 begin
   aPath := ExtractFilePath(ParamStr(0))  + 'Patch\';
   aBatText := aPath + 'xdelta.exe' + ' patch ' +  aPath+'Patch.xdt '+ aPath + 'Old.exe '+ aPath +'New.exe';
-  FileHelper.SaveFile(ExtractFilePath(ParamStr(0))  + 'Patch\' + 'Patch.bat',aBatText);
+  ConfigHelper.SaveFile(ExtractFilePath(ParamStr(0))  + 'Patch\' + 'Patch.bat',aBatText);
 end;
 
 procedure TUpgrade.UpdateSelf(AOwner : TComponent);

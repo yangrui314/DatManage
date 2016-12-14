@@ -27,7 +27,7 @@ type
 
 implementation
   uses
-    unitConfigHelper,unitFileHelper;
+    unitConfigHelper;
 
 
 constructor TSQLEnvironment.Create(AOwner: TComponent;aParameter : String);
@@ -78,7 +78,7 @@ begin
     on E: Exception do
     begin
       FSQLSuccess:= False;
-      FileHelper.SaveLog(FSQLSuccess,aSQL);
+      ConfigHelper.SaveLog(FSQLSuccess,aSQL);
       FLoadTable := False;
       if aShowError then
       begin
@@ -93,7 +93,7 @@ begin
      end;
   end;
   FSQLSuccess := True;
-  FileHelper.SaveLog(FSQLSuccess,aSQL);
+  ConfigHelper.SaveLog(FSQLSuccess,aSQL);
 end;
 
 
@@ -196,7 +196,7 @@ begin
     on E: Exception do
     begin
       FSQLSuccess := False;
-      FileHelper.SaveLog(FSQLSuccess,aSQL);
+      ConfigHelper.SaveLog(FSQLSuccess,aSQL);
       showmessage('执行语句共'+ IntToStr(Len) + '条,'+'执行SQL失败'
        + #13#10 +
       '异常类名称:' + E.ClassName
@@ -205,7 +205,7 @@ begin
     end;
   end;
   FSQLSuccess := True;
-  FileHelper.SaveLog(FSQLSuccess,aSQL);
+  ConfigHelper.SaveLog(FSQLSuccess,aSQL);
 end;
 
 function TSQLEnvironment.LoadTableName(aFilter : String = '') : TStringList;

@@ -32,7 +32,7 @@ type
 
 implementation
   uses
-    unitConfigHelper,unitFileHelper;
+    unitConfigHelper;
 
 
 constructor TExcelHandle.Create(aTable : TTable);
@@ -106,7 +106,7 @@ begin
   end;
 
 
-  FileHelper.SaveFile(FSQLSavePath,DelSQL + #13#10 + s);
+  ConfigHelper.SaveFile(FSQLSavePath,DelSQL + #13#10 + s);
   ShowMessage('导出'+FSQLSavePath+'成功');
 end;
 
