@@ -10,7 +10,6 @@ uses
 type
   TUpgrade = class
   private
-    FPatchVersion : String;
     FNowVersion : string;
     RzVersionInfo: TRzVersionInfo;
     FOwner : TComponent;
@@ -20,9 +19,6 @@ type
     function ReadWebVersion: String;
     procedure DownloadFile(aURL : string;aFileName : String;aShowProgress : Boolean = True);
     function GetNeedUpdateToVersion(aNowVersion : string;aWebVersion : string):Boolean;
-    procedure CreateNew;
-    procedure MergeNew;
-    procedure CreateBat;
   protected
   public
     procedure UpdateSelf(AOwner : TComponent);
@@ -78,7 +74,6 @@ var
   aStrList : TStringList;
 begin
   Result := '';
-  FPatchVersion := '';
   aConfigPath := ExtractFilePath(ParamStr(0)) + 'Upgrade\' + 'Version.ini';
   if not FileExists(aConfigPath) then
   begin
@@ -89,13 +84,6 @@ begin
   for I := 0 to aStrList.Count - 1 do
   begin
     aStr := aStrList[I];
-    if Pos('Patch',aStr) <> 0 then
-    begin
-      aNum := Pos('=',aStr);
-      aStr := Copy(aStr,aNum + 1,Length(aStr)-aNum);
-      FPatchVersion := aStr;
-    end;
-
     if Pos('Version',aStr) <> 0 then
     begin
       aNum := Pos('=',aStr);
@@ -199,40 +187,7 @@ begin
   end;
 end;
 
-procedure TUpgrade.CreateNew;
-var
-  aPatchPath : string;
-  aUpgradePath : string;
-  aName : string;
-begin
-  aPatchPath := ExtractFilePath(ParamStr(0))  + 'Patch\';
-  aUpgradePath := ExtractFilePath(ParamStr(0)) + 'Upgrade\';
-  CopyFile((PChar(aUpgradePath + 'Patch.xdt')),(PChar(aPatchPath + 'Patch.xdt')),False);
-  aName := ExtractFileName(ParamStr(0));
-  CopyFile((PChar(ParamStr(0))),(PChar(aPatchPath + 'Old.exe')),False);
-  MergeNew;
-  CopyFile((PChar(aPatchPath + 'New.exe')),(PChar(aUpgradePath + aName )),False);
-end;
 
-procedure TUpgrade.MergeNew;
-var
-  aBat : String;
-begin
-  CreateBat;
-  aBat := ExtractFilePath(ParamStr(0))  + 'Patch\' + 'Patch.bat';
-  winexec(pchar(aBat), SW_HIDE);
-end;
-
-
-procedure TUpgrade.CreateBat;
-var
-  aBatText : string;
-  aPath : String;  
-begin
-  aPath := ExtractFilePath(ParamStr(0))  + 'Patch\';
-  aBatText := aPath + 'xdelta.exe' + ' patch ' +  aPath+'Patch.xdt '+ aPath + 'Old.exe '+ aPath +'New.exe';
-  ConfigHelper.SaveFile(ExtractFilePath(ParamStr(0))  + 'Patch\' + 'Patch.bat',aBatText);
-end;
 
 procedure TUpgrade.UpdateSelf(AOwner : TComponent);
 var
@@ -241,28 +196,16 @@ var
   aRemainVersion : string;
   aNumStr : string;
   i,j,k,l : Integer;
-  aPath : string;
-  FUsePatch : Boolean;
 begin
   FOwner := AOwner;
   RzVersionInfo := TRzVersionInfo.Create(FOwner);
   try
-    FUsePatch := False;
     if not NeedUpdate then
     begin
       ShowMessage('已是最新版本,不需要下载。');
       Exit;
     end;
-    aPath := ExtractFilePath(ParamStr(0))  + 'Patch\';
-    if (FPatchVersion = FNowVersion) and FileExists(aPath + 'xdelta.exe') and FUsePatch then
-    begin
-      DownloadFile('','Patch.xdt');
-      CreateNew;
-    end
-    else
-    begin
-      DownloadFile(UPGRADE_URL,'Upgrade.zip');
-    end;
+    DownloadFile(UPGRADE_URL,'Upgrade.zip');
     StartUpgrade;
   finally
     RzVersionInfo.Free;
