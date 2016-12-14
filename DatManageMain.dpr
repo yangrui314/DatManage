@@ -15,7 +15,6 @@ uses
   frameProgressBar in 'frameProgressBar.pas' {frmProgressBar: TFrame},
   formProgress in 'formProgress.pas' {fmProgress},
   unitConfig in 'unitConfig.pas',
-  unitConfigHelper in 'ConfigFile\unitConfigHelper.pas',
   formParent in 'Parent\formParent.pas' {ParentForm},
   unitHistory in 'unitHistory.pas',
   formSavePath in 'formSavePath.pas' {fmSavePath},
@@ -51,7 +50,8 @@ uses
   unitStrHelper in 'Helper\unitStrHelper.pas',
   formMenuBatchReName in 'Menu\formMenuBatchReName.pas' {fmMenuBatchReName},
   unitFileHelper in 'Helper\unitFileHelper.pas',
-  unitSQLHelper in 'Helper\unitSQLHelper.pas';
+  unitSQLHelper in 'Helper\unitSQLHelper.pas',
+  unitConfigHelper in 'Helper\unitConfigHelper.pas';
 
 {$R *.res}
 
