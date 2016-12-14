@@ -1,3 +1,9 @@
+{***************************************************
+功能模块:表的数据类,主要存储数据,提供一些常见的操作.
+开发人员：yr
+开发日期：2016-12-14 星期三
+修改日期：2016-12-14 星期三
+***************************************************}
 unit unitTable;
 
 interface
@@ -70,12 +76,16 @@ type
     property TableKeyField: String read FKeyField;
     property Environment  : TEnvironment  read  FEnvironment write FEnvironment;
     property ContainData : Boolean read  FContainData write FContainData;
+    //获取SQL类型 yr 2016-12-12
+    function GetFieldType(aFieldName : String) : String;
+    function GetOrderID(aName : String) : Integer;
+    function GetExportSQL(aDelKeyField : String = '';aContainDelSQL : Boolean = False) : String;
   end;
 
 implementation
 
 uses
-  formInsert,unitXmlWay,unitConfigHelper,unitSQLHelper;
+  formInsert,unitXmlWay,unitConfigHelper;
 
 constructor TTable.Create(aEnvironment : TEnvironment ; aSQL : String;aTableName : String;aShowError : Boolean = True);
 begin
@@ -119,10 +129,10 @@ begin
     FFieldSizeArray[I] :=  FEnvironment.MainData.Fields.Fields[I].Size;
     FFieldDataTypeArray[I] := FEnvironment.MainData.Fields.Fields[I].DataType;
     FFieldIsNullArray[I] := FEnvironment.MainData.Fields.Fields[I].IsNull;
-    FFieldSQLTypeArray[I] := SQLHelper.GetSQLType(FFieldDataTypeArray[I]);
+    FFieldSQLTypeArray[I] := ConfigHelper.GetSQLType(FFieldDataTypeArray[I]);
     FFieldVisibleArray[I] := True;
     FFieldCaptionArray[I] := '';
-    FFieldMainArray[I] := SQLHelper.IsKeyNameAccordValue(FFieldNameArray[I],FKeyField);
+    FFieldMainArray[I] := ConfigHelper.IsKeyField(FKeyField,FFieldNameArray[I]);
   end;
   ConfigHelper.ReadTableEnvironment(Self);
 end;
@@ -224,9 +234,133 @@ begin
   SetLength(FFieldMainArray,0);
 end;
 
+function TTable.GetFieldType(aFieldName : String) : String;
+var
+  I : Integer;
+begin
+  Result := '';
+  for I := 0 to  TableFieldCount - 1 do
+  begin
+    if (TableFieldNameArray[I] = aFieldName) then
+    begin
+      Result := TableFieldSQLTypeArray[I];
+      Exit;
+    end;
+  end;
+end;
+
+function TTable.GetOrderID(aName : String) : Integer;
+var
+  I : Integer;
+begin
+  Result := -1;
+  for I:=0 to  TableFieldCount - 1 do
+  begin
+    if aName = TableFieldNameArray[I] then
+    begin
+      Result := I;
+      Exit;
+    end;  
+  end;    
+end;
+
+function TTable.GetExportSQL(aDelKeyField : String;aContainDelSQL : Boolean) : String;
+var
+  aPrefixSQL : String;
+  aPostfixSQL : String;
+  aType : TFieldType;
+  aValue : String;
+  aFieldName : String;
+  I : Integer;
+  aDataType : TFieldType;
+  aFirst : Boolean;
+  aDelCondition : String;
+  DelSQL : String;
+begin
+  Result := '';
+  for I:=0 to  TableFieldCount - 1 do
+  begin
+    if not TableFieldVisibleArray[I] then Continue;
+    aDataType := TableFieldDataTypeArray[I];
+
+    if  (aDataType = ftAutoInc ) then Continue;
+
+    if aFieldName = ''
+    then aFieldName := aFieldName + ConfigHelper.CheckFieldBracket(TableFieldNameArray[I])
+    else aFieldName := aFieldName + ',' + ConfigHelper.CheckFieldBracket(TableFieldNameArray[I]);
+
+  end;
+
+  aPrefixSQL := 'INSERT INTO ' + TableName + ' (' +aFieldName + ' ) ';
+
+  TableData.First;
+  while not TableData.Eof do
+  begin
+
+    aPostfixSQL := ' VALUES ( ';
+    aFirst := True;
+    for i:=0 to TableData.Fields.Count - 1 do
+    begin
+      if not TableFieldVisibleArray[I] then Continue;
+      aFieldName := TableData.Fields.Fields[I].FieldName;
+      aDataType := TableFieldDataTypeArray[I];
+
+      if  (aDataType = ftAutoInc ) then Continue;
 
 
+      if aDataType = ftString then
+      begin
+        aValue :=  ''''+ TableData.FieldByName(aFieldName).AsString + '''';
+      end
+      else if  (aDataType = ftInteger) or (aDataType = ftSmallint)  then
+      begin
+        aValue := IntToStr(TableData.FieldByName(aFieldName).AsInteger);
+      end
+      else if  aDataType = ftFloat  then
+      begin
+        aValue := FloatToStr(TableData.FieldByName(aFieldName).AsFloat);
+      end
+      else if  aDataType = ftBoolean      then
+      begin
+        if  TableData.FieldByName(aFieldName).AsBoolean
+        then aValue := '1'
+        else aValue := '0';
+      end
+      else if  aDataType = ftDateTime  then
+      begin
+        aValue :=  ' ''' +  FormatDateTime('yyyy-mm-dd', TableData.FieldByName(aFieldName).AsDateTime) + ''' ' ;;
+      end
+      else if aDataType = ftLargeint then
+      begin
+        if TableData.FieldByName(aFieldName).AsString = ''
+        then aValue := 'null'
+        else aValue := IntToStr(TableData.FieldByName(aFieldName).AsInteger);
+      end
+      else
+      begin
+        aValue :=  ''''+ TableData.FieldByName(aFieldName).AsString + '''';
+      end;
+      if aFirst
+      then aPostfixSQL := aPostfixSQL + aValue
+      else aPostfixSQL := aPostfixSQL + ','+ aValue ;
+      aFirst := False;
+      if aDelKeyField =aFieldName then
+        aDelCondition := aValue;
+    end;
+    aPostfixSQL :=  aPostfixSQL + ')';
 
+    if aContainDelSQL and (TableName <> '') and (aDelKeyField <> '') then
+    begin
+      DelSQL := 'Delete from ' + TableName +
+      ' where '+ aDelKeyField + ' = ' + aDelCondition +' ' + ';';
+    end;
+
+    if Result = ''
+    then Result := DelSQL + #13#10+ aPrefixSQL + aPostfixSQL + ';'
+    else Result := Result +#13#10  + DelSQL + #13#10 + aPrefixSQL + aPostfixSQL + ';' ;
+    TableData.Next;
+  end;
+end;
 
 
 

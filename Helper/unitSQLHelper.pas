@@ -1,3 +1,10 @@
+{***************************************************
+功能模块:SQL的相关操作,不涉及到Config的操作。涉及到Config的
+操作都放到ConfigHelper中。
+开发人员：yr
+开发日期：2016-12-14 星期三
+修改日期：2016-12-14 星期三
+***************************************************}
 unit unitSQLHelper;
 
 interface
@@ -8,26 +15,26 @@ uses
 type
   TSQLHelper = class
   private
+    //字段是否需要增加中括号 yr 2016-12-14
+    function IsAddBracket(aFieldName : String) : Boolean;
   protected
   public
     constructor Create;
-    //是否是特殊类型 针对SQL查询 yr 2016-12-12
-    function IsQuotation(const aFieldType : String) : Boolean;
-    //获取SQL类型 yr 2016-12-12
-    function GetFieldType(aFieldName : String) : String;
-    //获取sql yr 2016-12-12
-    function GetSQL(aTable : String;aFieldName : String;aKeyword : String;
-      aCondition : String;aSelSQL : String; aSQL : String): string;
-    //执行SQL yr 2016-12-12
-    procedure RunSQL(aSQL : String;var aMsg : String);
-    function HandleSpecialStr(aFieldName : String) : String;
-    function IsSpecial(aStr : String) : Boolean;
-    function IsKeyNameAccordValue(aFieldName : String;aKeyField : String) : Boolean;
-    function ConvertString(aValue : Variant;aType :TFieldType):String;
+    //不需要引号的数据类型 yr 2016-12-14
+    function NotQuotationMark(const aFieldType : String) : Boolean;
+    //处理需要增加中括号的字段 yr 2016-12-14
+    function CheckFieldBracket(aFieldName : String) : String;
+    //是否是主键 yr 2016-12-14
+    function IsKeyField(aAllKey : String;aFieldName : String) : Boolean;
+    //根据数据类型返回值 yr 2016-12-14
+    function GetStrByFieldType(aValue : Variant;aType :TFieldType):String;
+    //数据类型转为字符串 yr 2016-12-14
     function GetSQLType(aFieldType : TFieldType) : String;
-    function GetOrderID(aName : String;var aTable : TTable) : Integer;
-    procedure SaveSQLFile(aFilePath : String;aContainDelSQL : Boolean;
-            aDelKeyField : String;var aTable : TTable);            
+    //SQL语句转换为中文提示 yr 2016-12-14
+    function GetMsgBySQL(aSQL : String) : String;
+    //通过若干条件得到SQL的条件语句 yr 2016-12-14
+    function GetConditionSQL(aFieldName : String;aFieldType :String;aKeyword : String;
+  aCondition : String) : String;  
   end;
 
 var
@@ -35,7 +42,7 @@ var
 
 implementation
   uses
-    unitConfig,unitStrHelper,unitFileHelper;
+    unitStrHelper,unitFileHelper;
 
 
 constructor TSQLHelper.Create;
@@ -43,7 +50,7 @@ begin
 
 end;
 
-function TSQLHelper.IsQuotation(const aFieldType : String) : Boolean;
+function TSQLHelper.NotQuotationMark(const aFieldType : String) : Boolean;
 begin
   Result := False;
   Result := ( aFieldType= 'integer') or (aFieldType = 'AutoInt')
@@ -53,145 +60,12 @@ begin
   or (aFieldType = 'bit') or (aFieldType = 'datatime') ;
 end;
 
-function TSQLHelper.GetFieldType(aFieldName : String) : String;
-var
-  I : Integer;
-begin
-  Result := '';
-  for I := 0 to  Config.SystemTable.TableFieldCount - 1 do
-  begin
-    if (Config.SystemTable.TableFieldNameArray[I] = aFieldName) then
-    begin
-      Result := Config.SystemTable.TableFieldSQLTypeArray[I];
-      Exit;
-    end;
-  end;
-end;
-
-function TSQLHelper.GetSQL(aTable : String;aFieldName : String;aKeyword : String;
-      aCondition : String;aSelSQL : String; aSQL : String): string;
-var
-  aFieldType : string;
-begin
-  if Config.SystemActivePageIndex = 0 then
-  begin
-    if Config.SystemTableName = '' then Config.SystemTableName := aTable;
-    if Config.SystemTableName = '' then
-    begin
-      Result := '';
-      ShowMessage('请输入表格名称');
-      Exit;
-    end
-    else
-    begin
-      Result := Config.SystemEnvironment.GetBaseTableSQL(Config.SystemTableName);
-      aFieldType := GetFieldType(aFieldName);
-      if  (aFieldName <> '') and  (aKeyword <> '') and (aCondition <> '') then
-      begin
-        if aKeyword = '包含' then
-        begin
-          if IsQuotation(aFieldType)   then
-          begin
-            ShowMessage('该字段不能使用''包含''查询。');
-            Result := '';
-          end
-          else
-          begin
-            Result := Result + ' where ' + HandleSpecialStr(aFieldName) + ' like ' + '''%'+  aCondition + '%''';
-          end;
-        end
-        else if aKeyword = '等于' then
-        begin
-          if IsQuotation(aFieldType)   then
-          begin
-            Result := Result + ' where ' + HandleSpecialStr(aFieldName)  + ' = ' +  aCondition ;
-          end
-          else
-          begin
-            Result := Result + ' where ' + HandleSpecialStr(aFieldName)  + ' = ' + ''''+  aCondition + '''';
-          end;
-        end
-        else if aKeyword = '不等于' then
-        begin
-          if IsQuotation(aFieldType) then
-          begin
-            Result := Result + ' where ' + HandleSpecialStr(aFieldName)  + ' <> ' +  aCondition ;
-          end
-          else
-          begin
-            Result := Result + ' where ' + HandleSpecialStr(aFieldName)  + ' <> ' + ''''+  aCondition + '''';          
-          end;
-        end;
-      end;
-      if  (aFieldName = '') and  (aKeyword = '') and (aCondition <> '') then
-      begin
-        Result := Result + ' where ' + aCondition;     
-      end;
-    end;
-  end
-  else
-  begin
-    Config.SystemTableName := '';
-    if aSelSQL = '' then
-      Result := aSQL
-    else
-      Result := aSelSQL;
-  end;
-end;
 
 
-procedure TSQLHelper.RunSQL(aSQL : String;var aMsg : String);
-var
-  aHint : String;
-begin
-  Config.SystemTable := TTable.Create(Config.SystemEnvironment, aSQL, Config.SystemTableName);
-  if  Config.SystemActivePageIndex = 0  then
-  begin
-    aHint := '打开'+ Config.SystemTableName;
-  end
-  else
-  begin
-    if (Pos('update',aSQL) <> 0 ) then
-    begin
-      aHint := '更新';
-      aHint := aHint + Trim(StrHelper.GetMidStr(aSQL,'update','set'))
-    end
-    else if (Pos('delete',aSQL) <> 0) then
-    begin
-      aHint := '删除';
-      if (Pos('where',aSQL) <> 0) then
-      begin
-        aHint := aHint + Trim(StrHelper.GetMidStr(aSQL,'from','where'))
-      end
-      else
-      begin
-        aHint := aHint + Trim(StrHelper.GetMidStr(aSQL,'from'))
-      end;      
-    end
-    else if (Pos('insert',aSQL) <> 0) then
-    begin
-      aHint := '插入';
-      aHint := aHint + Trim(StrHelper.GetMidStr(aSQL,'into','('));
-    end
-    else
-    begin
-      aHint := '查询';
-      if (Pos('where',aSQL) <> 0) then
-      begin
-        aHint := aHint + Trim(StrHelper.GetMidStr(aSQL,'from','where'))
-      end
-      else
-      begin
-        aHint := aHint + Trim(StrHelper.GetMidStr(aSQL,'from'))
-      end;       
-    end;
-  end;
-  aMsg := aHint;
-end;
 
-function TSQLHelper.HandleSpecialStr(aFieldName : String) : String;
+function TSQLHelper.CheckFieldBracket(aFieldName : String) : String;
 begin
-  if IsSpecial(aFieldName) then
+  if IsAddBracket(aFieldName) then
   begin
     Result :=   '['+ aFieldName + ']';
   end
@@ -202,34 +76,34 @@ begin
 end;
 
 
-function TSQLHelper.IsSpecial(aStr : String) : Boolean;
+function TSQLHelper.IsAddBracket(aFieldName : String) : Boolean;
 begin
   Result := False;
-  Result := (aStr = 'Sign');
+  Result := (aFieldName = 'Sign');
 end;
 
-function TSQLHelper.IsKeyNameAccordValue(aFieldName : String;aKeyField : String) : Boolean;
+function TSQLHelper.IsKeyField(aAllKey : String;aFieldName : String) : Boolean;
 begin
   Result := False;
-  if Pos(';',aKeyField) <> 0 then
+  if Pos(';',aAllKey) <> 0 then
   begin
-    Result := (Pos(aFieldName,aKeyField) <> 0);
+    Result := (Pos(aFieldName,aAllKey) <> 0);
   end
   else
   begin
-    if aKeyField =  'RecordID' then
+    if aAllKey =  'RecordID' then
     begin
       Result := (aFieldName ='RecordID_1');
     end
     else
     begin
-      Result := (aFieldName = aKeyField)
+      Result := (aFieldName = aAllKey)
     end;
   end;
 end;
 
 
-function TSQLHelper.ConvertString(aValue : Variant;aType :TFieldType):String;
+function TSQLHelper.GetStrByFieldType(aValue : Variant;aType :TFieldType):String;
 begin
   if aType = ftInteger then
   begin
@@ -351,122 +225,100 @@ begin
   end;
 end;
 
-function TSQLHelper.GetOrderID(aName : String;var aTable : TTable ) : Integer;
-var
-  I : Integer;
+
+
+
+
+function TSQLHelper.GetMsgBySQL(aSQL : String) : String;
 begin
-  Result := -1;
-  for I:=0 to  aTable.TableFieldCount - 1 do
+  Result := '';
+  if (Pos('update',aSQL) <> 0 ) then
   begin
-    if aName = aTable.TableFieldNameArray[I] then
+    Result := '更新';
+    Result := Result + Trim(StrHelper.GetMidStr(aSQL,'update','set'))
+  end
+  else if (Pos('delete',aSQL) <> 0) then
+  begin
+    Result := '删除';
+    if (Pos('where',aSQL) <> 0) then
     begin
-      Result := I;
-      Exit;
-    end;  
-  end;    
+      Result := Result + Trim(StrHelper.GetMidStr(aSQL,'from','where'))
+    end
+    else
+    begin
+      Result := Result + Trim(StrHelper.GetMidStr(aSQL,'from'))
+    end;
+  end
+  else if (Pos('insert',aSQL) <> 0) then
+  begin
+    Result := '插入';
+    Result := Result + Trim(StrHelper.GetMidStr(aSQL,'into','('));
+  end
+  else
+  begin
+    Result := '查询';
+    if (Pos('where',aSQL) <> 0) then
+    begin
+      Result := Result + Trim(StrHelper.GetMidStr(aSQL,'from','where'))
+    end
+    else
+    begin
+      Result := Result + Trim(StrHelper.GetMidStr(aSQL,'from'))
+    end;
+  end;
 end;
 
 
-procedure TSQLHelper.SaveSQLFile(aFilePath : String;aContainDelSQL : Boolean;
-    aDelKeyField : String;var aTable : TTable);
-var
-  aSQL : String;
-  aPrefixSQL : String;
-  aPostfixSQL : String;
-  aType : TFieldType;
-  aValue : String;
-  aFieldName : String;
-  I : Integer;
-  aDataType : TFieldType;
-  aFirst : Boolean;
-  aDelCondition : String;
-  DelSQL : String;
+function TSQLHelper.GetConditionSQL(aFieldName : String;aFieldType :String;aKeyword : String;
+  aCondition : String) : String;
 begin
-  for I:=0 to  aTable.TableFieldCount - 1 do
+  Result := '';
+  if  (aFieldName <> '') and  (aKeyword <> '') and (aCondition <> '') then
   begin
-    if not aTable.TableFieldVisibleArray[I] then Continue;
-    aDataType := aTable.TableFieldDataTypeArray[I];
-
-    if  (aDataType = ftAutoInc ) then Continue;
-
-    if aFieldName = ''
-    then aFieldName := aFieldName + HandleSpecialStr(aTable.TableFieldNameArray[I])
-    else aFieldName := aFieldName + ',' + HandleSpecialStr(aTable.TableFieldNameArray[I]);
-
-  end;
-
-  aPrefixSQL := 'INSERT INTO ' + aTable.TableName + ' (' +aFieldName + ' ) ';
-
-  aTable.TableData.First;
-  while not aTable.TableData.Eof do
-  begin
-
-    aPostfixSQL := ' VALUES ( ';
-    aFirst := True;
-    for i:=0 to aTable.TableData.Fields.Count - 1 do
+    if aKeyword = '包含' then
     begin
-      if not aTable.TableFieldVisibleArray[I] then Continue;
-      aFieldName := aTable.TableData.Fields.Fields[I].FieldName;
-      aDataType := aTable.TableFieldDataTypeArray[I];
-
-      if  (aDataType = ftAutoInc ) then Continue;
-
-
-      if aDataType = ftString then
+      if NotQuotationMark(aFieldType) then
       begin
-        aValue :=  ''''+ aTable.TableData.FieldByName(aFieldName).AsString + '''';
-      end
-      else if  (aDataType = ftInteger) or (aDataType = ftSmallint)  then
-      begin
-        aValue := IntToStr(aTable.TableData.FieldByName(aFieldName).AsInteger);
-      end
-      else if  aDataType = ftFloat  then
-      begin
-        aValue := FloatToStr(aTable.TableData.FieldByName(aFieldName).AsFloat);
-      end
-      else if  aDataType = ftBoolean      then
-      begin
-        if  aTable.TableData.FieldByName(aFieldName).AsBoolean
-        then aValue := '1'
-        else aValue := '0';
-      end
-      else if  aDataType = ftDateTime  then
-      begin
-        aValue :=  ' ''' +  FormatDateTime('yyyy-mm-dd', aTable.TableData.FieldByName(aFieldName).AsDateTime) + ''' ' ;;
-      end
-      else if aDataType = ftLargeint then
-      begin
-        if  aTable.TableData.FieldByName(aFieldName).AsString = ''
-        then aValue := 'null'
-        else aValue := IntToStr(aTable.TableData.FieldByName(aFieldName).AsInteger);
+        //ShowMessage('该字段不能使用''包含''查询。');
+        Exit;
       end
       else
       begin
-        aValue :=  ''''+ aTable.TableData.FieldByName(aFieldName).AsString + '''';
+        Result := ' where ' + CheckFieldBracket(aFieldName) + ' like ' + '''%'+  aCondition + '%''';
       end;
-      if aFirst
-      then aPostfixSQL := aPostfixSQL + aValue
-      else aPostfixSQL := aPostfixSQL + ','+ aValue ;
-      aFirst := False;
-      if aDelKeyField =aFieldName then
-        aDelCondition := aValue;
-    end;
-    aPostfixSQL :=  aPostfixSQL + ')';
-
-    if aContainDelSQL and (aTable.TableName <> '') and (aDelKeyField <> '') then
+    end
+    else if aKeyword = '等于' then
     begin
-      DelSQL := 'Delete from ' + aTable.TableName +
-      ' where '+ aDelKeyField + ' = ' + aDelCondition +' ' + ';';
+      if NotQuotationMark(aFieldType)   then
+      begin
+        Result := ' where ' + CheckFieldBracket(aFieldName)  + ' = ' +  aCondition ;
+      end
+      else
+      begin
+        Result := ' where ' + CheckFieldBracket(aFieldName)  + ' = ' + ''''+  aCondition + '''';
+      end;
+    end
+    else if aKeyword = '不等于' then
+    begin
+      if NotQuotationMark(aFieldType) then
+      begin
+        Result :=  ' where ' + CheckFieldBracket(aFieldName)  + ' <> ' +  aCondition ;
+      end
+      else
+      begin
+        Result :=  ' where ' + CheckFieldBracket(aFieldName)  + ' <> ' + ''''+  aCondition + '''';
+      end;
     end;
-
-    if aSQL = ''
-    then aSQL := DelSQL + #13#10+ aPrefixSQL + aPostfixSQL + ';'
-    else aSQL := aSQL +#13#10  + DelSQL + #13#10 + aPrefixSQL + aPostfixSQL + ';' ;
-    aTable.TableData.Next;
   end;
-  FileHelper.SaveFile(aFilePath,aSQL);
-end;
 
+  if  (aFieldName = '') and  (aKeyword = '') and (aCondition <> '') then
+  begin
+    if (Pos('where',aCondition) <> 0) then
+      Result := aCondition
+    else
+      Result := ' where ' + aCondition;
+  end;  
+end;
 
 
 end.

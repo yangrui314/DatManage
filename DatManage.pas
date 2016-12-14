@@ -139,7 +139,7 @@ var
 begin
   lblResult.Caption := '≤È—Ø÷–...';
   try
-    aSQL := SQLHelper.GetSQL(edtTable.EditText,edtFieldName.Text,edtKeyword.Text,
+    aSQL := ConfigHelper.GetSQL(edtTable.EditText,edtFieldName.Text,edtKeyword.Text,
               edtCondition.Text,edtSQL.SelText,edtSQL.Text);
     if aSQL = '' then
       Exit;
@@ -156,7 +156,7 @@ var
   I : Integer;
   aHint : String;
 begin
-  SQLHelper.RunSQL(aSQL,aHint);
+  ConfigHelper.RunSQL(aSQL,aHint);
   
   if Config.SystemEnvironment.SQLSuccess then
   begin

@@ -32,7 +32,7 @@ type
 
 implementation
   uses
-    unitConfigHelper,unitFileHelper,unitSQLHelper;
+    unitConfigHelper,unitFileHelper;
 
 
 constructor TExcelHandle.Create(aTable : TTable);
@@ -148,7 +148,7 @@ function TExcelHandle.LoadInsertSQL(RowNum : Integer): String;
     for I := 1 to FSheetColumn do
     begin
       aFieldName :=  Sheet.Cells[1,I].Value;
-      TableFieldOrderID := SQLHelper.GetOrderID(aFieldName,FTable);
+      TableFieldOrderID := FTable.GetOrderID(aFieldName);
       if TableFieldOrderID = -1 then Continue;
 
 //      if (not FTable.TableFieldIsNullArray[TableFieldOrderID]) and (Sheet.Cells[RowNum ,I].Value = '') then
@@ -164,16 +164,16 @@ function TExcelHandle.LoadInsertSQL(RowNum : Integer): String;
 
 
       if aFirst
-      then aValue := SQLHelper.ConvertString(Sheet.Cells[RowNum ,I].Value,FTable.TableFieldDataTypeArray[TableFieldOrderID])
-      else aValue := aValue + ',' + SQLHelper.ConvertString(Sheet.Cells[RowNum ,I].Value,FTable.TableFieldDataTypeArray[TableFieldOrderID]);
+      then aValue := ConfigHelper.GetStrByFieldType(Sheet.Cells[RowNum ,I].Value,FTable.TableFieldDataTypeArray[TableFieldOrderID])
+      else aValue := aValue + ',' + ConfigHelper.GetStrByFieldType(Sheet.Cells[RowNum ,I].Value,FTable.TableFieldDataTypeArray[TableFieldOrderID]);
 
 
       //获取删除语句的条件。
       if aFieldName = FDelKeyField then
       begin
         if FDelCondition = ''
-        then FDelCondition := SQLHelper.ConvertString(Sheet.Cells[RowNum ,I].Value,FTable.TableFieldDataTypeArray[TableFieldOrderID])
-        else FDelCondition := FDelCondition + ',' + SQLHelper.ConvertString(Sheet.Cells[RowNum ,I].Value,FTable.TableFieldDataTypeArray[TableFieldOrderID]); 
+        then FDelCondition := ConfigHelper.GetStrByFieldType(Sheet.Cells[RowNum ,I].Value,FTable.TableFieldDataTypeArray[TableFieldOrderID])
+        else FDelCondition := FDelCondition + ',' + ConfigHelper.GetStrByFieldType(Sheet.Cells[RowNum ,I].Value,FTable.TableFieldDataTypeArray[TableFieldOrderID]);
       end;
       aFirst := False;
     end;

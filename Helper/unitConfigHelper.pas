@@ -11,7 +11,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls,
   Dialogs,StdCtrls,unitConfig,unitXmlWay,unitDatWay,unitFileWay,unitHistory,
-  formParentMenu, Forms,unitTable;
+  formParentMenu, Forms,unitTable,DB, dbisamtb;
 
 
 type
@@ -45,11 +45,24 @@ type
     function GetHistoryName(aPath: string; aInclude: Boolean = False): string;
     function GetHistoryPath(aName: string; aInclude: Boolean = False): string;
     function GetMenuCaption(const aClassName: string): string;
-
     procedure SaveTableEnvironment(var aTable : TTable);
     procedure ReadTableEnvironment(var aTable : TTable);
-
     procedure Add(AOwner: TComponent;var aTable : TTable);
+    //执行SQL yr 2016-12-12
+    procedure RunSQL(aSQL : String;var aMsg : String);
+    //获取sql yr 2016-12-12
+    function GetSQL(aTable : String;aFieldName : String;aKeyword : String;
+      aCondition : String;aSelSQL : String; aSQL : String): string;
+    procedure SaveSQLFile(aFilePath : String;aContainDelSQL : Boolean;
+            aDelKeyField : String;var aTable : TTable);
+    //处理需要增加中括号的字段 yr 2016-12-14
+    function CheckFieldBracket(aFieldName : String) : String;
+    //根据数据类型返回值 yr 2016-12-14
+    function GetStrByFieldType(aValue : Variant;aType :TFieldType):String;
+    //是否是主键 yr 2016-12-14
+    function IsKeyField(aAllKey : String;aFieldName : String) : Boolean;
+    //数据类型转为字符串 yr 2016-12-14
+    function GetSQLType(aFieldType : TFieldType) : String;
     class function CreateInstance(var AForm: TfmParentMenu; AFormClassName: string = ''): TfmParentMenu; overload;
   end;
 
@@ -228,7 +241,6 @@ end;
 procedure TConfigHelper.SaveWayStr;
 var
   aFile: TextFile;
-  aStr : String;
 begin
   AssignFile(aFile,FWayStrPath);
   try
@@ -461,8 +473,88 @@ begin
   end;
 end;
 
+procedure TConfigHelper.RunSQL(aSQL : String;var aMsg : String);
+begin
+  Config.SystemTable := TTable.Create(Config.SystemEnvironment, aSQL, Config.SystemTableName);
+  if Config.SystemActivePageIndex = 0 then
+  begin
+    aMsg := '打开'+ Config.SystemTableName;
+  end
+  else
+  begin
+    aMsg := SQLHelper.GetMsgBySQL(aSQL);
+  end;
+end;
 
 
+function TConfigHelper.GetSQL(aTable : String;aFieldName : String;aKeyword : String;
+      aCondition : String;aSelSQL : String; aSQL : String): string;
+var
+  aFieldType : string;
+  aAllCondition : String;
+begin
+  if Config.SystemActivePageIndex = 0 then
+  begin
+    if Config.SystemTableName = '' then Config.SystemTableName := aTable;
+    if Config.SystemTableName = '' then
+    begin
+      Result := '';
+      ShowMessage('请输入表格名称');
+      Exit;
+    end
+    else
+    begin
+      Result := Config.SystemEnvironment.GetBaseTableSQL(Config.SystemTableName);
+      aFieldType := Config.SystemTable.GetFieldType(aFieldName);
+      if (aKeyword = '包含') and SQLHelper.NotQuotationMark(aFieldType) then
+      begin
+        ShowMessage('该字段不能使用''包含''查询。');
+        Result := '';
+        Exit;
+      end;
+      aAllCondition := SQLHelper.GetConditionSQL(aFieldName,aFieldType,aKeyword,aCondition);
+      Result := Result + aAllCondition;
+    end;
+  end
+  else
+  begin
+    Config.SystemTableName := '';
+    if aSelSQL = '' then
+      Result := aSQL
+    else
+      Result := aSelSQL;
+  end;
+end;
+
+procedure TConfigHelper.SaveSQLFile(aFilePath : String;aContainDelSQL : Boolean;
+    aDelKeyField : String;var aTable : TTable);
+var
+  aSQL : String;
+  DelSQL : String;
+begin
+  aSQL := aTable.GetExportSQL(aDelKeyField,aContainDelSQL);
+  FileHelper.SaveFile(aFilePath,aSQL);
+end;
+
+function TConfigHelper.CheckFieldBracket(aFieldName : String) : String;
+begin
+  Result := SQLHelper.CheckFieldBracket(aFieldName);
+end;
+
+function TConfigHelper.GetStrByFieldType(aValue : Variant;aType :TFieldType):String;
+begin
+  Result := SQLHelper.GetStrByFieldType(aValue,aType);
+end;
+
+function TConfigHelper.IsKeyField(aAllKey : String;aFieldName : String) : Boolean;
+begin
+  Result := SQLHelper.IsKeyField(aAllKey,aFieldName);
+end;
+
+function TConfigHelper.GetSQLType(aFieldType : TFieldType) : String;
+begin
+  Result := SQLHelper.GetSQLType(aFieldType);    
+end;
 
 initialization
   StrHelper := TStrHelper.Create;

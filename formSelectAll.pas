@@ -50,7 +50,7 @@ var
 
 implementation
   uses
-    StrUtils,formProgress,unitConfigHelper,unitSQLHelper;
+    StrUtils,formProgress,unitConfigHelper;
 
 {$R *.dfm}
 
@@ -169,7 +169,7 @@ begin
   for I := 0 to   FTableField.TableFieldCount - 1 do
   begin
     if (FTableField.TableFieldDataTypeArray[I]  <> ftString) then Continue;
-    aStr := SQLHelper.HandleSpecialStr(FTableField.TableFieldNameArray[I]);
+    aStr := ConfigHelper.CheckFieldBracket(FTableField.TableFieldNameArray[I]);
     aSQL := 'select * from ' + aTableName + ' where ' + aStr + ' like '
            + ''''  + '%'  + edtSelectStr.EditValue + '%' + '''' ;
     FTableSQL := TTable.Create(FEnvironment, aSQL, aTableName,False);
