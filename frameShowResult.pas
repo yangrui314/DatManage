@@ -29,6 +29,7 @@ type
     procedure AddColumn(const Width: Integer; const Caption : String;const DataType : String);
     function GetColumnLength(aFieldType : TFieldType;aDataSize : Integer): Integer;
   public
+    TRefreshMain : function : Boolean of object;
     property IsTableRefresh : Boolean read  FIsTableRefresh write FIsTableRefresh;
     constructor Create(AOwner: TComponent);Reintroduce;overload;
     procedure UpdateResult(aTable : TTable; aFieldShowWay : String = '1');
@@ -40,7 +41,7 @@ type
 
 implementation
   uses
-    DatManage,unitConfig;
+    unitConfig;
 
 {$R *.dfm}
 
@@ -248,7 +249,8 @@ begin
   Config.NowRow := aRow;
   if FIsTableRefresh then
   begin
-    TfmMain(FParent).IsTableRefreshTimer.Enabled := True;
+    TRefreshMain;
+    //TfmMain(FParent).IsTableRefreshTimer.Enabled := True;
   end;
 end;
 

@@ -111,6 +111,7 @@ type
     procedure UpdateConfigSystem;
     //设置系统环境 yr 2016-12-12
     procedure UpdateEnvironment(aParameter : String);
+    function RefreshUI : Boolean;
   protected
   public
     procedure WorkRun;
@@ -124,7 +125,7 @@ implementation
 uses
   FileCtrl, StrUtils, formTableProperty, unitExcelHandle,
   formExport, formAbout, formImport, unitConfig, unitHistory, formSavePath,
-  formSet,formSelectAll,frmMain,unitStrHelper,cnDebug,
+  formSet,formSelectAll,frmMain,unitStrHelper,
   unitFileHelper,unitSQLHelper;
 
 
@@ -237,9 +238,14 @@ begin
   edtKeyword.Properties.Items.Add('等于');
   edtKeyword.Properties.Items.Add('不等于');
   
-  IsTableRefreshTimer.Enabled := False;;  
+  IsTableRefreshTimer.Enabled := False;
+  FResult.TRefreshMain := RefreshUI;
 end;
 
+function TfmMain.RefreshUI : Boolean;
+begin
+  IsTableRefreshTimer.Enabled := True;
+end;
 
 
 procedure TfmMain.InitMenu;

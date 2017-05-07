@@ -79,7 +79,7 @@ var
 
 implementation
   uses
-    StrUtils,unitStrHelper,cnDebug,unitFileHelper,unitSQLHelper,
+    StrUtils,unitStrHelper,unitFileHelper,unitSQLHelper,
     formImport,formExport,formTableProperty,formInsert;
 
 
